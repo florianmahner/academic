@@ -1,0 +1,68 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BlogPostCard from '../../components/blocks/BlogPostCard.astro';
+import Container from '../../components/layout/Container.astro';
+import { getPublishedPosts } from '../../lib/blog';
+import { config } from '../../config';
+import { isSectionEnabled, DISABLED_SECTION_REDIRECT } from '../../lib/sections';
+
+// Redirect if section is disabled
+if (!isSectionEnabled('blog')) {
+  return Astro.redirect(DISABLED_SECTION_REDIRECT);
+}
+
+const title = `Blog | ${config.site.title}`;
+const posts = await getPublishedPosts();
+---
+
+<BaseLayout title={title} description="Blog posts and articles">
+  <article class="blog-page">
+    <Container>
+      <header class="page-header" data-animate="fade-up">
+        <h1>Blog</h1>
+        <p class="lead">Thoughts on research, machine learning, and academia.</p>
+      </header>
+
+      {posts.length > 0 ? (
+        <div class="posts-list" data-animate="stagger">
+          {posts.map(post => (
+            <BlogPostCard
+              title={post.data.title}
+              description={post.data.description}
+              date={post.data.date}
+              tags={post.data.tags}
+              href={`/blog/${post.slug}`}
+            />
+          ))}
+        </div>
+      ) : (
+        <p class="no-posts">No posts yet. Check back soon!</p>
+      )}
+    </Container>
+  </article>
+</BaseLayout>
+
+<style>
+  .blog-page {
+    padding: var(--space-8) 0;
+  }
+
+  .lead {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-secondary);
+    margin-top: var(--space-2);
+  }
+
+  .posts-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-top: var(--space-8);
+  }
+
+  .no-posts {
+    color: var(--color-text-muted);
+    font-style: italic;
+    margin-top: var(--space-8);
+  }
+</style>

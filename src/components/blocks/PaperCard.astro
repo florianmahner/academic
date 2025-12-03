@@ -1,0 +1,230 @@
+---
+/**
+ * PaperCard Component
+ * Display academic publication with preview, metadata, and links
+ */
+
+interface Props {
+  title: string;
+  authors: string[];
+  venue?: string;
+  year?: number;
+  preview?: string;
+  pdf?: string;
+  html?: string;
+  code?: string;
+  highlightAuthor?: string;
+  class?: string;
+}
+
+const {
+  title,
+  authors,
+  venue,
+  year,
+  preview,
+  pdf,
+  html,
+  code,
+  highlightAuthor = 'Mahner',
+  class: className,
+} = Astro.props;
+
+const primaryLink = pdf || html;
+---
+
+<article class:list={['paper-card', className]}>
+  {preview && (
+    <div class="paper-preview">
+      <img src={preview} alt={title} loading="lazy" decoding="async" />
+    </div>
+  )}
+  <div class="paper-content">
+    <div class="paper-meta">
+      {venue && <span class="paper-venue">{venue}</span>}
+      {year && <span class="paper-year">{year}</span>}
+    </div>
+    <h3 class="paper-title">
+      {primaryLink ? (
+        <a href={primaryLink} target="_blank" rel="noopener noreferrer">{title}</a>
+      ) : (
+        title
+      )}
+    </h3>
+    <p class="paper-authors">
+      {authors.map((author, i) => (
+        <>
+          <span class:list={{ 'highlight-author': author.includes(highlightAuthor) }}>
+            {author}
+          </span>
+          {i < authors.length - 1 && ', '}
+        </>
+      ))}
+    </p>
+    <div class="paper-links">
+      {pdf && (
+        <a href={pdf} class="paper-link" target="_blank" rel="noopener noreferrer">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          PDF
+        </a>
+      )}
+      {html && (
+        <a href={html} class="paper-link" target="_blank" rel="noopener noreferrer">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+          </svg>
+          Web
+        </a>
+      )}
+      {code && (
+        <a href={code} class="paper-link" target="_blank" rel="noopener noreferrer">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="16 18 22 12 16 6"></polyline>
+            <polyline points="8 6 2 12 8 18"></polyline>
+          </svg>
+          Code
+        </a>
+      )}
+    </div>
+  </div>
+</article>
+
+<style>
+  .paper-card {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: var(--space-5);
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+  }
+
+  .paper-card:hover {
+    background-color: var(--color-bg-alt);
+  }
+
+  .paper-preview {
+    flex-shrink: 0;
+    width: 140px;
+    height: 90px;
+    overflow: hidden;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+  }
+
+  .paper-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-normal);
+  }
+
+  .paper-card:hover .paper-preview img {
+    transform: scale(1.05);
+  }
+
+  .paper-content {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .paper-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+  }
+
+  .paper-venue {
+    font-size: var(--font-size-xs);
+    font-family: var(--font-ui);
+    color: var(--color-accent);
+    font-weight: var(--font-weight-medium);
+  }
+
+  .paper-year {
+    font-size: var(--font-size-xs);
+    font-family: var(--font-mono);
+    color: var(--color-text-muted);
+  }
+
+  .paper-title {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    font-style: normal;
+    margin: 0 0 var(--space-2);
+    line-height: var(--line-height-snug);
+  }
+
+  .paper-title a {
+    color: var(--color-text);
+    background: none;
+    transition: color var(--transition-fast);
+  }
+
+  .paper-title a:hover {
+    color: var(--color-accent);
+  }
+
+  .paper-authors {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin: 0 0 var(--space-3);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .highlight-author {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text);
+  }
+
+  .paper-links {
+    display: flex;
+    gap: var(--space-3);
+    margin-top: auto;
+  }
+
+  .paper-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-size-sm);
+    font-family: var(--font-ui);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+    background: none;
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    transition: all var(--transition-fast);
+  }
+
+  .paper-link:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+    background-color: rgba(196, 30, 58, 0.05);
+  }
+
+  [data-theme="dark"] .paper-link:hover {
+    background-color: rgba(255, 77, 106, 0.1);
+  }
+
+  @media (max-width: 600px) {
+    .paper-card {
+      grid-template-columns: 1fr;
+      gap: var(--space-3);
+    }
+
+    .paper-preview {
+      width: 100%;
+      height: 120px;
+    }
+  }
+</style>

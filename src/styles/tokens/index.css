@@ -1,0 +1,10 @@
+/* ==========================================================================
+   Design Tokens Index
+
+   Import order matters:
+   1. Base primitives (raw values)
+   2. Semantic tokens (purpose-based, reference primitives)
+   ========================================================================== */
+
+@import './base.css';
+@import './semantic.css';

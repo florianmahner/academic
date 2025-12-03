@@ -1,0 +1,94 @@
+---
+/**
+ * Section Component
+ * Semantic section with consistent spacing
+ */
+
+interface Props {
+  id?: string;
+  spacing?: 'sm' | 'md' | 'lg' | 'none';
+  class?: string;
+  [key: string]: any;
+}
+
+const {
+  id,
+  spacing = 'md',
+  class: className,
+  ...rest
+} = Astro.props;
+
+const classes = [
+  'section',
+  `section-spacing-${spacing}`,
+  className
+].filter(Boolean).join(' ');
+---
+
+<section id={id} class={classes} {...rest}>
+  {Astro.slots.has('label') && (
+    <div class="section-label">
+      <slot name="label" />
+    </div>
+  )}
+
+  {Astro.slots.has('title') && (
+    <h2 class="section-title">
+      <slot name="title" />
+    </h2>
+  )}
+
+  <div class="section-content">
+    <slot />
+  </div>
+</section>
+
+<style>
+  .section {
+    position: relative;
+  }
+
+  /* Spacing variants */
+  .section-spacing-none {
+    margin-bottom: 0;
+  }
+
+  .section-spacing-sm {
+    margin-bottom: var(--space-section-sm);
+  }
+
+  .section-spacing-md {
+    margin-bottom: var(--space-section);
+  }
+
+  .section-spacing-lg {
+    margin-bottom: var(--space-section-lg);
+  }
+
+  .section:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Section label (small uppercase) */
+  .section-label {
+    font-size: var(--font-size-label);
+    font-family: var(--font-ui);
+    font-weight: var(--font-weight-medium);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-label);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-4);
+  }
+
+  /* Section title */
+  .section-title {
+    font-size: var(--font-size-heading);
+    font-weight: var(--font-weight-semibold);
+    margin-top: 0;
+    margin-bottom: var(--space-6);
+  }
+
+  .section-content {
+    /* Content inherits from parent */
+  }
+</style>

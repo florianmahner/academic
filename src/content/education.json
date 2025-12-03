@@ -1,0 +1,41 @@
+{
+  "education": [
+    {
+      "degree": "PhD",
+      "field": "Computer Science",
+      "institution": "Stanford University",
+      "institutionUrl": "https://cs.stanford.edu/",
+      "startYear": 2016,
+      "endYear": 2021,
+      "supervisors": [
+        { "name": "Prof. Christopher Manning", "url": "https://nlp.stanford.edu/manning/" }
+      ],
+      "thesis": {
+        "title": "Efficient Neural Models for Natural Language Understanding",
+        "url": "/pdf/thesis-phd.pdf"
+      }
+    },
+    {
+      "degree": "MSc",
+      "field": "Machine Learning",
+      "institution": "Carnegie Mellon University",
+      "institutionUrl": "https://www.ml.cmu.edu/",
+      "startYear": 2014,
+      "endYear": 2016,
+      "grade": "GPA: 4.0/4.0",
+      "thesis": {
+        "title": "Attention Mechanisms in Sequence-to-Sequence Models",
+        "url": "/pdf/thesis-master.pdf"
+      }
+    },
+    {
+      "degree": "BSc",
+      "field": "Computer Science & Mathematics",
+      "institution": "MIT",
+      "institutionUrl": "https://www.eecs.mit.edu/",
+      "startYear": 2010,
+      "endYear": 2014,
+      "grade": "Summa Cum Laude"
+    }
+  ]
+}

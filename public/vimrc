@@ -1,0 +1,99 @@
+"  VUNDLE PACKAGES 
+"--------------------------------------------------------------------------------
+
+set nocompatible              " be iMproved, required
+filetype off                  " required
+
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+
+" let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
+Plugin 'rakr/vim-one'
+Plugin 'vim-python/python-syntax'
+Plugin 'sheerun/vim-polyglot' "syntax highlighting various lang
+Plugin 'tmhedberg/SimpylFold' " Fold code method wise correctly
+Plugin 'scrooloose/nerdtree' " tree folding code
+Plugin 'kien/ctrlp.vim' " control p command for searching
+Plugin 'hzchirs/vim-material'
+Plugin 'lervag/vimtex'
+Plugin 'junegunn/goyo.vim' " zen mode vim
+
+" All of your Plugins must be added before the following line
+call vundle#end()            " required
+filetype plugin indent on    " required
+
+
+" SYNTAX HIGHLIGHTING
+"--------------------------------------------------------------------------------
+
+set termguicolors 
+set background=dark
+let g:airline_theme='one'
+colorscheme one
+syntax on
+let python_highlight_all=1
+
+
+" ALL NEW KEYBINDINGS BELOW THIS LINE!
+"--------------------------------------------------------------------------------
+
+"split navigations like normal keyboard movements
+nnoremap <C-J> <C-W><C-J>
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
+nnoremap <C-H> <C-W><C-H>
+
+
+" Pressing enter then adds a line without going into insert mode
+nmap <S-Enter> o<Esc>
+nmap <CR> O<Esc>
+
+
+" Enable folding
+set foldmethod=indent
+set foldlevel=99
+
+" Remap folding to f key - nnoremap <space> za instead to space bar"
+nnoremap f za 
+
+" Moving between nerd tree tabs
+nnoremap <C-V> gt
+nnoremap <C-X> gT
+
+
+" PYTHON CONFIGURATIONS
+"--------------------------------------------------------------------------------
+
+set encoding=utf-8 "utf-8 encoding as usually used
+set tabstop=8 
+set softtabstop=1 
+set expandtab 
+set shiftwidth=4 
+set smarttab 
+set autoindent
+set nu
+
+
+let g:kite_tab_complete=1 "auto-completion
+let NERDTreeIgnore=['\.pyc$', '\~$'] "ignore files in NERDTree
+ "map nerd tree to ctrl n
+map <C-n> :NERDTreeToggle<CR> 
+
+
+" LATEX / VIMTEX CONFIGURATIONS
+"--------------------------------------------------------------------------------
+
+"let g:vimtex_view_method = 'skim'
+
+
+" GENERAL CONFIGURATIONS
+"--------------------------------------------------------------------------------
+
+" Splitting directio of vs for new windows
+set splitright
+set splitbelow
+
+" Go-to definition
+"set tags=tags;/

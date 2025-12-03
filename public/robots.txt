@@ -1,0 +1,7 @@
+# Robots.txt for florianmahner.github.io
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://florianmahner.github.io/sitemap-index.xml

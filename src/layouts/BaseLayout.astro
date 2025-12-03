@@ -1,0 +1,616 @@
+---
+/**
+ * Base Layout
+ * The main layout wrapper for all pages
+ * Includes navigation, footer, and global styles
+ *
+ * All settings are controlled by src/config.ts
+ */
+
+import ThemeToggle from '../components/ThemeToggle.astro';
+import ThemeStyles from '../components/ThemeStyles.astro';
+import AnimationInit from '../components/AnimationInit.astro';
+import StructuredData from '../components/StructuredData.astro';
+import { config } from '../config';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+}
+
+const {
+  title,
+  description = config.site.description,
+  image = "/img/og-image.jpg"
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const navMode = config.navigationMode;
+
+// Map navigation IDs to section keys
+const navIdToSection: Record<string, keyof typeof config.sections | null> = {
+  'about': null, // Always shown
+  'publications': 'publications',
+  'open-source': 'opensource',
+  'misc': 'misc',
+  'cv': 'cv',
+  'projects': 'projects',
+  'teaching': 'teaching',
+  'blog': 'blog',
+};
+
+// Filter navigation based on enabled sections
+const navItems = config.navigation.filter(item => {
+  const sectionKey = navIdToSection[item.id];
+  // Always show items without a section mapping (like 'about')
+  if (sectionKey === null) return true;
+  // Show if section is enabled
+  return config.sections[sectionKey] === true;
+});
+
+// Build full name from config
+const fullName = [config.name.first, config.name.middle, config.name.last].filter(Boolean).join(' ');
+
+// Build social links for footer
+const socialLinks = [
+  config.social.github && { label: 'GitHub', href: `https://github.com/${config.social.github}` },
+  config.social.scholar && { label: 'Scholar', href: `https://scholar.google.com/citations?user=${config.social.scholar}` },
+  config.social.linkedin && { label: 'LinkedIn', href: `https://www.linkedin.com/in/${config.social.linkedin}` },
+  config.social.twitter && { label: 'Twitter', href: `https://twitter.com/${config.social.twitter}` },
+  config.social.orcid && { label: 'ORCID', href: `https://orcid.org/${config.social.orcid}` },
+].filter(Boolean) as { label: string; href: string }[];
+
+const footerLinks = [
+  ...config.footer.links,
+  ...socialLinks,
+];
+---
+
+<!DOCTYPE html>
+<html lang="en" data-nav-mode={navMode} data-preset="minimal">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="canonical" href={canonicalURL} />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Primary Meta Tags -->
+    <title>{title}</title>
+    <meta name="title" content={title} />
+    <meta name="description" content={description} />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL(image, Astro.site)} />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={canonicalURL} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={new URL(image, Astro.site)} />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Structured Data -->
+    <StructuredData type="WebSite" />
+    <StructuredData type="Person" />
+
+    <!-- Theme & Fonts from config -->
+    <ThemeStyles />
+
+    <!-- Prevent flash of wrong theme -->
+    <script is:inline>
+      (function() {
+        const theme = localStorage.getItem('theme') ||
+          (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script>
+  </head>
+  <body>
+    <!-- Skip Link for Accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- OPTION A: Inline Navigation -->
+    {navMode === 'inline' && (
+      <header class="inline-header">
+        <nav class="inline-nav container" aria-label="Main navigation">
+          <ul class="inline-nav-links" role="list">
+            {navItems.map(item => (
+              <li>
+                <a
+                  href={item.href}
+                  class:list={['inline-nav-link', { active: Astro.url.pathname === item.href || (item.href !== '/' && Astro.url.pathname.startsWith(item.href)) }]}
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <ThemeToggle />
+        </nav>
+      </header>
+    )}
+
+    <!-- OPTION B: Floating Icon -->
+    {navMode === 'floating-icon' && (
+      <div class="floating-icon-nav">
+        <button class="menu-trigger" aria-label="Open menu" aria-expanded="false">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+        <div class="menu-panel">
+          <button class="menu-close" aria-label="Close menu">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+          <nav aria-label="Main navigation">
+            <ul class="menu-links" role="list">
+              {navItems.map(item => (
+                <li>
+                  <a
+                    href={item.href}
+                    class:list={['menu-link', { active: Astro.url.pathname === item.href }]}
+                  >
+                    {item.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+          <div class="menu-theme">
+            <ThemeToggle />
+          </div>
+        </div>
+      </div>
+    )}
+
+    <!-- OPTION C: Minimal Top Bar -->
+    {navMode === 'minimal' && (
+      <header class="minimal-header">
+        <nav class="minimal-nav container" aria-label="Main navigation">
+          <ul class="minimal-nav-links" role="list">
+            {navItems.map(item => (
+              <li>
+                <a
+                  href={item.href}
+                  class:list={['minimal-nav-link', { active: Astro.url.pathname === item.href }]}
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <ThemeToggle />
+        </nav>
+      </header>
+    )}
+
+    <main id="main-content" tabindex="-1">
+      <slot />
+    </main>
+
+    <footer class="footer">
+      <div class="container footer-content">
+        {config.footer.copyright && (
+          <span class="footer-copy">&copy; {new Date().getFullYear()} {fullName}</span>
+        )}
+        <div class="footer-links">
+          {footerLinks.map(link => (
+            <a
+              href={link.href}
+              target={link.href.startsWith('mailto:') ? undefined : '_blank'}
+              rel={link.href.startsWith('mailto:') ? undefined : 'noopener noreferrer'}
+            >
+              {link.label}
+            </a>
+          ))}
+        </div>
+      </div>
+    </footer>
+
+    <style>
+      /* ============================================
+         Skip Link (Accessibility)
+         ============================================ */
+      .skip-link {
+        position: absolute;
+        top: -100%;
+        left: var(--space-4);
+        z-index: var(--z-modal);
+        padding: var(--space-2) var(--space-4);
+        background-color: var(--color-accent);
+        color: white;
+        text-decoration: none;
+        border-radius: var(--radius-md);
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-medium);
+        transition: top 0.2s ease;
+      }
+
+      .skip-link:focus {
+        top: var(--space-4);
+        outline: 2px solid var(--color-text);
+        outline-offset: 2px;
+      }
+
+      /* Focus Styles for Main Content */
+      #main-content:focus {
+        outline: none;
+      }
+
+      /* ============================================
+         OPTION A: Inline Navigation
+         ============================================ */
+      .inline-header {
+        padding: var(--space-6) 0;
+        margin-bottom: var(--space-4);
+      }
+
+      .inline-nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .inline-nav-links {
+        display: flex;
+        align-items: center;
+        gap: var(--space-6);
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .inline-nav-link {
+        font-family: var(--font-ui);
+        font-size: var(--font-size-sm);
+        color: var(--color-text-secondary);
+        text-decoration: none;
+        background: none;
+        transition: color var(--transition-fast);
+      }
+
+      .inline-nav-link:hover {
+        color: var(--color-text);
+      }
+
+      .inline-nav-link.active {
+        color: var(--color-accent);
+      }
+
+      @media (max-width: 500px) {
+        .inline-nav-links {
+          gap: var(--space-4);
+        }
+        .inline-nav-link {
+          font-size: var(--font-size-xs);
+        }
+      }
+
+      /* ============================================
+         OPTION B: Floating Icon
+         ============================================ */
+      .floating-icon-nav {
+        position: fixed;
+        bottom: var(--space-6);
+        right: var(--space-6);
+        z-index: var(--z-modal);
+      }
+
+      .menu-trigger {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background-color: var(--color-bg);
+        border: 1px solid var(--color-border);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all var(--transition-fast);
+      }
+
+      .menu-trigger:hover {
+        background-color: var(--color-bg-alt);
+        transform: scale(1.05);
+      }
+
+      .menu-trigger svg {
+        color: var(--color-text);
+      }
+
+      .menu-panel {
+        position: absolute;
+        bottom: 60px;
+        right: 0;
+        background-color: var(--color-bg);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        padding: var(--space-4);
+        min-width: 180px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(10px) scale(0.95);
+        transition: all 0.2s ease;
+      }
+
+      .menu-panel.open {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0) scale(1);
+      }
+
+      [data-theme="dark"] .menu-panel {
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+      }
+
+      .menu-close {
+        position: absolute;
+        top: var(--space-2);
+        right: var(--space-2);
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: var(--space-1);
+        color: var(--color-text-secondary);
+        transition: color var(--transition-fast);
+      }
+
+      .menu-close:hover {
+        color: var(--color-text);
+      }
+
+      .menu-links {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-1);
+      }
+
+      .menu-link {
+        display: block;
+        font-family: var(--font-ui);
+        font-size: var(--font-size-sm);
+        color: var(--color-text-secondary);
+        text-decoration: none;
+        background: none;
+        padding: var(--space-2) var(--space-3);
+        border-radius: var(--radius-md);
+        transition: all var(--transition-fast);
+      }
+
+      .menu-link:hover {
+        color: var(--color-text);
+        background-color: var(--color-bg-alt);
+      }
+
+      .menu-link.active {
+        color: var(--color-accent);
+        background-color: rgba(196, 30, 58, 0.1);
+      }
+
+      .menu-theme {
+        margin-top: var(--space-3);
+        padding-top: var(--space-3);
+        border-top: 1px solid var(--color-border);
+        display: flex;
+        justify-content: center;
+      }
+
+      /* ============================================
+         OPTION C: Minimal Top Bar
+         ============================================ */
+      .minimal-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: var(--z-sticky);
+        background-color: var(--color-bg);
+        transition: transform 0.3s ease;
+      }
+
+      .minimal-header.hidden {
+        transform: translateY(-100%);
+      }
+
+      .minimal-nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 44px;
+      }
+
+      .minimal-nav-links {
+        display: flex;
+        align-items: center;
+        gap: var(--space-6);
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .minimal-nav-link {
+        font-family: var(--font-ui);
+        font-size: var(--font-size-xs);
+        color: var(--color-text-muted);
+        text-decoration: none;
+        background: none;
+        text-transform: lowercase;
+        letter-spacing: 0.02em;
+        transition: color var(--transition-fast);
+      }
+
+      .minimal-nav-link:hover {
+        color: var(--color-text);
+      }
+
+      .minimal-nav-link.active {
+        color: var(--color-text);
+      }
+
+      @media (max-width: 500px) {
+        .minimal-nav-links {
+          gap: var(--space-4);
+        }
+      }
+
+      /* ============================================
+         Main Content
+         ============================================ */
+      main {
+        min-height: calc(100vh - 200px);
+        padding: var(--space-8) 0;
+      }
+
+      [data-nav-mode="inline"] main {
+        padding-top: 0;
+      }
+
+      [data-nav-mode="minimal"] main {
+        padding-top: calc(44px + var(--space-8));
+      }
+
+      /* ============================================
+         Footer
+         ============================================ */
+      .footer {
+        margin-top: var(--space-16);
+        padding: var(--space-6) 0;
+      }
+
+      .footer-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-4);
+      }
+
+      .footer-copy {
+        font-size: var(--font-size-xs);
+        color: var(--color-text-muted);
+      }
+
+      .footer-links {
+        display: flex;
+        gap: var(--space-4);
+      }
+
+      .footer-links a {
+        font-size: var(--font-size-xs);
+        color: var(--color-text-muted);
+        text-decoration: none;
+        background: none;
+        transition: color var(--transition-fast);
+      }
+
+      .footer-links a:hover {
+        color: var(--color-text);
+      }
+
+      @media (max-width: 500px) {
+        .footer-content {
+          flex-direction: column;
+          gap: var(--space-2);
+        }
+        .footer-links {
+          gap: var(--space-3);
+        }
+      }
+    </style>
+
+    <script>
+      // Floating icon menu toggle
+      function initFloatingMenu() {
+        const trigger = document.querySelector('.menu-trigger');
+        const panel = document.querySelector('.menu-panel');
+        const close = document.querySelector('.menu-close');
+
+        if (!trigger || !panel) return;
+
+        trigger.addEventListener('click', () => {
+          const isOpen = panel.classList.toggle('open');
+          trigger.setAttribute('aria-expanded', String(isOpen));
+        });
+
+        close?.addEventListener('click', () => {
+          panel.classList.remove('open');
+          trigger.setAttribute('aria-expanded', 'false');
+        });
+
+        // Close on click outside
+        document.addEventListener('click', (e) => {
+          if (!trigger.contains(e.target as Node) && !panel.contains(e.target as Node)) {
+            panel.classList.remove('open');
+            trigger.setAttribute('aria-expanded', 'false');
+          }
+        });
+
+        // Close on link click
+        panel.querySelectorAll('.menu-link').forEach(link => {
+          link.addEventListener('click', () => {
+            panel.classList.remove('open');
+            trigger.setAttribute('aria-expanded', 'false');
+          });
+        });
+      }
+
+      // Minimal header scroll hide/show
+      function initMinimalHeader() {
+        const header = document.querySelector('.minimal-header');
+        if (!header) return;
+
+        let lastScrollY = window.scrollY;
+        let ticking = false;
+
+        function updateHeader() {
+          const currentScrollY = window.scrollY;
+
+          if (currentScrollY < 50) {
+            header.classList.remove('hidden');
+          } else if (currentScrollY > lastScrollY) {
+            header.classList.add('hidden');
+          } else {
+            header.classList.remove('hidden');
+          }
+
+          lastScrollY = currentScrollY;
+          ticking = false;
+        }
+
+        window.addEventListener('scroll', () => {
+          if (!ticking) {
+            requestAnimationFrame(updateHeader);
+            ticking = true;
+          }
+        }, { passive: true });
+      }
+
+      initFloatingMenu();
+      initMinimalHeader();
+      document.addEventListener('astro:after-swap', () => {
+        initFloatingMenu();
+        initMinimalHeader();
+      });
+    </script>
+
+    <AnimationInit />
+  </body>
+</html>

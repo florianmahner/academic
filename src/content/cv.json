@@ -1,0 +1,93 @@
+{
+  "experience": [
+    {
+      "title": "Assistant Professor",
+      "organization": "University of California, Berkeley",
+      "location": "Berkeley, CA",
+      "startDate": "2023",
+      "endDate": "Present",
+      "description": "Leading research in natural language processing and machine learning.",
+      "highlights": [
+        "Building the Language Intelligence Lab (LIL)",
+        "Teaching graduate courses in NLP and ML",
+        "Advising 5 PhD students and 3 postdocs"
+      ]
+    },
+    {
+      "title": "Research Scientist",
+      "organization": "Google Research",
+      "location": "Mountain View, CA",
+      "startDate": "2021",
+      "endDate": "2023",
+      "description": "Worked on large language models and efficient transformer architectures.",
+      "highlights": [
+        "Led team developing efficient attention mechanisms",
+        "Published 8 papers at top venues",
+        "Contributed to open-source ML frameworks"
+      ]
+    },
+    {
+      "title": "Research Intern",
+      "organization": "DeepMind",
+      "location": "London, UK",
+      "startDate": "2020",
+      "endDate": "2020",
+      "description": "Summer internship focused on multilingual NLP.",
+      "highlights": [
+        "Developed cross-lingual transfer methods",
+        "Work led to EMNLP publication"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "Ph.D. Computer Science",
+      "institution": "Stanford University",
+      "location": "Stanford, CA",
+      "year": "2021",
+      "details": "Dissertation: Efficient Neural Models for Natural Language Understanding. Advisor: Prof. Christopher Manning"
+    },
+    {
+      "degree": "M.S. Machine Learning",
+      "institution": "Carnegie Mellon University",
+      "location": "Pittsburgh, PA",
+      "year": "2016",
+      "details": "Focus on deep learning and NLP"
+    },
+    {
+      "degree": "B.S. Computer Science & Mathematics",
+      "institution": "Massachusetts Institute of Technology",
+      "location": "Cambridge, MA",
+      "year": "2014",
+      "details": "Summa Cum Laude"
+    }
+  ],
+  "skills": {
+    "Programming": ["Python", "PyTorch", "JAX", "TensorFlow", "C++"],
+    "Machine Learning": ["NLP", "Transformers", "Deep Learning", "Transfer Learning"],
+    "Languages": ["English (Native)", "Spanish (Fluent)", "Mandarin (Basic)"],
+    "Tools": ["Git", "Docker", "Kubernetes", "LaTeX"]
+  },
+  "awards": [
+    {
+      "title": "Best Paper Award",
+      "issuer": "ACL 2023",
+      "year": "2023"
+    },
+    {
+      "title": "Outstanding Reviewer",
+      "issuer": "NeurIPS 2022",
+      "year": "2022"
+    },
+    {
+      "title": "Google PhD Fellowship",
+      "issuer": "Google",
+      "year": "2019"
+    },
+    {
+      "title": "NSF Graduate Research Fellowship",
+      "issuer": "National Science Foundation",
+      "year": "2016"
+    }
+  ]
+}

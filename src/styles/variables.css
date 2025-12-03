@@ -1,0 +1,64 @@
+/* ==========================================================================
+   CSS Variables
+   Imports design tokens and defines font families
+   ========================================================================== */
+
+/* Import base and semantic tokens */
+@import './tokens/index.css';
+
+/* ==========================================================================
+   FONT FAMILIES
+   Font stacks for different purposes
+   ========================================================================== */
+
+:root {
+  /* ============================================================
+     FONT OPTIONS - Uncomment ONE set to try different fonts
+     The active option sets the font variables used throughout.
+     ============================================================ */
+
+  /* OPTION: Inter - warm, friendly, very readable
+     (This is now the DEFAULT - see below)
+  */
+
+  /* OPTION 2: Source Sans 3 - professional, friendly
+  --font-body: 'Source Sans 3', system-ui, sans-serif;
+  --font-heading: 'Source Sans 3', system-ui, sans-serif;
+  --font-code: 'JetBrains Mono', Consolas, monospace;
+  --font-ui: 'Source Sans 3', system-ui, sans-serif;
+  */
+
+  /* OPTION 3: IBM Plex Sans - technical but warm
+  --font-body: 'IBM Plex Sans', system-ui, sans-serif;
+  --font-heading: 'IBM Plex Sans', system-ui, sans-serif;
+  --font-code: 'IBM Plex Mono', Consolas, monospace;
+  --font-ui: 'IBM Plex Sans', system-ui, sans-serif;
+  */
+
+  /* OPTION 4: Outfit - modern geometric, soft edges
+  --font-body: 'Outfit', system-ui, sans-serif;
+  --font-heading: 'Outfit', system-ui, sans-serif;
+  --font-code: 'JetBrains Mono', Consolas, monospace;
+  --font-ui: 'Outfit', system-ui, sans-serif;
+  */
+
+  /* OPTION 5: Crimson Pro (serif) - elegant, academic
+  --font-body: 'Crimson Pro', Georgia, serif;
+  --font-heading: 'Crimson Pro', Georgia, serif;
+  --font-code: 'JetBrains Mono', Consolas, monospace;
+  --font-ui: 'Inter', system-ui, sans-serif;
+  */
+
+  /* OPTION 1: Inter (DEFAULT) - warm, friendly, very readable */
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-heading: 'Inter', system-ui, sans-serif;
+  --font-code: 'JetBrains Mono', Consolas, monospace;
+  --font-ui: 'Inter', system-ui, sans-serif;
+
+  /* OPTION 6: Geist - sharp/modern (Vercel)
+  --font-body: 'Geist', system-ui, sans-serif;
+  --font-heading: 'Geist', system-ui, sans-serif;
+  --font-code: 'Geist Mono', Consolas, monospace;
+  --font-ui: 'Geist', system-ui, sans-serif;
+  */
+}

@@ -1,0 +1,68 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PaperCard from '../components/blocks/PaperCard.astro';
+import Section from '../components/layout/Section.astro';
+import Container from '../components/layout/Container.astro';
+import { loadPublications, groupByYear } from '../lib/bibtex';
+import { config } from '../config';
+import path from 'node:path';
+
+const title = `Publications | ${config.site.title}`;
+
+// Load publications from BibTeX file
+const contentDir = path.join(process.cwd(), 'src', 'content');
+const publications = loadPublications(contentDir);
+
+// Group by year
+const pubsByYear = groupByYear(publications);
+const years = Object.keys(pubsByYear).sort((a, b) => Number(b) - Number(a));
+---
+
+<BaseLayout title={title} description={`Academic publications by ${config.name.first} ${config.name.last}`}>
+  <article class="publications-page">
+    <Container>
+      <header class="page-header" data-animate="fade-up">
+        <h1>Publications</h1>
+      </header>
+
+      {years.map(year => (
+        <Section spacing="lg">
+          <h2 class="year-label">{year}</h2>
+          <div class="publications-list" data-animate="stagger">
+            {pubsByYear[Number(year)].map(pub => (
+              <PaperCard
+                title={pub.title}
+                authors={pub.authors}
+                venue={pub.journal || pub.booktitle}
+                year={pub.year}
+                preview={pub.preview}
+                pdf={pub.pdf}
+                html={pub.html}
+              />
+            ))}
+          </div>
+        </Section>
+      ))}
+    </Container>
+  </article>
+</BaseLayout>
+
+<style>
+  .publications-page {
+    padding: var(--space-8) 0;
+  }
+
+  .year-label {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-normal);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-6);
+    font-family: var(--font-mono);
+  }
+
+  .publications-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+</style>

@@ -1,0 +1,386 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { config } from '../config';
+import { loadPublications, getSelectedPublications } from '../lib/bibtex';
+import educationData from '../content/education.json';
+import path from 'node:path';
+
+const title = config.site.title;
+
+// Load publications from BibTeX
+const contentDir = path.join(process.cwd(), 'src', 'content');
+const publications = loadPublications(contentDir);
+const selectedPapers = getSelectedPublications(publications);
+
+// Education data
+const education = educationData.education;
+
+// Build name for display
+const fullName = [config.name.first, config.name.middle, config.name.last].filter(Boolean).join(' ');
+const displayName = config.name.middle
+  ? `${config.name.first} ${config.name.middle}`
+  : config.name.first;
+---
+
+<BaseLayout title={title}>
+  <article class="about-page">
+    <div class="container">
+      <!-- Profile Section -->
+      <section class="profile-section" data-animate="fade-up">
+        <h1>{displayName} <span class="accent">{config.name.last}</span></h1>
+        <p>
+          I am an Assistant Professor at <a href="https://eecs.berkeley.edu/">UC Berkeley EECS</a> where I lead the <a href="https://lillab.berkeley.edu/">Language Intelligence Lab (LIL)</a>. Before that, I was a Research Scientist at <a href="https://research.google/">Google Research</a> and completed my PhD at <a href="https://cs.stanford.edu/">Stanford</a> advised by <a href="https://nlp.stanford.edu/manning/">Chris Manning</a>.
+        </p>
+      </section>
+
+      <!-- Research Interests -->
+      <section class="section" data-animate="fade-up">
+        <h2>Research Interests</h2>
+        <p>
+          My research focuses on making language models more efficient, interpretable, and capable of understanding longer contexts. I develop new attention mechanisms that scale to documents with hundreds of thousands of tokens while maintaining high quality.
+        </p>
+        <p>
+          I am also interested in multilingual NLP and cross-lingual transfer learning, working to make advances in language technology accessible across the world's languages. My group combines insights from linguistics, cognitive science, and machine learning.
+        </p>
+      </section>
+
+      <!-- Selected Publications -->
+      {config.features.selectedPublications && selectedPapers.length > 0 && (
+        <section class="section" data-animate="fade-up">
+          <h2>Selected Publications</h2>
+          <div class="selected-papers" data-animate="stagger">
+            {selectedPapers.map(paper => (
+              <article class="paper-card">
+                {paper.preview && (
+                  <div class="paper-preview">
+                    <img src={paper.preview} alt={paper.title} loading="lazy" />
+                  </div>
+                )}
+                <div class="paper-content">
+                  <div class="paper-meta">
+                    <span class="paper-venue">{paper.journal || paper.booktitle}</span>
+                    <span class="paper-year">{paper.year}</span>
+                  </div>
+                  <h3 class="paper-title">
+                    {paper.pdf ? (
+                      <a href={paper.pdf} target="_blank" rel="noopener noreferrer">{paper.title}</a>
+                    ) : paper.html ? (
+                      <a href={paper.html} target="_blank" rel="noopener noreferrer">{paper.title}</a>
+                    ) : (
+                      paper.title
+                    )}
+                  </h3>
+                  <p class="paper-authors">{paper.authors.join(', ')}</p>
+                  <div class="paper-links">
+                    {paper.pdf && (
+                      <a href={paper.pdf} class="paper-link" target="_blank" rel="noopener noreferrer">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                          <polyline points="7 10 12 15 17 10"></polyline>
+                          <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        PDF
+                      </a>
+                    )}
+                    {paper.html && (
+                      <a href={paper.html} class="paper-link" target="_blank" rel="noopener noreferrer">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <line x1="2" y1="12" x2="22" y2="12"></line>
+                          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                        </svg>
+                        Web
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+          <p class="view-all">
+            <a href="/publications">View all publications &rarr;</a>
+          </p>
+        </section>
+      )}
+
+      <!-- Academic Background -->
+      {config.features.education && education.length > 0 && (
+        <section class="section" data-animate="fade-up">
+          <h2>Academic Background</h2>
+
+          <div class="education-list" data-animate="stagger">
+            {education.map(edu => (
+              <div class="education-item">
+                <div class="education-period">{edu.startYear} – {edu.endYear}</div>
+                <div class="education-content">
+                  <h3>{edu.degree} in {edu.field}</h3>
+                  <p class="education-institution">
+                    <a href={edu.institutionUrl}>{edu.institution}</a>
+                  </p>
+                  {edu.supervisors && (
+                    <p class="education-details">
+                      Supervisors: {edu.supervisors.map((sup, i) => (
+                        <>
+                          <a href={sup.url}>{sup.name}</a>
+                          {i < edu.supervisors.length - 1 && ', '}
+                        </>
+                      ))}
+                    </p>
+                  )}
+                  {edu.grade && (
+                    <p class="education-details">Grade: {edu.grade}</p>
+                  )}
+                  {edu.thesis && (
+                    <a href={edu.thesis.url} class="thesis-link">Thesis: {edu.thesis.title}</a>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .about-page {
+    padding: var(--space-8) 0;
+    /* User can customize content width by overriding these variables */
+    --page-max-width: var(--content-max-width, 750px);
+  }
+
+  .about-page .container {
+    max-width: var(--page-max-width);
+  }
+
+  /* Profile Section */
+  .profile-section {
+    margin-bottom: var(--space-12);
+  }
+
+  .profile-section h1 {
+    margin-bottom: var(--space-4);
+  }
+
+  .accent {
+    color: var(--color-accent);
+  }
+
+  .lead {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-secondary);
+    font-style: italic;
+    margin-bottom: var(--space-6);
+  }
+
+  /* Sections */
+  .section {
+    margin-bottom: var(--space-12);
+  }
+
+  .section h2 {
+    margin-bottom: var(--space-6);
+  }
+
+  /* Selected Papers */
+  .selected-papers {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .paper-card {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: var(--space-5);
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+  }
+
+  .paper-card:hover {
+    background-color: var(--color-bg-alt);
+  }
+
+  .paper-preview {
+    flex-shrink: 0;
+    width: 180px;
+    height: 120px;
+    overflow: hidden;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+  }
+
+  .paper-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-normal);
+  }
+
+  .paper-card:hover .paper-preview img {
+    transform: scale(1.05);
+  }
+
+  .paper-content {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .paper-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+  }
+
+  .paper-venue {
+    font-size: var(--font-size-xs);
+    font-family: var(--font-ui);
+    color: var(--color-accent);
+    font-weight: var(--font-weight-medium);
+  }
+
+  .paper-year {
+    font-size: var(--font-size-xs);
+    font-family: var(--font-mono);
+    color: var(--color-text-muted);
+  }
+
+  .paper-title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-medium);
+    font-style: normal;
+    margin: 0 0 var(--space-2);
+    line-height: var(--line-height-tight);
+  }
+
+  .paper-title a {
+    color: var(--color-text);
+    background: none;
+    transition: color var(--transition-fast);
+  }
+
+  .paper-title a:hover {
+    color: var(--color-accent);
+  }
+
+  .paper-authors {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin: 0 0 var(--space-4);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .paper-links {
+    display: flex;
+    gap: var(--space-3);
+    margin-top: auto;
+  }
+
+  .paper-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-size-sm);
+    font-family: var(--font-ui);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+    background: none;
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    transition: all var(--transition-fast);
+  }
+
+  .paper-link:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+    background-color: rgba(196, 30, 58, 0.05);
+  }
+
+  [data-theme="dark"] .paper-link:hover {
+    background-color: rgba(255, 77, 106, 0.1);
+  }
+
+  @media (max-width: 600px) {
+    .paper-card {
+      grid-template-columns: 1fr;
+      gap: var(--space-4);
+    }
+
+    .paper-preview {
+      width: 100%;
+      height: 140px;
+    }
+  }
+
+  /* Education */
+  .education-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .education-item {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: var(--space-5);
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+  }
+
+  .education-item:hover {
+    background-color: var(--color-bg-alt);
+  }
+
+  .education-period {
+    font-size: var(--font-size-sm);
+    font-family: var(--font-mono);
+    color: var(--color-text-muted);
+    padding-top: 2px;
+  }
+
+  .education-content h3 {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    font-style: normal;
+    margin: 0 0 var(--space-1);
+    color: var(--color-text);
+  }
+
+  .education-institution {
+    margin: 0 0 var(--space-1);
+    font-size: var(--font-size-sm);
+  }
+
+  .education-institution a {
+    color: var(--color-text-secondary);
+  }
+
+  .education-details {
+    margin: 0 0 var(--space-2);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+  }
+
+  .thesis-link {
+    display: inline-block;
+    font-size: var(--font-size-sm);
+    color: var(--color-accent);
+    background: none;
+  }
+
+  @media (max-width: 500px) {
+    .education-item {
+      grid-template-columns: 1fr;
+      gap: var(--space-1);
+    }
+
+    .education-period {
+      font-size: var(--font-size-xs);
+    }
+  }
+</style>

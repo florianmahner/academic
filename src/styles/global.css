@@ -1,0 +1,625 @@
+/* ==========================================================================
+   Global Styles
+   Imports all stylesheets with CSS Layers for cascade control
+   ========================================================================== */
+
+/* Layer order definition - must be first */
+@import './layers.css';
+
+/* Design tokens (CSS variables) */
+@import './variables.css' layer(tokens);
+@import './colors.css' layer(tokens);
+
+/* Base typography */
+@import './typography.css' layer(base);
+
+/* Style presets (editorial, minimal, documentation) */
+@import './presets/index.css';
+
+/* ==========================================================================
+   CSS Reset (Modern) - Base Layer
+   ========================================================================== */
+
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  * {
+    margin: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    min-height: 100vh;
+    line-height: var(--line-height-normal);
+  }
+
+  img, picture, video, canvas, svg {
+    display: block;
+    max-width: 100%;
+  }
+
+  input, button, textarea, select {
+    font: inherit;
+  }
+
+  p, h1, h2, h3, h4, h5, h6 {
+    overflow-wrap: break-word;
+  }
+
+  /* ==========================================================================
+     Focus Styles (Accessibility)
+     ========================================================================== */
+
+  /* Default focus outline for interactive elements */
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  /* Remove default focus for mouse users */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  /* Reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* ==========================================================================
+   Component Styles - Components Layer
+   ========================================================================== */
+
+@layer components {
+  /* Layout Utilities */
+
+  /* Tufte-style article layout */
+  article {
+    padding: var(--space-8) var(--margin-left);
+    max-width: var(--full-width);
+    margin: 0 auto;
+  }
+
+  /* Main content area */
+  .content {
+    width: var(--content-width);
+    max-width: var(--content-max-width);
+  }
+
+  /* Full width content */
+  .full-width {
+    width: 100%;
+    max-width: none;
+  }
+
+  /* Container */
+  .container {
+    width: 100%;
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    padding: 0 var(--container-padding);
+  }
+
+  /* Design Patterns - Consistent spacing & typography */
+
+  /* Page header - consistent across all pages */
+  .page-header {
+    margin-bottom: var(--space-8);
+  }
+
+  .page-header h1 {
+    font-weight: var(--font-weight-normal);
+  }
+
+  /* Section spacing - use for content sections */
+  .section {
+    margin-bottom: var(--space-10);
+  }
+
+  .section:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Section headers - small uppercase labels */
+  .section-label {
+    font-size: var(--font-size-xs);
+    font-family: var(--font-ui);
+    font-weight: var(--font-weight-medium);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wider);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-4);
+  }
+
+  /* List items with hover - for publications, repos, etc */
+  .hover-item {
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+    transition: background-color var(--transition-fast);
+  }
+
+  .hover-item:hover {
+    background-color: var(--color-bg-alt);
+  }
+
+  /* View all link - consistent CTA style */
+  .view-all {
+    margin-top: var(--space-6);
+  }
+
+  .view-all a {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    transition: color var(--transition-fast);
+  }
+
+  .view-all a:hover {
+    color: var(--color-accent);
+  }
+
+  /* Sidenote Styles (Tufte signature feature) */
+
+  /* Sidenote and margin note base */
+  .sidenote,
+  .marginnote {
+    float: right;
+    clear: right;
+    margin-right: calc(-1 * var(--margin-width));
+    width: var(--sidenote-width);
+    margin-top: 0.3rem;
+    margin-bottom: var(--space-4);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-normal);
+    color: var(--color-text-secondary);
+    position: relative;
+  }
+
+  .sidenote {
+    counter-increment: sidenote-counter;
+  }
+
+  /* Sidenote number in text */
+  .sidenote-number {
+    counter-increment: sidenote-counter;
+  }
+
+  .sidenote-number::after,
+  .sidenote::before {
+    font-size: var(--font-size-xs);
+    position: relative;
+    vertical-align: baseline;
+  }
+
+  .sidenote-number::after {
+    content: counter(sidenote-counter);
+    top: -0.5rem;
+    left: 0.1rem;
+    color: var(--color-accent);
+  }
+
+  .sidenote::before {
+    content: counter(sidenote-counter) " ";
+    top: -0.5rem;
+    color: var(--color-accent);
+  }
+
+  /* Margin note (no number) */
+  .marginnote::before {
+    content: none;
+  }
+
+  /* Checkbox hack for mobile sidenotes */
+  input.margin-toggle {
+    display: none;
+  }
+
+  label.sidenote-number,
+  label.margin-toggle:not(.sidenote-number) {
+    display: inline;
+    cursor: pointer;
+  }
+
+  label.margin-toggle:not(.sidenote-number) {
+    color: var(--color-accent);
+  }
+
+  /* Mobile: collapse sidenotes */
+  @media (max-width: 1100px) {
+    .sidenote,
+    .marginnote {
+      display: none;
+    }
+
+    .margin-toggle:checked + .sidenote,
+    .margin-toggle:checked + .marginnote {
+      display: block;
+      float: left;
+      clear: both;
+      width: 95%;
+      margin: var(--space-4) 2.5%;
+      padding: var(--space-4);
+      background-color: var(--color-bg-alt);
+      border-radius: var(--radius-md);
+      border-left: 3px solid var(--color-accent);
+    }
+
+    label.margin-toggle:not(.sidenote-number) {
+      display: inline;
+    }
+
+    label.margin-toggle:not(.sidenote-number)::after {
+      content: " ⊕";
+    }
+  }
+
+  /* Micro-interactions & Hover Effects */
+
+  /* Interactive elements base transition */
+  a, button, input, select, textarea {
+    transition: all var(--transition-fast);
+  }
+
+  /* Focus states for accessibility */
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /* Button interactions */
+  button {
+    cursor: pointer;
+  }
+
+  button:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
+  /* Card hover effects utility */
+  .interactive-card {
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .interactive-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .interactive-card:active {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+  }
+
+  /* Underline animation for links */
+  .link-underline {
+    position: relative;
+    text-decoration: none;
+    background: none;
+  }
+
+  .link-underline::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background-color: currentColor;
+    transition: width var(--transition-fast);
+  }
+
+  .link-underline:hover::after {
+    width: 100%;
+  }
+
+  /* Scale on hover */
+  .hover-scale {
+    transition: transform var(--transition-fast);
+  }
+
+  .hover-scale:hover {
+    transform: scale(1.02);
+  }
+
+  /* Lift on hover */
+  .hover-lift {
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+  }
+
+  /* Glow effect on hover */
+  .hover-glow {
+    transition: box-shadow var(--transition-fast);
+  }
+
+  .hover-glow:hover {
+    box-shadow: 0 0 20px rgba(196, 30, 58, 0.15);
+  }
+
+  [data-theme="dark"] .hover-glow:hover {
+    box-shadow: 0 0 20px rgba(255, 77, 106, 0.2);
+  }
+
+  /* Icon rotation on hover */
+  .icon-rotate-hover {
+    transition: transform var(--transition-fast);
+  }
+
+  .icon-rotate-hover:hover {
+    transform: rotate(10deg);
+  }
+
+  /* Arrow slide on hover */
+  .arrow-slide {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+  }
+
+  .arrow-slide svg,
+  .arrow-slide .arrow {
+    transition: transform var(--transition-fast);
+  }
+
+  .arrow-slide:hover svg,
+  .arrow-slide:hover .arrow {
+    transform: translateX(4px);
+  }
+
+  /* Smooth image loading */
+  img {
+    transition: opacity var(--transition-normal);
+  }
+
+  img[loading="lazy"] {
+    opacity: 0;
+  }
+
+  img[loading="lazy"].loaded,
+  img:not([loading="lazy"]) {
+    opacity: 1;
+  }
+
+  /* Responsive Enhancements */
+
+  /* Smaller touch targets on mobile */
+  @media (max-width: 768px) {
+    /* Increase touch target sizes */
+    button, a.pub-link, a.paper-link {
+      min-height: 44px;
+      min-width: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Improve card stacking */
+    .paper-card,
+    .publication-card,
+    .repo-card,
+    .tool-card {
+      padding: var(--space-4);
+    }
+
+    /* Better spacing on mobile */
+    section {
+      margin-bottom: var(--space-10);
+    }
+
+    /* Full width containers */
+    .container {
+      padding: 0 var(--space-4);
+    }
+  }
+
+  /* Very small screens */
+  @media (max-width: 400px) {
+    :root {
+      --container-padding: var(--space-3);
+    }
+
+    h1 {
+      font-size: var(--font-size-2xl);
+    }
+
+    h2 {
+      font-size: var(--font-size-xl);
+    }
+  }
+
+  /* Tablet-specific styles */
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .repos-grid,
+    .tools-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* Large screens - enable sidenotes */
+  @media (min-width: 1200px) {
+    article {
+      position: relative;
+    }
+
+    .sidenote,
+    .marginnote {
+      display: block;
+      float: right;
+      clear: right;
+      margin-right: calc(-1 * var(--margin-width) - var(--space-6));
+      width: var(--sidenote-width);
+    }
+  }
+
+  /* High DPI screen optimizations */
+  @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    img {
+      image-rendering: -webkit-optimize-contrast;
+    }
+  }
+
+  /* Print Styles */
+  @media print {
+    body {
+      font-size: 12pt;
+      color: black;
+      background: white;
+    }
+
+    a {
+      color: black;
+      text-decoration: underline;
+    }
+
+    .sidenote, .marginnote {
+      float: none;
+      display: block;
+      margin: 1em 0;
+      font-size: 10pt;
+      border-left: 2px solid #ccc;
+      padding-left: 1em;
+    }
+
+    nav, .no-print {
+      display: none;
+    }
+  }
+}
+
+/* ==========================================================================
+   Utility Classes - Utilities Layer (highest priority)
+   ========================================================================== */
+
+@layer utilities {
+  /* Visually hidden (accessible) */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Text alignment */
+  .text-center { text-align: center; }
+  .text-left { text-align: left; }
+  .text-right { text-align: right; }
+
+  /* Display */
+  .hidden { display: none; }
+  .block { display: block; }
+  .inline { display: inline; }
+  .inline-block { display: inline-block; }
+  .flex { display: flex; }
+  .grid { display: grid; }
+
+  /* Flex utilities */
+  .items-center { align-items: center; }
+  .justify-center { justify-content: center; }
+  .justify-between { justify-content: space-between; }
+  .gap-2 { gap: var(--space-2); }
+  .gap-4 { gap: var(--space-4); }
+  .gap-6 { gap: var(--space-6); }
+
+  /* Spacing */
+  .mt-4 { margin-top: var(--space-4); }
+  .mt-8 { margin-top: var(--space-8); }
+  .mb-4 { margin-bottom: var(--space-4); }
+  .mb-8 { margin-bottom: var(--space-8); }
+
+  /* Respect reduced motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* Fade in animation */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .fade-in {
+    animation: fadeIn var(--transition-normal) ease-out;
+  }
+
+  /* Slide up animation */
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .slide-up {
+    animation: slideUp var(--transition-slow) ease-out;
+  }
+
+  /* Pulse animation for attention */
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+
+  .pulse {
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  /* Shimmer effect for loading states */
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      var(--color-bg-alt) 25%,
+      var(--color-bg) 50%,
+      var(--color-bg-alt) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+}

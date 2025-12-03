@@ -1,0 +1,15 @@
+/* ==========================================================================
+   CSS Layer Order Definition
+
+   Establishes cascade priority for the style system.
+   Lower layers can be overridden by higher layers without specificity wars.
+
+   Layer Order:
+   1. base      - CSS reset, typography fundamentals
+   2. tokens    - Design tokens (CSS custom properties)
+   3. presets   - Style preset overrides (editorial, minimal, documentation)
+   4. components - Component-specific styles
+   5. utilities - Utility classes (highest priority)
+   ========================================================================== */
+
+@layer base, tokens, presets, components, utilities;

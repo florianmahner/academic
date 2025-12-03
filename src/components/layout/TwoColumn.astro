@@ -1,0 +1,108 @@
+---
+/**
+ * TwoColumn Layout Component
+ * Provides a responsive two-column layout with sidebar
+ * Used primarily for documentation-style pages
+ */
+
+interface Props {
+  sidebarPosition?: 'left' | 'right';
+  sidebarWidth?: 'narrow' | 'default' | 'wide';
+  sticky?: boolean;
+  class?: string;
+}
+
+const {
+  sidebarPosition = 'left',
+  sidebarWidth = 'default',
+  sticky = true,
+  class: className,
+} = Astro.props;
+
+const widthMap = {
+  narrow: '200px',
+  default: '250px',
+  wide: '300px',
+};
+---
+
+<div
+  class:list={[
+    'two-column',
+    `sidebar-${sidebarPosition}`,
+    `sidebar-${sidebarWidth}`,
+    { 'sidebar-sticky': sticky },
+    className,
+  ]}
+  style={`--sidebar-width: ${widthMap[sidebarWidth]}`}
+>
+  <aside class="sidebar">
+    <slot name="sidebar" />
+  </aside>
+  <main class="content">
+    <slot />
+  </main>
+</div>
+
+<style>
+  .two-column {
+    display: grid;
+    grid-template-columns: var(--sidebar-width) 1fr;
+    gap: var(--space-8);
+    max-width: calc(var(--content-width) + var(--sidebar-width) + var(--space-8));
+    margin: 0 auto;
+    padding: 0 var(--space-4);
+  }
+
+  .sidebar-right {
+    grid-template-columns: 1fr var(--sidebar-width);
+  }
+
+  .sidebar-right .sidebar {
+    order: 2;
+  }
+
+  .sidebar-right .content {
+    order: 1;
+  }
+
+  .sidebar {
+    min-width: 0;
+  }
+
+  .sidebar-sticky .sidebar {
+    position: sticky;
+    top: var(--space-8);
+    max-height: calc(100vh - var(--space-16));
+    overflow-y: auto;
+  }
+
+  .content {
+    min-width: 0;
+  }
+
+  /* Responsive: stack on smaller screens */
+  @media (max-width: 900px) {
+    .two-column {
+      grid-template-columns: 1fr;
+    }
+
+    .sidebar-right .sidebar,
+    .sidebar-right .content {
+      order: unset;
+    }
+
+    .sidebar {
+      position: static !important;
+      max-height: none !important;
+      padding-bottom: var(--space-4);
+      margin-bottom: var(--space-4);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .sidebar-sticky .sidebar {
+      position: static;
+      max-height: none;
+    }
+  }
+</style>

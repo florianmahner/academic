@@ -1,0 +1,34 @@
+{
+  "courses": [
+    {
+      "title": "CS 288: Natural Language Processing",
+      "role": "Instructor",
+      "institution": "UC Berkeley",
+      "semester": "Fall 2024",
+      "description": "Graduate course covering modern NLP techniques including transformers, pre-training, fine-tuning, and applications to real-world problems.",
+      "materials": "https://cs288.berkeley.edu"
+    },
+    {
+      "title": "CS 182: Deep Learning",
+      "role": "Instructor",
+      "institution": "UC Berkeley",
+      "semester": "Spring 2024",
+      "description": "Introduction to deep learning covering neural network fundamentals, CNNs, RNNs, transformers, and generative models.",
+      "materials": "https://cs182.berkeley.edu"
+    },
+    {
+      "title": "CS 294: Special Topics in Large Language Models",
+      "role": "Instructor",
+      "institution": "UC Berkeley",
+      "semester": "Fall 2023",
+      "description": "Research seminar exploring cutting-edge topics in LLMs including scaling laws, emergent abilities, alignment, and efficiency."
+    },
+    {
+      "title": "CS 224N: Natural Language Processing with Deep Learning",
+      "role": "Teaching Assistant",
+      "institution": "Stanford University",
+      "semester": "Winter 2020",
+      "description": "Graduate course on neural network methods for NLP. Assisted with course design, held office hours, and mentored student projects."
+    }
+  ]
+}

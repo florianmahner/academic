@@ -1,0 +1,34 @@
+{
+  "projects": [
+    {
+      "title": "LongContext-LM",
+      "description": "A research framework for training and evaluating language models on extremely long documents (100k+ tokens). Includes efficient attention implementations and memory-optimized training strategies.",
+      "image": "/img/projects/longcontext.png",
+      "tags": ["Transformers", "NLP", "Efficient ML"],
+      "url": "https://github.com/janesmith/longcontext-lm",
+      "featured": true
+    },
+    {
+      "title": "CrossLingual-Bench",
+      "description": "A comprehensive benchmark suite for evaluating cross-lingual transfer in multilingual NLP models. Covers 50+ languages with diverse evaluation tasks.",
+      "image": "/img/projects/crosslingual.png",
+      "tags": ["Multilingual", "Benchmarks", "Evaluation"],
+      "url": "https://github.com/janesmith/crosslingual-bench",
+      "featured": true
+    },
+    {
+      "title": "Neural Summarizer",
+      "description": "State-of-the-art extractive and abstractive summarization toolkit with support for multi-document summarization and controllable generation.",
+      "tags": ["Summarization", "Generation", "Python"],
+      "url": "https://github.com/janesmith/neural-summarizer",
+      "featured": true
+    },
+    {
+      "title": "Attention Visualizer",
+      "description": "Interactive web tool for visualizing and interpreting attention patterns in transformer models. Supports BERT, GPT, and custom architectures.",
+      "tags": ["Interpretability", "Visualization", "Web"],
+      "url": "https://github.com/janesmith/attention-viz",
+      "featured": false
+    }
+  ]
+}

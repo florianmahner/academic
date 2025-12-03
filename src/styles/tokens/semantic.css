@@ -1,0 +1,171 @@
+/* ==========================================================================
+   Semantic Design Tokens
+   Purpose-based tokens that reference primitives
+
+   These provide meaning and can be overridden by presets
+   without changing the underlying scale.
+   ========================================================================== */
+
+:root {
+  /* -------------------------------------------------------------------------
+     LAYOUT SEMANTICS
+     Named values for common layout patterns
+     ------------------------------------------------------------------------- */
+
+  /* Content area sizing */
+  --content-width: 55%;
+  --content-max-width: var(--content-width-base);
+  --container-padding: var(--space-6);
+
+  /* Tufte-style margins (for sidenotes) */
+  --margin-left: 5%;
+  --margin-right: 30%;
+  --margin-width: 400px;
+  --sidenote-width: 300px;
+  --full-width: 1400px;
+
+  /* -------------------------------------------------------------------------
+     SPACING SEMANTICS
+     Named spacing for specific use cases
+     ------------------------------------------------------------------------- */
+
+  /* Section spacing */
+  --space-section: var(--space-16);
+  --space-section-sm: var(--space-10);
+  --space-section-lg: var(--space-24);
+
+  /* Component spacing */
+  --space-card: var(--space-4);
+  --space-card-sm: var(--space-3);
+  --space-card-lg: var(--space-6);
+
+  /* Element spacing */
+  --space-element: var(--space-4);
+  --space-element-sm: var(--space-2);
+  --space-element-lg: var(--space-6);
+
+  /* Inline spacing (between inline elements) */
+  --space-inline: var(--space-2);
+  --space-inline-sm: var(--space-1);
+  --space-inline-lg: var(--space-3);
+
+  /* Stack spacing (between stacked elements) */
+  --space-stack: var(--space-4);
+  --space-stack-sm: var(--space-2);
+  --space-stack-lg: var(--space-8);
+
+  /* -------------------------------------------------------------------------
+     TYPOGRAPHY SEMANTICS
+     Named type styles for specific purposes
+     ------------------------------------------------------------------------- */
+
+  /* Display/Hero text */
+  --font-size-display: var(--font-size-4xl);
+  --line-height-display: var(--line-height-tight);
+  --letter-spacing-display: var(--letter-spacing-tight);
+
+  /* Page titles */
+  --font-size-title: var(--font-size-3xl);
+  --line-height-title: var(--line-height-tight);
+  --letter-spacing-title: var(--letter-spacing-tight);
+
+  /* Section headings */
+  --font-size-heading: var(--font-size-2xl);
+  --line-height-heading: var(--line-height-snug);
+  --letter-spacing-heading: var(--letter-spacing-normal);
+
+  /* Subheadings */
+  --font-size-subheading: var(--font-size-xl);
+  --line-height-subheading: var(--line-height-snug);
+  --letter-spacing-subheading: var(--letter-spacing-normal);
+
+  /* Body text */
+  --font-size-body: var(--font-size-base);
+  --line-height-body: var(--line-height-normal);
+  --letter-spacing-body: var(--letter-spacing-normal);
+
+  /* Small/supporting text */
+  --font-size-small: var(--font-size-sm);
+  --line-height-small: var(--line-height-normal);
+  --letter-spacing-small: var(--letter-spacing-normal);
+
+  /* Labels and captions */
+  --font-size-label: var(--font-size-xs);
+  --line-height-label: var(--line-height-normal);
+  --letter-spacing-label: var(--letter-spacing-wider);
+
+  /* -------------------------------------------------------------------------
+     COMPONENT SEMANTICS
+     Tokens for specific UI components
+     ------------------------------------------------------------------------- */
+
+  /* Cards */
+  --card-padding: var(--space-card);
+  --card-radius: var(--radius-md);
+  --card-border-width: var(--border-1);
+
+  /* Buttons */
+  --button-padding-x: var(--space-4);
+  --button-padding-y: var(--space-2);
+  --button-radius: var(--radius-md);
+  --button-font-size: var(--font-size-sm);
+  --button-font-weight: var(--font-weight-medium);
+
+  /* Inputs */
+  --input-padding-x: var(--space-3);
+  --input-padding-y: var(--space-2);
+  --input-radius: var(--radius-md);
+  --input-border-width: var(--border-1);
+
+  /* Navigation */
+  --nav-item-padding-x: var(--space-3);
+  --nav-item-padding-y: var(--space-2);
+  --nav-item-gap: var(--space-1);
+
+  /* Page header */
+  --page-header-spacing: var(--space-8);
+
+  /* -------------------------------------------------------------------------
+     INTERACTIVE STATES
+     Tokens for hover, focus, active states
+     ------------------------------------------------------------------------- */
+
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+  --focus-ring-color: var(--color-accent);
+
+  --hover-scale: 1.02;
+  --hover-lift: -4px;
+  --active-scale: 0.98;
+}
+
+/* -------------------------------------------------------------------------
+   RESPONSIVE OVERRIDES
+   Adjust semantic tokens for different screen sizes
+   ------------------------------------------------------------------------- */
+
+@media (max-width: 1200px) {
+  :root {
+    --content-width: 65%;
+    --margin-right: 20%;
+  }
+}
+
+@media (max-width: 900px) {
+  :root {
+    --content-width: 90%;
+    --margin-left: 5%;
+    --margin-right: 5%;
+    --space-section: var(--space-12);
+    --space-section-lg: var(--space-16);
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --content-width: 100%;
+    --container-padding: var(--space-4);
+    --space-section: var(--space-10);
+    --card-padding: var(--space-3);
+  }
+}

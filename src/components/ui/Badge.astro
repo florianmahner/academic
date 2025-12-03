@@ -1,0 +1,103 @@
+---
+/**
+ * Badge Component
+ * Small label for tags, status, and categories
+ */
+
+interface Props {
+  variant?: 'default' | 'primary' | 'success' | 'warning' | 'error' | 'outline';
+  size?: 'sm' | 'md';
+  class?: string;
+  [key: string]: any;
+}
+
+const {
+  variant = 'default',
+  size = 'md',
+  class: className,
+  ...rest
+} = Astro.props;
+
+const classes = [
+  'badge',
+  `badge-${variant}`,
+  `badge-${size}`,
+  className
+].filter(Boolean).join(' ');
+---
+
+<span class={classes} {...rest}>
+  <slot />
+</span>
+
+<style>
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--font-ui);
+    font-weight: var(--font-weight-medium);
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+  }
+
+  /* Sizes */
+  .badge-sm {
+    padding: var(--space-1) var(--space-2);
+    font-size: 0.65rem;
+    letter-spacing: 0.02em;
+  }
+
+  .badge-md {
+    padding: var(--space-1) var(--space-3);
+    font-size: var(--font-size-xs);
+  }
+
+  /* Variants */
+  .badge-default {
+    background-color: var(--color-bg-alt);
+    color: var(--color-text-secondary);
+  }
+
+  .badge-primary {
+    background-color: var(--color-accent);
+    color: white;
+  }
+
+  .badge-success {
+    background-color: #10b981;
+    color: white;
+  }
+
+  .badge-warning {
+    background-color: #f59e0b;
+    color: white;
+  }
+
+  .badge-error {
+    background-color: #ef4444;
+    color: white;
+  }
+
+  .badge-outline {
+    background-color: transparent;
+    border: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
+  }
+
+  /* Dark mode adjustments */
+  [data-theme="dark"] .badge-default {
+    background-color: var(--color-bg-alt);
+  }
+
+  [data-theme="dark"] .badge-success {
+    background-color: #059669;
+  }
+
+  [data-theme="dark"] .badge-warning {
+    background-color: #d97706;
+  }
+
+  [data-theme="dark"] .badge-error {
+    background-color: #dc2626;
+  }
+</style>

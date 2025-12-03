@@ -1,0 +1,106 @@
+---
+/**
+ * Structured Data Component
+ * Provides JSON-LD structured data for SEO
+ */
+
+interface Props {
+  type: 'Person' | 'WebPage' | 'Article' | 'WebSite';
+  data?: Record<string, unknown>;
+}
+
+const { type, data = {} } = Astro.props;
+
+const baseUrl = Astro.site?.toString() || 'https://florianmahner.github.io';
+
+// Person schema for academic profile
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Florian Mahner',
+  url: baseUrl,
+  jobTitle: 'PhD Candidate',
+  affiliation: {
+    '@type': 'Organization',
+    name: 'Max Planck Research Group Vision and Computational Cognition',
+    url: 'https://hebartlab.com/',
+  },
+  alumniOf: [
+    {
+      '@type': 'CollegeOrUniversity',
+      name: 'Radboud University',
+      url: 'https://www.ru.nl/ai/',
+    },
+    {
+      '@type': 'CollegeOrUniversity',
+      name: 'Osnabrück University',
+      url: 'https://www.ikw.uni-osnabrueck.de/',
+    },
+  ],
+  knowsAbout: [
+    'Computational Neuroscience',
+    'Machine Learning',
+    'Representation Learning',
+    'Deep Learning',
+    'Computer Vision',
+    'Cognitive Science',
+  ],
+  sameAs: [
+    'https://github.com/florianmahner',
+    'https://www.linkedin.com/in/florianmahner',
+  ],
+};
+
+// WebSite schema
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Florian Mahner',
+  description: 'Personal academic website of Florian Mahner - Research in computational neuroscience and machine learning',
+  url: baseUrl,
+  author: {
+    '@type': 'Person',
+    name: 'Florian Mahner',
+  },
+};
+
+// WebPage schema
+const webPageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  url: new URL(Astro.url.pathname, baseUrl).toString(),
+  isPartOf: {
+    '@type': 'WebSite',
+    url: baseUrl,
+    name: 'Florian Mahner',
+  },
+  ...data,
+};
+
+// Article schema (for blog posts)
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  author: {
+    '@type': 'Person',
+    name: 'Florian Mahner',
+    url: baseUrl,
+  },
+  publisher: {
+    '@type': 'Person',
+    name: 'Florian Mahner',
+  },
+  ...data,
+};
+
+const schemas: Record<string, object> = {
+  Person: personSchema,
+  WebSite: websiteSchema,
+  WebPage: webPageSchema,
+  Article: articleSchema,
+};
+
+const schema = schemas[type];
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />

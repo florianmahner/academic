@@ -1,0 +1,92 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Container from '../components/layout/Container.astro';
+import Grid from '../components/layout/Grid.astro';
+import ProjectCard from '../components/blocks/ProjectCard.astro';
+import projectsData from '../content/projects.json';
+import { config } from '../config';
+import { isSectionEnabled, DISABLED_SECTION_REDIRECT } from '../lib/sections';
+
+// Redirect if section is disabled
+if (!isSectionEnabled('projects')) {
+  return Astro.redirect(DISABLED_SECTION_REDIRECT);
+}
+
+const title = `Projects | ${config.site.title}`;
+const projects = projectsData.projects;
+const featuredProjects = projects.filter(p => p.featured);
+const otherProjects = projects.filter(p => !p.featured);
+---
+
+<BaseLayout title={title} description="Research projects and portfolio">
+  <article class="projects-page">
+    <Container>
+      <header class="page-header" data-animate="fade-up">
+        <h1>Projects</h1>
+        <p class="lead">Selected research projects and tools.</p>
+      </header>
+
+      {featuredProjects.length > 0 && (
+        <section class="featured-section" data-animate="fade-up">
+          <h2 class="section-label">Featured</h2>
+          <Grid cols={2} gap="md">
+            {featuredProjects.map(project => (
+              <ProjectCard
+                title={project.title}
+                description={project.description}
+                image={project.image}
+                tags={project.tags}
+                url={project.url}
+                featured
+              />
+            ))}
+          </Grid>
+        </section>
+      )}
+
+      {otherProjects.length > 0 && (
+        <section class="other-section" data-animate="fade-up">
+          <h2 class="section-label">Other Projects</h2>
+          <Grid cols={2} gap="md">
+            {otherProjects.map(project => (
+              <ProjectCard
+                title={project.title}
+                description={project.description}
+                image={project.image}
+                tags={project.tags}
+                url={project.url}
+              />
+            ))}
+          </Grid>
+        </section>
+      )}
+    </Container>
+  </article>
+</BaseLayout>
+
+<style>
+  .projects-page {
+    padding: var(--space-8) 0;
+  }
+
+  .lead {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-secondary);
+    margin-top: var(--space-2);
+  }
+
+  .featured-section,
+  .other-section {
+    margin-top: var(--space-10);
+  }
+
+  .section-label {
+    font-size: var(--font-size-xs);
+    font-family: var(--font-ui);
+    font-weight: var(--font-weight-medium);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wider);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-4);
+  }
+</style>

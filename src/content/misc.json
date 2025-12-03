@@ -1,0 +1,14 @@
+{
+  "tools": [
+    { "name": "Cursor", "url": "https://www.cursor.com/", "description": "AI-powered code editor" },
+    { "name": "Overleaf", "url": "https://www.overleaf.com", "description": "Collaborative LaTeX editor" },
+    { "name": "Arc", "url": "https://arc.net/", "description": "A better browser" },
+    { "name": "MathPix", "url": "https://mathpix.com", "description": "Convert images to LaTeX" },
+    { "name": "Raycast", "url": "https://www.raycast.com/", "description": "Productivity launcher for Mac" },
+    { "name": "Warp", "url": "https://www.warp.dev/", "description": "Terminal on steroids" },
+    { "name": "Notion", "url": "https://www.notion.so/", "description": "All-in-one workspace" },
+    { "name": "Paperpile", "url": "https://paperpile.com/", "description": "Reference management" },
+    { "name": "Obsidian", "url": "https://obsidian.md/", "description": "Knowledge base and note-taking" },
+    { "name": "Affinity", "url": "https://www.affinity.studio/", "description": "Like Illustrator but better" }    
+  ]
+}

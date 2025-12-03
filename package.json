@@ -1,0 +1,18 @@
+{
+  "name": "florianmahner-website",
+  "description": "Personal academic website for Florian Mahner",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.6.0",
+    "astro": "^5.16.3",
+    "bibtex-parse": "^2.1.0",
+    "gsap": "^3.13.0"
+  }
+}
