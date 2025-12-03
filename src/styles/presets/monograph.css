@@ -1,0 +1,228 @@
+/**
+ * Monograph Theme
+ *
+ * Scholarly elegance inspired by Edward Tufte books, academic monographs,
+ * and classical typography. Warm, sophisticated, timeless.
+ */
+
+@layer presets {
+  /* ==========================================================================
+     Monograph - Light Mode
+     ========================================================================== */
+
+  [data-preset="monograph"] {
+    /* Color Palette - Warm cream and crimson */
+    --preset-bg: #FFFDF7;
+    --preset-bg-alt: #F9F6EE;
+    --preset-text: #2D2A24;
+    --preset-text-secondary: #5C5750;
+    --preset-text-muted: #8A857C;
+    --preset-accent: #8B2332;
+    --preset-accent-hover: #6E1C28;
+    --preset-border: #E8E4DA;
+    --preset-border-light: #F0EDE5;
+
+    /* Typography - Crimson Pro + Space Grotesk */
+    --preset-font-heading: 'Crimson Pro', Georgia, serif;
+    --preset-font-body: 'Crimson Pro', Georgia, serif;
+    --preset-font-ui: 'Space Grotesk', system-ui, sans-serif;
+    --preset-font-mono: 'JetBrains Mono', Consolas, monospace;
+
+    --preset-weight-heading: 600;
+    --preset-weight-body: 400;
+    --preset-weight-ui: 400;
+
+    --preset-tracking-heading: -0.01em;
+    --preset-tracking-body: 0.01em;
+    --preset-tracking-ui: 0.02em;
+
+    /* Spacing - Generous rhythm */
+    --preset-space-section: 5rem;
+    --preset-space-element: 1.5rem;
+    --preset-space-component: 1.25rem;
+
+    /* Components - Minimal, borderless */
+    --preset-card-border: none;
+    --preset-card-radius: 4px;
+    --preset-card-shadow: none;
+    --preset-card-hover-bg: var(--preset-bg-alt);
+    --preset-card-hover-shadow: none;
+    --preset-card-hover-transform: none;
+
+    --preset-button-radius: 4px;
+    --preset-button-weight: 400;
+
+    --preset-link-decoration: underline;
+    --preset-link-decoration-thickness: 1px;
+    --preset-link-underline-offset: 3px;
+
+    --preset-badge-radius: 2px;
+    --preset-badge-padding: 0.125rem 0.5rem;
+
+    /* Navigation - Light, elegant */
+    --preset-nav-weight: 400;
+    --preset-nav-case: none;
+    --preset-nav-tracking: 0.01em;
+    --preset-nav-active-color: var(--preset-accent);
+
+    /* Motion - Gentle */
+    --preset-transition-hover: 200ms ease-out;
+    --preset-stagger-delay: 80ms;
+    --preset-page-animation: preset-fade-in;
+  }
+
+  /* ==========================================================================
+     Monograph - Dark Mode
+     ========================================================================== */
+
+  [data-theme="dark"][data-preset="monograph"] {
+    --preset-bg: #1A1917;
+    --preset-bg-alt: #252320;
+    --preset-text: #E8E4DA;
+    --preset-text-secondary: #B5B0A6;
+    --preset-text-muted: #7A756C;
+    --preset-accent: #D94F5C;
+    --preset-accent-hover: #E87580;
+    --preset-border: #3A3833;
+    --preset-border-light: #2D2B28;
+  }
+
+  /* ==========================================================================
+     Monograph - Typography Overrides
+     ========================================================================== */
+
+  [data-preset="monograph"] h1 {
+    font-family: var(--preset-font-heading);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  [data-preset="monograph"] h2 {
+    font-family: var(--preset-font-heading);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+
+  [data-preset="monograph"] h3,
+  [data-preset="monograph"] h4,
+  [data-preset="monograph"] h5,
+  [data-preset="monograph"] h6 {
+    font-family: var(--preset-font-heading);
+    font-weight: 500;
+  }
+
+  [data-preset="monograph"] p,
+  [data-preset="monograph"] li {
+    font-family: var(--preset-font-body);
+    line-height: 1.7;
+  }
+
+  /* Links - Animated underline */
+  [data-preset="monograph"] a:not(.nav-link):not(.button) {
+    color: var(--preset-accent);
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: 3px;
+    transition: text-decoration-color var(--preset-transition-hover);
+  }
+
+  [data-preset="monograph"] a:not(.nav-link):not(.button):hover {
+    text-decoration-color: var(--preset-accent);
+  }
+
+  /* ==========================================================================
+     Monograph - Component Overrides
+     ========================================================================== */
+
+  /* Cards */
+  [data-preset="monograph"] .card,
+  [data-preset="monograph"] .paper-card,
+  [data-preset="monograph"] .repo-card,
+  [data-preset="monograph"] .project-card {
+    border: none;
+    border-radius: 4px;
+    box-shadow: none;
+    padding: var(--preset-space-component);
+    transition: background-color var(--preset-transition-hover);
+  }
+
+  [data-preset="monograph"] .card:hover,
+  [data-preset="monograph"] .paper-card:hover,
+  [data-preset="monograph"] .repo-card:hover,
+  [data-preset="monograph"] .project-card:hover {
+    background-color: var(--preset-bg-alt);
+  }
+
+  /* Buttons - Ghost style */
+  [data-preset="monograph"] .button,
+  [data-preset="monograph"] button {
+    font-family: var(--preset-font-ui);
+    font-weight: 400;
+    border-radius: 4px;
+    letter-spacing: 0.02em;
+  }
+
+  /* Section labels - Small caps */
+  [data-preset="monograph"] .section-label {
+    font-family: var(--preset-font-ui);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--preset-text-muted);
+  }
+
+  /* Blockquotes - Elegant */
+  [data-preset="monograph"] blockquote {
+    font-style: italic;
+    border-left: 2px solid var(--preset-border);
+    padding-left: 1.5rem;
+    margin-left: 0;
+    color: var(--preset-text-secondary);
+  }
+
+  /* Code - Subtle */
+  [data-preset="monograph"] code {
+    font-family: var(--preset-font-mono);
+    font-size: 0.875em;
+    background: var(--preset-bg-alt);
+    padding: 0.125rem 0.375rem;
+    border-radius: 2px;
+  }
+
+  [data-preset="monograph"] pre {
+    background: var(--preset-bg-alt);
+    border: 1px solid var(--preset-border-light);
+    border-radius: 4px;
+    padding: 1rem;
+  }
+
+  /* Navigation */
+  [data-preset="monograph"] .inline-nav-link,
+  [data-preset="monograph"] .minimal-nav-link,
+  [data-preset="monograph"] .sidebar-link {
+    font-family: var(--preset-font-ui);
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    color: var(--preset-text-secondary);
+  }
+
+  [data-preset="monograph"] .inline-nav-link:hover,
+  [data-preset="monograph"] .minimal-nav-link:hover,
+  [data-preset="monograph"] .sidebar-link:hover {
+    color: var(--preset-text);
+  }
+
+  [data-preset="monograph"] .inline-nav-link.active,
+  [data-preset="monograph"] .minimal-nav-link.active,
+  [data-preset="monograph"] .sidebar-link.active {
+    color: var(--preset-accent);
+  }
+
+  /* Footer */
+  [data-preset="monograph"] .footer {
+    border-top: 1px solid var(--preset-border-light);
+  }
+}

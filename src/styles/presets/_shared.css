@@ -1,0 +1,142 @@
+/**
+ * Shared Preset Utilities
+ *
+ * Common styles and utilities used across all theme presets.
+ * This file is imported by each preset and provides base functionality.
+ */
+
+@layer presets {
+  /* ==========================================================================
+     Reset Preset Variables to Defaults
+     These get overridden by each preset
+     ========================================================================== */
+
+  :root {
+    /* Color defaults (overridden by presets) */
+    --preset-bg: #ffffff;
+    --preset-bg-alt: #f5f5f5;
+    --preset-text: #1a1a1a;
+    --preset-text-secondary: #666666;
+    --preset-text-muted: #999999;
+    --preset-accent: #0066cc;
+    --preset-accent-hover: #0052a3;
+    --preset-border: #e0e0e0;
+    --preset-border-light: #f0f0f0;
+
+    /* Typography defaults */
+    --preset-font-heading: system-ui, sans-serif;
+    --preset-font-body: system-ui, sans-serif;
+    --preset-font-ui: system-ui, sans-serif;
+    --preset-font-mono: monospace;
+
+    --preset-weight-heading: 600;
+    --preset-weight-body: 400;
+    --preset-weight-ui: 400;
+
+    --preset-tracking-heading: -0.02em;
+    --preset-tracking-body: 0;
+    --preset-tracking-ui: 0;
+
+    /* Spacing defaults */
+    --preset-space-section: 4rem;
+    --preset-space-element: 1rem;
+    --preset-space-component: 1rem;
+
+    /* Component defaults */
+    --preset-card-border: 1px solid var(--color-border-light);
+    --preset-card-radius: 8px;
+    --preset-card-shadow: none;
+    --preset-card-hover-bg: var(--color-bg-alt);
+    --preset-card-hover-shadow: none;
+    --preset-card-hover-transform: none;
+
+    --preset-button-radius: 6px;
+    --preset-button-weight: 500;
+
+    --preset-link-decoration: underline;
+    --preset-link-decoration-thickness: 1px;
+    --preset-link-underline-offset: 2px;
+
+    --preset-badge-radius: 9999px;
+    --preset-badge-padding: 0.25rem 0.75rem;
+
+    /* Navigation defaults */
+    --preset-nav-weight: 400;
+    --preset-nav-case: none;
+    --preset-nav-tracking: 0;
+    --preset-nav-active-color: var(--color-accent);
+
+    /* Motion defaults */
+    --preset-transition-hover: 200ms ease-out;
+    --preset-stagger-delay: 80ms;
+  }
+
+  /* ==========================================================================
+     Shared Animation Keyframes
+     ========================================================================== */
+
+  @keyframes preset-fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes preset-slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes preset-scale-in {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  /* ==========================================================================
+     Shared Utility Classes
+     ========================================================================== */
+
+  /* Page animation wrapper */
+  .page-animate {
+    animation: var(--preset-page-animation, preset-fade-in) 0.4s ease-out forwards;
+  }
+
+  /* Stagger animation children */
+  [data-animate="stagger"] > * {
+    opacity: 0;
+    animation: preset-slide-up 0.4s ease-out forwards;
+  }
+
+  [data-animate="stagger"] > *:nth-child(1) { animation-delay: calc(var(--preset-stagger-delay) * 0); }
+  [data-animate="stagger"] > *:nth-child(2) { animation-delay: calc(var(--preset-stagger-delay) * 1); }
+  [data-animate="stagger"] > *:nth-child(3) { animation-delay: calc(var(--preset-stagger-delay) * 2); }
+  [data-animate="stagger"] > *:nth-child(4) { animation-delay: calc(var(--preset-stagger-delay) * 3); }
+  [data-animate="stagger"] > *:nth-child(5) { animation-delay: calc(var(--preset-stagger-delay) * 4); }
+  [data-animate="stagger"] > *:nth-child(6) { animation-delay: calc(var(--preset-stagger-delay) * 5); }
+  [data-animate="stagger"] > *:nth-child(7) { animation-delay: calc(var(--preset-stagger-delay) * 6); }
+  [data-animate="stagger"] > *:nth-child(8) { animation-delay: calc(var(--preset-stagger-delay) * 7); }
+
+  /* Reduce motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .page-animate,
+    [data-animate="stagger"] > * {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+  }
+}

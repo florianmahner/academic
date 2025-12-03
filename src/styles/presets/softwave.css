@@ -1,0 +1,260 @@
+/**
+ * Softwave Theme
+ *
+ * Modern and approachable design inspired by Linear, Raycast, Vercel, and Arc browser.
+ * Calm, contemporary, polished with soft shadows and rounded elements.
+ */
+
+@layer presets {
+  /* ==========================================================================
+     Softwave - Light Mode
+     ========================================================================== */
+
+  [data-preset="softwave"] {
+    /* Color Palette - Cool white and violet-blue */
+    --preset-bg: #FAFBFD;
+    --preset-bg-alt: #F3F5F8;
+    --preset-text: #1A1D23;
+    --preset-text-secondary: #4A5067;
+    --preset-text-muted: #8891A5;
+    --preset-accent: #5B5CFF;
+    --preset-accent-hover: #4747E5;
+    --preset-border: #E5E8EE;
+    --preset-border-light: #EFF1F5;
+
+    /* Typography - Plus Jakarta Sans */
+    --preset-font-heading: 'Plus Jakarta Sans', system-ui, sans-serif;
+    --preset-font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+    --preset-font-ui: 'Plus Jakarta Sans', system-ui, sans-serif;
+    --preset-font-mono: 'Fira Code', Consolas, monospace;
+
+    --preset-weight-heading: 700;
+    --preset-weight-body: 400;
+    --preset-weight-ui: 500;
+
+    --preset-tracking-heading: -0.02em;
+    --preset-tracking-body: 0;
+    --preset-tracking-ui: 0;
+
+    /* Spacing - Comfortable */
+    --preset-space-section: 5rem;
+    --preset-space-element: 1.25rem;
+    --preset-space-component: 1.5rem;
+
+    /* Components - Soft, elevated */
+    --preset-card-border: 1px solid var(--preset-border-light);
+    --preset-card-radius: 12px;
+    --preset-card-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04);
+    --preset-card-hover-bg: var(--preset-bg);
+    --preset-card-hover-shadow: 0 4px 12px rgba(0,0,0,0.1), 0 8px 24px rgba(0,0,0,0.06);
+    --preset-card-hover-transform: translateY(-2px);
+
+    --preset-button-radius: 8px;
+    --preset-button-weight: 500;
+
+    --preset-link-decoration: none;
+    --preset-link-decoration-thickness: 0;
+    --preset-link-underline-offset: 0;
+
+    --preset-badge-radius: 9999px;
+    --preset-badge-padding: 0.25rem 0.75rem;
+
+    /* Navigation - Subtle */
+    --preset-nav-weight: 500;
+    --preset-nav-case: none;
+    --preset-nav-tracking: 0;
+    --preset-nav-active-color: var(--preset-accent);
+
+    /* Motion - Smooth with slight bounce */
+    --preset-transition-hover: 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    --preset-stagger-delay: 100ms;
+    --preset-page-animation: preset-scale-in;
+  }
+
+  /* ==========================================================================
+     Softwave - Dark Mode
+     ========================================================================== */
+
+  [data-theme="dark"][data-preset="softwave"] {
+    --preset-bg: #0D0F14;
+    --preset-bg-alt: #181B24;
+    --preset-text: #ECEEF3;
+    --preset-text-secondary: #A5ABB8;
+    --preset-text-muted: #6B7280;
+    --preset-accent: #7B7CFF;
+    --preset-accent-hover: #9B9CFF;
+    --preset-border: #2D3142;
+    --preset-border-light: #1F222D;
+
+    --preset-card-shadow: 0 1px 3px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.2);
+    --preset-card-hover-shadow: 0 4px 12px rgba(0,0,0,0.4), 0 8px 24px rgba(0,0,0,0.3);
+  }
+
+  /* ==========================================================================
+     Softwave - Typography Overrides
+     ========================================================================== */
+
+  [data-preset="softwave"] h1 {
+    font-family: var(--preset-font-heading);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+
+  [data-preset="softwave"] h2 {
+    font-family: var(--preset-font-heading);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  [data-preset="softwave"] h3,
+  [data-preset="softwave"] h4,
+  [data-preset="softwave"] h5,
+  [data-preset="softwave"] h6 {
+    font-family: var(--preset-font-heading);
+    font-weight: 600;
+  }
+
+  [data-preset="softwave"] p,
+  [data-preset="softwave"] li {
+    font-family: var(--preset-font-body);
+    line-height: 1.6;
+  }
+
+  /* Links - Color only, subtle opacity */
+  [data-preset="softwave"] a:not(.nav-link):not(.button) {
+    color: var(--preset-accent);
+    text-decoration: none;
+    transition: opacity var(--preset-transition-hover);
+  }
+
+  [data-preset="softwave"] a:not(.nav-link):not(.button):hover {
+    opacity: 0.8;
+  }
+
+  /* ==========================================================================
+     Softwave - Component Overrides
+     ========================================================================== */
+
+  /* Cards - Elevated with soft shadow */
+  [data-preset="softwave"] .card,
+  [data-preset="softwave"] .paper-card,
+  [data-preset="softwave"] .repo-card,
+  [data-preset="softwave"] .project-card {
+    background: var(--preset-bg);
+    border: 1px solid var(--preset-border-light);
+    border-radius: 12px;
+    box-shadow: var(--preset-card-shadow);
+    padding: var(--preset-space-component);
+    transition: all var(--preset-transition-hover);
+  }
+
+  [data-preset="softwave"] .card:hover,
+  [data-preset="softwave"] .paper-card:hover,
+  [data-preset="softwave"] .repo-card:hover,
+  [data-preset="softwave"] .project-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--preset-card-hover-shadow);
+  }
+
+  /* Buttons - Rounded, gradient on primary */
+  [data-preset="softwave"] .button,
+  [data-preset="softwave"] button {
+    font-family: var(--preset-font-ui);
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all var(--preset-transition-hover);
+  }
+
+  [data-preset="softwave"] .button.primary,
+  [data-preset="softwave"] button.primary {
+    background: linear-gradient(135deg, var(--preset-accent), #7B7CFF);
+    color: white;
+    border: none;
+  }
+
+  [data-preset="softwave"] .button.primary:hover,
+  [data-preset="softwave"] button.primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(91, 92, 255, 0.4);
+  }
+
+  /* Section labels - Accent color */
+  [data-preset="softwave"] .section-label {
+    font-family: var(--preset-font-ui);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--preset-accent);
+  }
+
+  /* Blockquotes - Soft */
+  [data-preset="softwave"] blockquote {
+    background: var(--preset-bg-alt);
+    border-left: 3px solid var(--preset-accent);
+    border-radius: 0 8px 8px 0;
+    padding: 1rem 1.5rem;
+    margin-left: 0;
+    color: var(--preset-text-secondary);
+  }
+
+  /* Code - Rounded */
+  [data-preset="softwave"] code {
+    font-family: var(--preset-font-mono);
+    font-size: 0.875em;
+    background: var(--preset-bg-alt);
+    padding: 0.125rem 0.5rem;
+    border-radius: 6px;
+  }
+
+  [data-preset="softwave"] pre {
+    background: var(--preset-bg-alt);
+    border: 1px solid var(--preset-border-light);
+    border-radius: 12px;
+    padding: 1.25rem;
+  }
+
+  /* Navigation - Subtle backgrounds */
+  [data-preset="softwave"] .inline-nav-link,
+  [data-preset="softwave"] .minimal-nav-link,
+  [data-preset="softwave"] .sidebar-link {
+    font-family: var(--preset-font-ui);
+    font-weight: 500;
+    color: var(--preset-text-secondary);
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    transition: all var(--preset-transition-hover);
+  }
+
+  [data-preset="softwave"] .inline-nav-link:hover,
+  [data-preset="softwave"] .minimal-nav-link:hover,
+  [data-preset="softwave"] .sidebar-link:hover {
+    color: var(--preset-text);
+    background: var(--preset-bg-alt);
+  }
+
+  [data-preset="softwave"] .inline-nav-link.active,
+  [data-preset="softwave"] .minimal-nav-link.active,
+  [data-preset="softwave"] .sidebar-link.active {
+    color: var(--preset-accent);
+    background: rgba(91, 92, 255, 0.1);
+  }
+
+  /* Footer - Subtle gradient divider */
+  [data-preset="softwave"] .footer {
+    border-top: 1px solid var(--preset-border-light);
+    background: linear-gradient(180deg, var(--preset-bg-alt) 0%, var(--preset-bg) 100%);
+  }
+
+  /* Badges - Pills */
+  [data-preset="softwave"] .badge {
+    border-radius: 9999px;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    background: var(--preset-bg-alt);
+    color: var(--preset-text-secondary);
+  }
+}

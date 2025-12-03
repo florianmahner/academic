@@ -1,64 +1,107 @@
 /* ==========================================================================
-   CSS Variables
-   Imports design tokens and defines font families
+   CSS Variables Bridge
+   Maps preset variables to semantic variables used throughout the site.
+   Presets set --preset-* variables, this file maps them to --color-*, --font-*, etc.
    ========================================================================== */
 
 /* Import base and semantic tokens */
 @import './tokens/index.css';
 
 /* ==========================================================================
-   FONT FAMILIES
-   Font stacks for different purposes
+   VARIABLE BRIDGE
+   Map preset variables to semantic variables with fallbacks
    ========================================================================== */
 
 :root {
   /* ============================================================
-     FONT OPTIONS - Uncomment ONE set to try different fonts
-     The active option sets the font variables used throughout.
+     COLOR MAPPINGS
+     Preset colors → Semantic colors
      ============================================================ */
 
-  /* OPTION: Inter - warm, friendly, very readable
-     (This is now the DEFAULT - see below)
-  */
+  --color-bg: var(--preset-bg, #ffffff);
+  --color-bg-alt: var(--preset-bg-alt, #f5f5f5);
+  --color-text: var(--preset-text, #1a1a1a);
+  --color-text-secondary: var(--preset-text-secondary, #666666);
+  --color-text-muted: var(--preset-text-muted, #999999);
+  --color-accent: var(--preset-accent, #0066cc);
+  --color-accent-hover: var(--preset-accent-hover, #0052a3);
+  --color-border: var(--preset-border, #e0e0e0);
+  --color-border-light: var(--preset-border-light, #f0f0f0);
 
-  /* OPTION 2: Source Sans 3 - professional, friendly
-  --font-body: 'Source Sans 3', system-ui, sans-serif;
-  --font-heading: 'Source Sans 3', system-ui, sans-serif;
-  --font-code: 'JetBrains Mono', Consolas, monospace;
-  --font-ui: 'Source Sans 3', system-ui, sans-serif;
-  */
+  /* Semantic aliases */
+  --color-link: var(--color-accent);
+  --color-link-hover: var(--color-accent-hover);
+  --color-heading: var(--color-text);
 
-  /* OPTION 3: IBM Plex Sans - technical but warm
-  --font-body: 'IBM Plex Sans', system-ui, sans-serif;
-  --font-heading: 'IBM Plex Sans', system-ui, sans-serif;
-  --font-code: 'IBM Plex Mono', Consolas, monospace;
-  --font-ui: 'IBM Plex Sans', system-ui, sans-serif;
-  */
+  /* ============================================================
+     FONT MAPPINGS
+     Preset fonts → Semantic fonts
+     ============================================================ */
 
-  /* OPTION 4: Outfit - modern geometric, soft edges
-  --font-body: 'Outfit', system-ui, sans-serif;
-  --font-heading: 'Outfit', system-ui, sans-serif;
-  --font-code: 'JetBrains Mono', Consolas, monospace;
-  --font-ui: 'Outfit', system-ui, sans-serif;
-  */
+  --font-heading: var(--preset-font-heading, system-ui, sans-serif);
+  --font-body: var(--preset-font-body, system-ui, sans-serif);
+  --font-ui: var(--preset-font-ui, system-ui, sans-serif);
+  --font-code: var(--preset-font-mono, monospace);
+  --font-mono: var(--preset-font-mono, monospace);
 
-  /* OPTION 5: Crimson Pro (serif) - elegant, academic
-  --font-body: 'Crimson Pro', Georgia, serif;
-  --font-heading: 'Crimson Pro', Georgia, serif;
-  --font-code: 'JetBrains Mono', Consolas, monospace;
-  --font-ui: 'Inter', system-ui, sans-serif;
-  */
+  /* Font weights */
+  --font-weight-heading: var(--preset-weight-heading, 600);
+  --font-weight-body: var(--preset-weight-body, 400);
+  --font-weight-ui: var(--preset-weight-ui, 400);
 
-  /* OPTION 1: Inter (DEFAULT) - warm, friendly, very readable */
-  --font-body: 'Inter', system-ui, sans-serif;
-  --font-heading: 'Inter', system-ui, sans-serif;
-  --font-code: 'JetBrains Mono', Consolas, monospace;
-  --font-ui: 'Inter', system-ui, sans-serif;
+  /* Letter spacing */
+  --letter-spacing-heading: var(--preset-tracking-heading, -0.02em);
+  --letter-spacing-body: var(--preset-tracking-body, 0);
+  --letter-spacing-ui: var(--preset-tracking-ui, 0);
 
-  /* OPTION 6: Geist - sharp/modern (Vercel)
-  --font-body: 'Geist', system-ui, sans-serif;
-  --font-heading: 'Geist', system-ui, sans-serif;
-  --font-code: 'Geist Mono', Consolas, monospace;
-  --font-ui: 'Geist', system-ui, sans-serif;
-  */
+  /* ============================================================
+     SPACING MAPPINGS
+     Preset spacing → Semantic spacing
+     ============================================================ */
+
+  --space-section: var(--preset-space-section, 4rem);
+  --space-element: var(--preset-space-element, 1rem);
+  --space-component: var(--preset-space-component, 1rem);
+
+  /* ============================================================
+     COMPONENT MAPPINGS
+     Preset component styles → Component variables
+     ============================================================ */
+
+  /* Cards */
+  --card-border: var(--preset-card-border, 1px solid var(--color-border-light));
+  --card-radius: var(--preset-card-radius, 8px);
+  --card-shadow: var(--preset-card-shadow, none);
+  --card-hover-bg: var(--preset-card-hover-bg, var(--color-bg-alt));
+  --card-hover-shadow: var(--preset-card-hover-shadow, none);
+  --card-hover-transform: var(--preset-card-hover-transform, none);
+
+  /* Buttons */
+  --button-radius: var(--preset-button-radius, 6px);
+  --button-weight: var(--preset-button-weight, 500);
+
+  /* Links */
+  --link-decoration: var(--preset-link-decoration, underline);
+  --link-decoration-thickness: var(--preset-link-decoration-thickness, 1px);
+  --link-underline-offset: var(--preset-link-underline-offset, 2px);
+
+  /* Badges */
+  --badge-radius: var(--preset-badge-radius, 9999px);
+  --badge-padding: var(--preset-badge-padding, 0.25rem 0.75rem);
+
+  /* ============================================================
+     NAVIGATION MAPPINGS
+     ============================================================ */
+
+  --nav-weight: var(--preset-nav-weight, 400);
+  --nav-case: var(--preset-nav-case, none);
+  --nav-tracking: var(--preset-nav-tracking, 0);
+  --nav-active-color: var(--preset-nav-active-color, var(--color-accent));
+
+  /* ============================================================
+     MOTION MAPPINGS
+     ============================================================ */
+
+  --transition-hover: var(--preset-transition-hover, 200ms ease-out);
+  --stagger-delay: var(--preset-stagger-delay, 80ms);
 }

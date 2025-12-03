@@ -1,21 +1,33 @@
 ---
 /**
  * Theme Styles Component
- * Generates CSS custom properties from config
- * Include this in your <head> to apply theme customization
  *
- * Performance optimizations:
- * - Preconnect to Google Fonts origins
+ * Loads fonts and applies theme customization based on the selected preset.
+ * Include this in your <head> to apply theme styling.
+ *
+ * Features:
+ * - Loads preset-specific fonts from Google Fonts
+ * - Applies config overrides on top of preset defaults
+ * - Preconnect for faster font loading
  * - Uses display=swap to avoid FOIT
- * - Only loads weights that are used (400, 500, 600)
  */
 import { config } from '../config';
+import { getPreset, buildGoogleFontsUrl } from '../lib/presets';
 
-const { theme } = config;
+// Get the selected preset
+const presetId = config.theme.preset;
+const preset = getPreset(presetId);
 
-// Generate Google Fonts URL from config - only load necessary weights
-const fonts = Object.values(theme.fonts).filter((v, i, a) => a.indexOf(v) === i);
-const fontsUrl = `https://fonts.googleapis.com/css2?${fonts.map(f => `family=${f.replace(/ /g, '+')}:wght@400;500;600`).join('&')}&display=swap`;
+// Build Google Fonts URL for preset fonts
+const fontsUrl = buildGoogleFontsUrl(preset);
+
+// Get overrides from config
+const overrides = config.theme.overrides;
+const contentWidth = overrides.layout?.contentWidth || '750px';
+
+// Check if accent colors are overridden
+const hasAccentOverride = overrides.colors?.accent;
+const hasAccentDarkOverride = overrides.colors?.accentDark;
 ---
 
 <!-- DNS prefetch and preconnect for faster font loading -->
@@ -23,43 +35,46 @@ const fontsUrl = `https://fonts.googleapis.com/css2?${fonts.map(f => `family=${f
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-<!-- Load fonts with swap strategy -->
-<link href={fontsUrl} rel="stylesheet" media="print" onload="this.media='all'" />
-<noscript><link href={fontsUrl} rel="stylesheet" /></noscript>
+<!-- Load preset fonts -->
+{fontsUrl && (
+  <>
+    <link href={fontsUrl} rel="stylesheet" media="print" onload="this.media='all'" />
+    <noscript><link href={fontsUrl} rel="stylesheet" /></noscript>
+  </>
+)}
 
 <style define:vars={{
-  accentLight: theme.accentLight,
-  accentDark: theme.accentDark,
-  fontBody: theme.fonts.body,
-  fontHeading: theme.fonts.heading,
-  fontUi: theme.fonts.ui,
-  fontMono: theme.fonts.mono,
-  contentWidth: theme.contentWidth,
+  contentWidth: contentWidth,
+  accentOverride: hasAccentOverride ? overrides.colors.accent : '',
+  accentDarkOverride: hasAccentDarkOverride ? overrides.colors.accentDark : '',
 }}>
   :root {
-    /* Accent colors from config */
-    --color-accent: var(--accentLight);
-    --color-accent-hover: color-mix(in srgb, var(--accentLight) 85%, black);
-
-    /* Fonts from config */
-    --font-body: var(--fontBody), system-ui, sans-serif;
-    --font-heading: var(--fontHeading), system-ui, sans-serif;
-    --font-ui: var(--fontUi), system-ui, sans-serif;
-    --font-mono: var(--fontMono), 'SF Mono', monospace;
-
     /* Content width from config */
     --content-max-width: var(--contentWidth);
   }
 
-  [data-theme="dark"] {
-    --color-accent: var(--accentDark);
-    --color-accent-hover: color-mix(in srgb, var(--accentDark) 85%, white);
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --color-accent: var(--accentDark);
-      --color-accent-hover: color-mix(in srgb, var(--accentDark) 85%, white);
-    }
+  /* Apply accent color overrides if specified */
+  :root {
+    --color-accent-override: var(--accentOverride);
+    --color-accent-dark-override: var(--accentDarkOverride);
   }
 </style>
+
+{/* Apply accent overrides via inline style if specified */}
+{hasAccentOverride && (
+  <style>
+    :root {
+      --preset-accent: {overrides.colors.accent} !important;
+      --preset-accent-hover: color-mix(in srgb, {overrides.colors.accent} 85%, black) !important;
+    }
+  </style>
+)}
+
+{hasAccentDarkOverride && (
+  <style>
+    [data-theme="dark"] {
+      --preset-accent: {overrides.colors.accentDark} !important;
+      --preset-accent-hover: color-mix(in srgb, {overrides.colors.accentDark} 85%, white) !important;
+    }
+  </style>
+)}

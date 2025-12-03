@@ -1,6 +1,13 @@
 /* ==========================================================================
-   Preset Styles
-   Minimal Swiss design theme
+   Theme Presets
+   Four distinctive visual identities for the academic template
    ========================================================================== */
 
-@import './minimal.css';
+/* Shared utilities and animations */
+@import './_shared.css';
+
+/* Theme presets */
+@import './monograph.css';   /* Default - Scholarly elegance */
+@import './brutalist.css';   /* Bold & raw */
+@import './softwave.css';    /* Modern & approachable */
+@import './terminal.css';    /* Hacker aesthetic */

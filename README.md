@@ -1,11 +1,35 @@
 # Academic Website Template
 
-A minimal, modern academic website template built with [Astro](https://astro.build). Features clean typography, scroll animations, BibTeX support, and a centralized configuration system.
+A modern, customizable academic website template built with [Astro](https://astro.build). Features **4 distinctive theme presets**, flexible navigation, BibTeX support, and a centralized configuration system.
+
+## Theme Presets
+
+Choose from four distinctive visual identities:
+
+### Monograph (Default)
+Scholarly elegance with warm cream tones and classic serif typography.
+- **Fonts**: Crimson Pro, Space Grotesk
+- **Colors**: Warm cream background, crimson accents
+
+### Brutalist
+Bold, raw design with extreme typographic contrast.
+- **Fonts**: Bricolage Grotesque, IBM Plex Sans
+- **Colors**: Black/white with orange accents
+
+### Softwave
+Modern and approachable with soft shadows and rounded elements.
+- **Fonts**: Plus Jakarta Sans, Fira Code
+- **Colors**: Cool white, violet-blue accents
+
+### Terminal
+Hacker aesthetic with IDE-inspired colors.
+- **Fonts**: Space Grotesk, JetBrains Mono
+- **Colors**: Deep space dark, cyan glow
 
 ## Features
 
-- **Single config file** - All settings in `src/config.ts`
-- **Clean minimal design** - Swiss-style typography and layout
+- **4 theme presets** - Distinctive designs, not generic AI aesthetics
+- **4 navigation modes** - Inline, minimal, floating-icon, sidebar
 - **BibTeX support** - Manage publications in standard `.bib` format
 - **Dark mode** - Automatic theme switching with manual toggle
 - **GSAP animations** - Smooth scroll-triggered animations
@@ -38,7 +62,7 @@ export const config = {
   // Your name
   name: {
     first: "Your",
-    middle: "", // optional
+    middle: "",
     last: "Name",
   },
 
@@ -49,9 +73,9 @@ export const config = {
   email: "you@example.com",
   social: {
     github: "username",
-    scholar: "SCHOLAR_ID", // Google Scholar ID
+    scholar: "SCHOLAR_ID",
     linkedin: "username",
-    twitter: "", // leave empty to hide
+    twitter: "",
     orcid: "",
   },
 
@@ -59,208 +83,114 @@ export const config = {
   sections: {
     publications: true,
     opensource: true,
-    misc: true,
     cv: true,
     projects: true,
     teaching: true,
     blog: true,
+    misc: true,
   },
 
-  // Theme customization
+  // Navigation
+  navigation: {
+    mode: "inline", // "inline" | "minimal" | "floating-icon" | "sidebar"
+    items: [
+      { id: "about", label: "About", href: "/" },
+      // ... add more pages
+    ],
+  },
+
+  // Theme System
   theme: {
-    accentLight: "#2563eb", // accent color in light mode
-    accentDark: "#60a5fa",  // accent color in dark mode
-    fonts: {
-      body: "Source Sans 3",
-      heading: "Source Sans 3",
-      ui: "Inter",
-      mono: "JetBrains Mono",
+    preset: "monograph", // "monograph" | "brutalist" | "softwave" | "terminal"
+    colorMode: {
+      default: "system", // "light" | "dark" | "system"
+      enableToggle: true,
     },
-    contentWidth: "750px",
+    overrides: {
+      // Optional: override preset values
+      colors: {
+        accent: undefined, // e.g., "#8B2332"
+        accentDark: undefined,
+      },
+      layout: {
+        contentWidth: "750px",
+      },
+    },
   },
 
-  // Navigation style: "inline" | "minimal" | "floating-icon"
-  navigationMode: "inline",
-
-  // Feature toggles
-  features: {
-    selectedPublications: true, // show on homepage
-    education: true,            // show on homepage
-    darkMode: true,
-    animations: true,
+  // Motion & Animations
+  motion: {
+    enabled: true,
+    reduceMotion: "respect-system",
+    pageTransitions: true,
+    staggerAnimations: true,
   },
 };
 ```
+
+## Navigation Modes
+
+### Inline
+Traditional horizontal navigation at the top of the page.
+
+### Minimal
+Compact fixed top bar that hides on scroll down, shows on scroll up.
+
+### Floating-icon
+Fixed circular button in the bottom-right corner that opens a popup menu.
+
+### Sidebar
+Vertical navigation on the left side with content on the right.
 
 ## Content Files
 
 ### Publications (BibTeX)
 
-Edit `src/content/papers.bib` to add publications:
+Edit `src/content/papers.bib`:
 
 ```bibtex
 @article{yourname2024paper,
   title = {Your Paper Title},
-  author = {Your Name and Coauthor Name},
+  author = {Your Name and Coauthor},
   journal = {Journal Name},
   year = {2024},
-  % Custom fields for website:
   pdf = {https://link-to-pdf.pdf},
   html = {https://paper-webpage.com},
   preview = {/previews/paper.gif},
-  selected = {true},  % show on homepage
-  abbr = {JNL}        % abbreviation shown in list
+  selected = {true},
+  abbr = {JNL}
 }
 ```
 
-### Education
+### Other Content
 
-Edit `src/content/education.json`:
-
-```json
-{
-  "education": [
-    {
-      "degree": "PhD",
-      "field": "Computer Science",
-      "institution": "University Name",
-      "institutionUrl": "https://university.edu",
-      "startYear": 2020,
-      "endYear": 2024,
-      "supervisors": [
-        { "name": "Prof. Name", "url": "https://professor.com" }
-      ],
-      "thesis": {
-        "title": "Thesis Title",
-        "url": "/pdf/thesis.pdf"
-      }
-    }
-  ]
-}
-```
-
-### CV
-
-Edit `src/content/cv.json` for experience, skills, and awards:
-
-```json
-{
-  "experience": [
-    {
-      "title": "Position Title",
-      "organization": "Company/University",
-      "location": "City, Country",
-      "startDate": "2020",
-      "endDate": "Present",
-      "description": "Role description",
-      "highlights": ["Achievement 1", "Achievement 2"]
-    }
-  ],
-  "skills": {
-    "Programming": ["Python", "PyTorch"],
-    "Languages": ["English (Native)"]
-  },
-  "awards": [
-    { "title": "Award Name", "issuer": "Organization", "year": "2024" }
-  ]
-}
-```
-
-### Projects
-
-Edit `src/content/projects.json`:
-
-```json
-{
-  "projects": [
-    {
-      "title": "Project Name",
-      "description": "Brief description",
-      "tags": ["Python", "ML"],
-      "url": "https://github.com/you/project",
-      "featured": true
-    }
-  ]
-}
-```
-
-### Teaching
-
-Edit `src/content/teaching.json`:
-
-```json
-{
-  "courses": [
-    {
-      "title": "Course Name",
-      "role": "Instructor",
-      "institution": "University",
-      "semester": "Fall 2024",
-      "description": "Course description",
-      "materials": "https://course-website.edu"
-    }
-  ]
-}
-```
-
-### Open Source
-
-Edit `src/content/repositories.json`:
-
-```json
-{
-  "github_user": "yourusername",
-  "repositories": [
-    {
-      "name": "repo-name",
-      "owner": "yourusername",
-      "description": "Description",
-      "url": "https://github.com/yourusername/repo-name",
-      "language": "Python",
-      "stars": 100,
-      "forks": 20,
-      "featured": true
-    }
-  ]
-}
-```
-
-### Blog Posts
-
-Add Markdown files to `src/content/blog/`:
-
-```markdown
----
-title: "Your Post Title"
-description: "Brief description"
-date: 2024-01-15
-tags: ["machine-learning", "research"]
-draft: false
----
-
-Your content here...
-```
+- `src/content/education.json` - Academic background
+- `src/content/cv.json` - Experience, skills, awards
+- `src/content/projects.json` - Portfolio projects
+- `src/content/teaching.json` - Courses
+- `src/content/repositories.json` - Open source
+- `src/content/blog/*.md` - Blog posts in Markdown
 
 ## Project Structure
 
 ```
 src/
 ├── config.ts              # All site configuration
-├── content/
-│   ├── papers.bib         # Publications (BibTeX)
-│   ├── education.json     # Academic background
-│   ├── cv.json            # CV data
-│   ├── projects.json      # Portfolio projects
-│   ├── teaching.json      # Courses
-│   ├── repositories.json  # Open source
-│   ├── misc.json          # Tools/resources
-│   └── blog/              # Blog posts (Markdown)
-├── lib/                   # Utility functions
+├── lib/
+│   └── presets.ts         # Theme preset definitions
+├── content/               # Content files (JSON, BibTeX, Markdown)
 ├── components/            # UI components
 ├── layouts/
-│   └── BaseLayout.astro   # Main page wrapper
+│   └── BaseLayout.astro   # Main layout with navigation
 ├── pages/                 # Site pages
-└── styles/                # CSS styles
+└── styles/
+    ├── global.css         # Main stylesheet
+    ├── variables.css      # CSS variable bridge
+    └── presets/           # Theme preset CSS files
+        ├── monograph.css
+        ├── brutalist.css
+        ├── softwave.css
+        └── terminal.css
 ```
 
 ## Commands
@@ -274,37 +204,35 @@ src/
 
 ## Customization
 
-### Colors
-
-Change accent colors in `src/config.ts`:
+### Changing Theme Preset
 
 ```typescript
 theme: {
-  accentLight: "#0066cc", // blue accent
-  accentDark: "#4da6ff",
+  preset: "brutalist", // Try different presets
 }
 ```
 
-### Fonts
-
-Change fonts (loaded from Google Fonts):
+### Override Accent Colors
 
 ```typescript
-fonts: {
-  body: "Lora",
-  heading: "Playfair Display",
-  ui: "Inter",
-  mono: "Fira Code",
+theme: {
+  preset: "monograph",
+  overrides: {
+    colors: {
+      accent: "#0066cc",     // Custom light mode accent
+      accentDark: "#4da6ff", // Custom dark mode accent
+    },
+  },
 }
 ```
 
-### Navigation Style
+### Change Navigation Style
 
-Choose from three navigation modes:
-
-- `"inline"` - Traditional horizontal nav at top
-- `"minimal"` - Compact top bar
-- `"floating-icon"` - Floating hamburger menu
+```typescript
+navigation: {
+  mode: "sidebar", // Try sidebar navigation
+}
+```
 
 ## Deployment
 

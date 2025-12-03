@@ -3,6 +3,8 @@
  * Edit this file to customize your website
  */
 
+import type { ThemePreset } from './lib/presets';
+
 export const config = {
   // ==========================================================================
   // PERSONAL INFORMATION
@@ -58,52 +60,100 @@ export const config = {
   // NAVIGATION
   // ==========================================================================
 
-  // Pages to show in nav bar (order matters)
-  // Items are automatically filtered based on sections config above
-  navigation: [
-    { id: "about", label: "About", href: "/" },
-    { id: "publications", label: "Publications", href: "/publications" },
-    { id: "open-source", label: "Open Source", href: "/open-source" },
-    { id: "cv", label: "CV", href: "/cv" },
-    { id: "projects", label: "Projects", href: "/projects" },
-    { id: "teaching", label: "Teaching", href: "/teaching" },
-    { id: "blog", label: "Blog", href: "/blog" },
-    { id: "misc", label: "Misc", href: "/misc" },
-  ],
+  navigation: {
+    // Navigation display mode
+    // "inline" - Horizontal nav at top
+    // "minimal" - Compact fixed top bar, hides on scroll
+    // "floating-icon" - Fixed circular button bottom-right
+    // "sidebar" - Vertical nav on left side
+    mode: "inline" as const,
 
-  // Navigation style: "inline" | "floating-icon" | "minimal"
-  navigationMode: "inline" as const,
+    // Navigation items (order matters)
+    // Items are automatically filtered based on sections config
+    items: [
+      { id: "about", label: "About", href: "/" },
+      { id: "publications", label: "Publications", href: "/publications" },
+      { id: "open-source", label: "Open Source", href: "/open-source" },
+      { id: "cv", label: "CV", href: "/cv" },
+      { id: "projects", label: "Projects", href: "/projects" },
+      { id: "teaching", label: "Teaching", href: "/teaching" },
+      { id: "blog", label: "Blog", href: "/blog" },
+      { id: "misc", label: "Misc", href: "/misc" },
+    ],
+
+    // Optional style overrides (uses preset defaults if not set)
+    style: {
+      case: undefined as "none" | "lowercase" | "uppercase" | undefined,
+      weight: undefined as string | undefined,
+    },
+  },
 
   // ==========================================================================
-  // THEME CUSTOMIZATION
+  // THEME SYSTEM
   // ==========================================================================
 
   theme: {
-    // Accent color (used for links, highlights)
-    accentLight: "#2563eb", // Blue
-    accentDark: "#60a5fa",
+    // Theme preset selection
+    // "monograph" - Scholarly elegance, warm cream tones, Crimson Pro
+    // "brutalist" - Bold & raw, black/white/orange, extreme contrast
+    // "softwave" - Modern & calm, soft violet-blue, rounded elements
+    // "terminal" - Hacker aesthetic, IDE colors, monospace
+    preset: "monograph" as ThemePreset,
 
-    // Font families (loaded from Google Fonts)
-    fonts: {
-      body: "Source Sans 3",
-      heading: "Source Sans 3",
-      ui: "Inter",
-      mono: "JetBrains Mono",
+    // Color mode settings
+    colorMode: {
+      default: "system" as const, // "light" | "dark" | "system"
+      enableToggle: true,
     },
 
-    // Content width (max-width of main content)
-    contentWidth: "750px",
+    // Override preset values (optional - merged with preset defaults)
+    overrides: {
+      // Font overrides
+      fonts: {
+        heading: undefined as string | undefined,
+        body: undefined as string | undefined,
+        ui: undefined as string | undefined,
+        mono: undefined as string | undefined,
+      },
+
+      // Color overrides
+      colors: {
+        accent: undefined as string | undefined,
+        accentDark: undefined as string | undefined,
+      },
+
+      // Layout overrides
+      layout: {
+        contentWidth: "750px",
+      },
+    },
   },
 
-  // Feature toggles
+  // ==========================================================================
+  // MOTION & ANIMATIONS
+  // ==========================================================================
+
+  motion: {
+    enabled: true,
+    reduceMotion: "respect-system" as const, // "respect-system" | "reduce" | "none"
+    pageTransitions: true,
+    staggerAnimations: true,
+  },
+
+  // ==========================================================================
+  // FEATURES
+  // ==========================================================================
+
   features: {
-    selectedPublications: true,
-    education: true,
-    darkMode: true,
-    animations: true,
+    selectedPublications: true, // Show selected papers on homepage
+    education: true, // Show education section on homepage
+    darkMode: true, // Enable dark mode toggle
   },
 
-  // Footer links (in addition to social)
+  // ==========================================================================
+  // FOOTER
+  // ==========================================================================
+
   footer: {
     copyright: true,
     links: [
@@ -122,6 +172,8 @@ export const config = {
   },
 };
 
-// Type exports for use in components
+// Type exports
 export type SiteConfig = typeof config;
 export type SectionKey = keyof typeof config.sections;
+export type NavigationMode = typeof config.navigation.mode;
+export type ColorMode = typeof config.theme.colorMode.default;
