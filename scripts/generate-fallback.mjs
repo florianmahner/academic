@@ -93,17 +93,18 @@ function createSquaresGrid(ctx, colors, hash) {
 }
 
 function createDiagonalStripes(ctx, colors, hash) {
-  const stripeWidth = 80 + hash % 80; // Much wider stripes
-  const gap = 12;
+  const stripeWidth = 60 + hash % 60; // Stripe width
+  const gap = 30 + hash % 30; // Spacing between stripes
+  const totalWidth = stripeWidth + gap;
   const angle = (hash % 4) * Math.PI / 4;
 
   ctx.save();
   ctx.translate(WIDTH / 2, HEIGHT / 2);
   ctx.rotate(angle);
 
-  for (let i = -8; i < 15; i++) {
+  for (let i = -10; i < 20; i++) {
     ctx.fillStyle = colors[Math.abs(i) % colors.length];
-    ctx.fillRect(i * stripeWidth - WIDTH, -HEIGHT, stripeWidth - gap, HEIGHT * 2);
+    ctx.fillRect(i * totalWidth - WIDTH, -HEIGHT, stripeWidth, HEIGHT * 2);
   }
 
   ctx.restore();
@@ -238,14 +239,14 @@ function createCheckerboard(ctx, colors, hash) {
 }
 
 function createHexagonPattern(ctx, colors, hash) {
-  const size = 80 + hash % 60; // Much larger hexagons
+  const size = 50 + hash % 30; // Back to original good size
   const h = size * Math.sqrt(3) / 2;
-  const gap = 10;
+  const gap = 6;
 
-  const cols = Math.floor(WIDTH / (size * 1.5));
-  const rows = Math.floor(HEIGHT / h);
-  const offsetX = (WIDTH - (cols * size * 1.5)) / 2 + size;
-  const offsetY = (HEIGHT - (rows * h)) / 2 + size;
+  const cols = Math.floor(WIDTH / (size * 1.5)) + 1;
+  const rows = Math.floor(HEIGHT / h) + 1;
+  const offsetX = (WIDTH - (cols - 1) * size * 1.5) / 2;
+  const offsetY = (HEIGHT - (rows - 1) * h) / 2;
 
   for (let row = 0; row < rows; row++) {
     for (let col = 0; col < cols; col++) {
