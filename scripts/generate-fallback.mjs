@@ -52,15 +52,16 @@ function getPalette(hash) {
 // Pattern generators - each creates a STATIC frame (single image GIF)
 
 function createCirclesPattern(ctx, colors, hash) {
-  const n = 5 + (hash % 4);
+  const n = 3 + (hash % 3); // Less dense - 3-5 circles instead of 5-8
   const seed = hash;
 
   for (let i = 0; i < n; i++) {
-    const x = ((seed + i * 123) % WIDTH);
-    const y = ((seed + i * 456) % HEIGHT);
-    const radius = 40 + (hash >> i) % 60;
+    const radius = 60 + (hash >> i) % 80;
+    // Ensure circles stay within bounds
+    const x = radius + ((seed + i * 123) % (WIDTH - radius * 2));
+    const y = radius + ((seed + i * 456) % (HEIGHT - radius * 2));
 
-    ctx.fillStyle = colors[i % colors.length] + '80';
+    ctx.fillStyle = colors[i % colors.length] + 'A0'; // More opaque
     ctx.beginPath();
     ctx.arc(x, y, radius, 0, Math.PI * 2);
     ctx.fill();
@@ -68,15 +69,23 @@ function createCirclesPattern(ctx, colors, hash) {
 }
 
 function createSquaresGrid(ctx, colors, hash) {
-  const size = 60 + hash % 40;
-  const cols = Math.floor(WIDTH / size) + 1;
-  const rows = Math.floor(HEIGHT / size) + 1;
+  const size = 80 + hash % 50; // Larger squares - less dense
+  const gap = 10;
+  const cols = Math.floor(WIDTH / size);
+  const rows = Math.floor(HEIGHT / size);
+
+  // Center the grid
+  const offsetX = (WIDTH - cols * size) / 2;
+  const offsetY = (HEIGHT - rows * size) / 2;
 
   for (let i = 0; i < rows; i++) {
     for (let j = 0; j < cols; j++) {
       if ((i + j + hash) % 3 === 0) {
+        const x = offsetX + j * size;
+        const y = offsetY + i * size;
+
         ctx.fillStyle = colors[(i + j) % colors.length];
-        ctx.fillRect(j * size, i * size, size - 4, size - 4);
+        ctx.fillRect(x + gap/2, y + gap/2, size - gap, size - gap);
       }
     }
   }
@@ -101,8 +110,8 @@ function createDiagonalStripes(ctx, colors, hash) {
 function createConcentricCircles(ctx, colors, hash) {
   const cx = WIDTH / 2;
   const cy = HEIGHT / 2;
-  const maxRadius = Math.sqrt(WIDTH * WIDTH + HEIGHT * HEIGHT) / 2;
-  const step = 30 + hash % 40;
+  const maxRadius = Math.min(WIDTH, HEIGHT) / 2 - 20; // Keep within bounds
+  const step = 45 + hash % 35; // Larger steps - less dense
 
   for (let r = maxRadius; r > 0; r -= step) {
     const idx = Math.floor(r / step) % colors.length;
@@ -114,12 +123,21 @@ function createConcentricCircles(ctx, colors, hash) {
 }
 
 function createDotGrid(ctx, colors, hash) {
-  const spacing = 40 + hash % 30;
-  const dotSize = 12 + hash % 12;
+  const spacing = 60 + hash % 40; // More spacing - less dense
+  const dotSize = 14 + hash % 14;
 
-  for (let y = spacing / 2; y < HEIGHT; y += spacing) {
-    for (let x = spacing / 2; x < WIDTH; x += spacing) {
-      const colorIdx = Math.floor((x + y + hash) / spacing) % colors.length;
+  // Ensure grid is centered and doesn't clip
+  const cols = Math.floor(WIDTH / spacing);
+  const rows = Math.floor(HEIGHT / spacing);
+  const offsetX = (WIDTH - (cols - 1) * spacing) / 2;
+  const offsetY = (HEIGHT - (rows - 1) * spacing) / 2;
+
+  for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < cols; j++) {
+      const x = offsetX + j * spacing;
+      const y = offsetY + i * spacing;
+
+      const colorIdx = (i + j + hash) % colors.length;
       ctx.fillStyle = colors[colorIdx];
       ctx.beginPath();
       ctx.arc(x, y, dotSize, 0, Math.PI * 2);
@@ -150,18 +168,26 @@ function createWavePattern(ctx, colors, hash) {
 }
 
 function createTrianglesMosaic(ctx, colors, hash) {
-  const size = 80 + hash % 60;
+  const size = 100 + hash % 60; // Larger triangles
+  const gap = 8;
 
-  for (let y = 0; y < HEIGHT + size; y += size) {
-    for (let x = 0; x < WIDTH + size; x += size) {
-      const colorIdx = (Math.floor(x / size) + Math.floor(y / size) + hash) % colors.length;
+  const cols = Math.floor(WIDTH / size);
+  const rows = Math.floor(HEIGHT / size);
+  const offsetX = (WIDTH - cols * size) / 2;
+  const offsetY = (HEIGHT - rows * size) / 2;
+
+  for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < cols; j++) {
+      const x = offsetX + j * size;
+      const y = offsetY + i * size;
+      const colorIdx = (i + j + hash) % colors.length;
       ctx.fillStyle = colors[colorIdx];
 
-      // Draw triangle
+      // Draw triangle within bounds
       ctx.beginPath();
-      ctx.moveTo(x, y);
-      ctx.lineTo(x + size, y);
-      ctx.lineTo(x + size / 2, y + size);
+      ctx.moveTo(x + gap, y + gap);
+      ctx.lineTo(x + size - gap, y + gap);
+      ctx.lineTo(x + size / 2, y + size - gap);
       ctx.closePath();
       ctx.fill();
     }
@@ -187,12 +213,20 @@ function createRadialBurst(ctx, colors, hash) {
 }
 
 function createCheckerboard(ctx, colors, hash) {
-  const size = 50 + hash % 50;
+  const size = 80 + hash % 60; // Larger squares
 
-  for (let y = 0; y < HEIGHT; y += size) {
-    for (let x = 0; x < WIDTH; x += size) {
-      if (((x / size) + (y / size) + hash) % 2 === 0) {
-        const colorIdx = (Math.floor(x / size) + Math.floor(y / size)) % colors.length;
+  const cols = Math.floor(WIDTH / size);
+  const rows = Math.floor(HEIGHT / size);
+  const offsetX = (WIDTH - cols * size) / 2;
+  const offsetY = (HEIGHT - rows * size) / 2;
+
+  for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < cols; j++) {
+      if ((i + j + hash) % 2 === 0) {
+        const x = offsetX + j * size;
+        const y = offsetY + i * size;
+        const colorIdx = (i + j) % colors.length;
+
         ctx.fillStyle = colors[colorIdx];
         ctx.fillRect(x, y, size, size);
       }
@@ -201,13 +235,22 @@ function createCheckerboard(ctx, colors, hash) {
 }
 
 function createHexagonPattern(ctx, colors, hash) {
-  const size = 50 + hash % 40;
+  const size = 60 + hash % 40; // Larger hexagons
   const h = size * Math.sqrt(3) / 2;
+  const gap = 4;
 
-  for (let row = 0; row < HEIGHT / h + 2; row++) {
-    for (let col = 0; col < WIDTH / size + 2; col++) {
-      const x = col * size * 1.5;
-      const y = row * h + (col % 2) * h / 2;
+  const cols = Math.floor(WIDTH / (size * 1.5)) + 1;
+  const rows = Math.floor(HEIGHT / h) + 1;
+  const offsetX = (WIDTH - cols * size * 1.5) / 2;
+  const offsetY = (HEIGHT - rows * h) / 2;
+
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      const x = offsetX + col * size * 1.5;
+      const y = offsetY + row * h + (col % 2) * h / 2;
+
+      // Skip if out of bounds
+      if (x + size > WIDTH + 20 || y + size > HEIGHT + 20) continue;
 
       const colorIdx = (row + col + hash) % colors.length;
       ctx.fillStyle = colors[colorIdx];
@@ -216,8 +259,8 @@ function createHexagonPattern(ctx, colors, hash) {
       ctx.beginPath();
       for (let i = 0; i < 6; i++) {
         const angle = (Math.PI / 3) * i;
-        const hx = x + size * Math.cos(angle);
-        const hy = y + size * Math.sin(angle);
+        const hx = x + (size - gap) * Math.cos(angle);
+        const hy = y + (size - gap) * Math.sin(angle);
         if (i === 0) ctx.moveTo(hx, hy);
         else ctx.lineTo(hx, hy);
       }
