@@ -86,9 +86,36 @@ const navModes = [
       </div>
     </div>
 
+    <!-- Theme Section -->
+    <div class="section">
+      <div class="section-title">Theme</div>
+      <div class="theme-toggle-group">
+        <button class="theme-option" data-theme="light">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <span>Light</span>
+        </button>
+        <button class="theme-option" data-theme="dark">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+          <span>Dark</span>
+        </button>
+      </div>
+    </div>
+
     <div class="dropdown-footer">
       <span class="footer-label">
-        <span id="current-nav">-</span> / <span id="current-typography">-</span>
+        <span id="current-nav">-</span> / <span id="current-typography">-</span> / <span id="current-theme">-</span>
       </span>
     </div>
   </div>
@@ -297,6 +324,51 @@ const navModes = [
     font-size: 10px;
     color: #71717a;
   }
+
+  .theme-toggle-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 0 8px 8px;
+  }
+
+  .theme-option {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    color: #18181b;
+    transition: all 0.15s;
+  }
+
+  .theme-option:hover {
+    background: #f4f4f5;
+  }
+
+  [data-theme="dark"] .theme-option {
+    color: #fafafa;
+  }
+
+  [data-theme="dark"] .theme-option:hover {
+    background: #3f3f46;
+  }
+
+  .theme-option.active {
+    background: #f4f4f5;
+    border-color: #a1a1aa;
+  }
+
+  [data-theme="dark"] .theme-option.active {
+    background: #3f3f46;
+    border-color: #71717a;
+  }
 </style>
 
 <script>
@@ -308,8 +380,10 @@ const navModes = [
     const close = document.getElementById('settings-close');
     const navOptions = document.querySelectorAll('.nav-option');
     const typographyOptions = document.querySelectorAll('.typography-option');
+    const themeOptions = document.querySelectorAll('.theme-option');
     const currentNav = document.getElementById('current-nav');
     const currentTypography = document.getElementById('current-typography');
+    const currentTheme = document.getElementById('current-theme');
     const html = document.documentElement;
     const body = document.body;
 
@@ -371,8 +445,31 @@ const navModes = [
       }
     };
 
+    // Apply theme (light/dark)
+    const applyTheme = (theme: string) => {
+      html.setAttribute('data-theme', theme);
+      localStorage.setItem('theme', theme);
+
+      themeOptions.forEach(opt => {
+        const optTheme = (opt as HTMLElement).dataset.theme;
+        opt.classList.toggle('active', optTheme === theme);
+      });
+
+      if (currentTheme) {
+        currentTheme.textContent = theme === 'dark' ? 'Dark' : 'Light';
+      }
+    };
+
+    // Get stored theme
+    const getStoredTheme = () => {
+      const stored = localStorage.getItem('theme');
+      if (stored) return stored;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+
     // Initialize with stored values
     applyNavMode(getStoredNavMode());
+    applyTheme(getStoredTheme());
 
     const storedPresetId = getStoredPreset();
     const storedPresetBtn = document.querySelector(`[data-preset-id="${storedPresetId}"]`);
@@ -406,6 +503,14 @@ const navModes = [
     // Typography selection
     typographyOptions.forEach(btn => {
       btn.addEventListener('click', () => applyPreset(btn));
+    });
+
+    // Theme selection
+    themeOptions.forEach(opt => {
+      opt.addEventListener('click', () => {
+        const theme = (opt as HTMLElement).dataset.theme;
+        if (theme) applyTheme(theme);
+      });
     });
 
     // Close on outside click

@@ -9,7 +9,6 @@
  * - inline: Simple header nav
  */
 
-import ThemeToggle from '../components/ThemeToggle.astro';
 import ThemeStyles from '../components/ThemeStyles.astro';
 import AnimationInit from '../components/AnimationInit.astro';
 import StructuredData from '../components/StructuredData.astro';
@@ -150,9 +149,6 @@ const footerLinks = [...config.footer.links, ...socialLinks];
               </li>
             ))}
           </ul>
-          <div class="floating-nav-actions">
-            <ThemeToggle />
-          </div>
         </div>
       </nav>
 
@@ -171,9 +167,6 @@ const footerLinks = [...config.footer.links, ...socialLinks];
               </li>
             ))}
           </ul>
-          <div class="sidebar-nav-footer">
-            <ThemeToggle />
-          </div>
         </nav>
       </aside>
 
@@ -192,7 +185,6 @@ const footerLinks = [...config.footer.links, ...socialLinks];
               </li>
             ))}
           </ul>
-          <ThemeToggle />
         </nav>
       </header>
 
@@ -225,9 +217,6 @@ const footerLinks = [...config.footer.links, ...socialLinks];
             </li>
           ))}
         </ul>
-        <div class="mobile-nav-footer">
-          <ThemeToggle />
-        </div>
       </div>
 
       <!-- Main Content -->
@@ -363,11 +352,6 @@ const footerLinks = [...config.footer.links, ...socialLinks];
         color: var(--color-text);
       }
 
-      .floating-nav-actions {
-        display: flex;
-        align-items: center;
-      }
-
       /* No content offset needed - nav is at bottom */
       [data-nav-mode="floating"] .main-content,
       [data-nav-mode="floating-icon"] .main-content {
@@ -440,12 +424,6 @@ const footerLinks = [...config.footer.links, ...socialLinks];
       .sidebar-nav-link.active {
         color: var(--color-text);
         font-weight: var(--font-weight-medium);
-      }
-
-      .sidebar-nav-footer {
-        margin-top: var(--space-6);
-        padding-top: var(--space-4);
-        border-top: 1px solid var(--color-border);
       }
 
       [data-nav-mode="sidebar"] .main-content,
@@ -602,12 +580,6 @@ const footerLinks = [...config.footer.links, ...socialLinks];
 
       .mobile-nav-link.active {
         color: var(--color-accent);
-      }
-
-      .mobile-nav-footer {
-        margin-top: auto;
-        padding-top: var(--space-4);
-        border-top: 1px solid var(--color-border);
       }
 
       /* Mobile breakpoint */

@@ -645,11 +645,17 @@ img:not([loading="lazy"]) {
   gap: var(--space-3);
   padding: var(--space-4);
   border-radius: var(--radius-md);
-  transition: background-color var(--transition-fast);
+  transition: all var(--transition-fast);
+  border: 1px solid transparent;
 }
 
 .paper-card:hover {
-  background-color: var(--color-bg-alt);
+  border-color: var(--color-border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="dark"] .paper-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* Card with preview image - use grid layout */
