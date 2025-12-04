@@ -351,12 +351,36 @@ Alternatively, use `src/content/publications.json`:
 
 **Note:** The template automatically prefers `.bib` if both files exist. Most academics find BibTeX easier since you can export directly from reference managers (Zotero, Mendeley, etc.).
 
+### GitHub Repositories
+
+The template **automatically fetches** repo stats from GitHub API!
+
+Edit `src/content/repositories.json` - just list owner/name pairs:
+
+```json
+{
+  "github_user": "your-username",
+  "repositories": [
+    { "owner": "pytorch", "name": "pytorch" },
+    { "owner": "your-username", "name": "your-project" }
+  ]
+}
+```
+
+**At build time, the template fetches:**
+- ⭐ Stars count
+- 🍴 Forks count
+- 📝 Description
+- 🏷️ Language
+- 🔖 Topics
+
+No manual updates needed - always fresh data!
+
 ### Other Content Files
 
 | File | Purpose |
 |------|---------|
 | `education.json` | Academic background, degrees, advisors |
-| `repositories.json` | GitHub projects showcase |
 | `misc.json` | Tools, configs, other resources |
 
 All files use simple JSON format - no coding required!

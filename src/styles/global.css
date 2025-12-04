@@ -640,8 +640,9 @@ img:not([loading="lazy"]) {
 
 /* Card container */
 .paper-card {
-  display: grid;
-  gap: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
   padding: var(--space-4);
   border-radius: var(--radius-md);
   transition: background-color var(--transition-fast);
@@ -651,13 +652,17 @@ img:not([loading="lazy"]) {
   background-color: var(--color-bg-alt);
 }
 
-/* Card with preview image */
+/* Card with preview image - use grid layout */
 .paper-card--with-preview {
+  display: grid;
   grid-template-columns: 140px 1fr;
+  gap: var(--space-5);
 }
 
 .paper-card--with-preview-lg {
+  display: grid;
   grid-template-columns: 180px 1fr;
+  gap: var(--space-5);
 }
 
 /* Preview image */
