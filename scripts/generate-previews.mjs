@@ -429,6 +429,51 @@ async function generateRotatingSquares(filename, colors, bgColor) {
   console.log(`✓ Generated ${filename}`);
 }
 
+/**
+ * Generate a fallback GIF for a paper based on its ID
+ * Creates unique animation deterministically from paper ID
+ */
+export async function generateFallbackPreview(paperId, mode = 'light') {
+  // Hash paper ID to get consistent random values
+  let hash = 0;
+  for (let i = 0; i < paperId.length; i++) {
+    hash = ((hash << 5) - hash) + paperId.charCodeAt(i);
+    hash = hash & hash;
+  }
+
+  // Select animation type based on hash
+  const animTypes = [
+    generateBouncingBalls,
+    generatePulsingCircles,
+    generateSpinningArcs,
+    generateWaveDots,
+    generateRotatingSquares,
+    generateWaveBars
+  ];
+  const animType = animTypes[Math.abs(hash) % animTypes.length];
+
+  // Select color palette based on hash
+  const palettes = [
+    ['#667eea', '#764ba2', '#f093fb'],
+    ['#ff6b6b', '#fda085', '#f6d365'],
+    ['#a8edea', '#fed6e3', '#8ec5fc'],
+    ['#fa709a', '#fee140', '#fbc2eb'],
+    ['#30cfd0', '#330867', '#a8edea'],
+    ['#56ab2f', '#a8e063', '#4facfe'],
+    ['#ff9a56', '#ff6a88', '#fbc2eb'],
+    ['#4facfe', '#00f2fe', '#43e97b']
+  ];
+  const palette = palettes[Math.abs(hash >> 4) % palettes.length];
+
+  // Generate with unique seed
+  seed = Math.abs(hash);
+  const bgColor = mode === 'dark' ? BG_DARK : BG_LIGHT;
+  const filename = `${paperId}-${mode}.gif`;
+
+  await animType(filename, palette, bgColor);
+  return filename;
+}
+
 async function main() {
   const animations = [
     // 7 unique animations (PageRank removed for placeholder demo)
@@ -460,7 +505,12 @@ async function main() {
     await generator(`${baseName}-dark.gif`, colors, BG_DARK);
   }
 
-  console.log(`\n✨ Done! All ${totalGifs} GIFs ready (${animations.length} animations × 2 themes)`);
+  // Generate fallback for PageRank as demo
+  console.log('\n📦 Generating fallback preview for page1999pagerank...');
+  await generateFallbackPreview('page1999pagerank', 'light');
+  await generateFallbackPreview('page1999pagerank', 'dark');
+
+  console.log(`\n✨ Done! All GIFs ready (${animations.length} manual + 1 auto-generated)`);
   console.log(`\nTo regenerate: node scripts/generate-previews.mjs ${SEED}`);
 }
 
