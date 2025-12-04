@@ -93,15 +93,15 @@ export const config = {
 
   about: {
     // Main bio paragraph
-    bio: "I am a researcher passionate about understanding complex systems, from <a href='https://en.wikipedia.org/wiki/Quantum_entanglement' target='_blank'>quantum entanglement</a> to <a href='https://xkcd.com/1425/' target='_blank'>seemingly simple computer vision problems</a>. My work explores the intersection of computational thinking and interdisciplinary science.",
+    bio: "I am a researcher exploring the fascinating intersection of <a href='https://en.wikipedia.org/wiki/Computational_neuroscience' target='_blank'>computational neuroscience</a> and <a href='https://distill.pub' target='_blank'>interpretable machine learning</a>. My work investigates how artificial systems can learn, reason, and adapt in ways that mirror—and sometimes surpass—biological intelligence. I'm particularly drawn to questions that bridge theory and practice, from <a href='https://colah.github.io/posts/2015-08-Understanding-LSTMs/' target='_blank'>understanding neural architectures</a> to building tools that democratize access to <a href='https://huggingface.co' target='_blank'>state-of-the-art AI</a>.",
 
     // Research interests section
-    researchInterests: "My research spans artificial intelligence, cognitive science, and the philosophy of mind. I'm particularly interested in how we can build systems that are not just intelligent, but also <a href='https://www.youtube.com/watch?v=dQw4w9WgXcQ' target='_blank'>ethical and aligned with human values</a>. Currently exploring <a href='https://www.reddit.com/r/MachineLearning/' target='_blank'>emergent behaviors in neural networks</a> and the surprising connections between <a href='https://waitbutwhy.com/2015/01/artificial-intelligence-revolution-1.html' target='_blank'>AI safety and existential risk</a>.",
+    researchInterests: "My research interests span representation learning, computational cognitive modeling, and the philosophical implications of artificial intelligence. I believe the most interesting questions emerge at disciplinary boundaries—where computer science meets neuroscience, where statistics meets epistemology, and where <a href='https://arxiv.org/abs/1706.03762' target='_blank'>engineering breakthroughs</a> inspire new scientific hypotheses. I'm also fascinated by <a href='https://www.lesswrong.com' target='_blank'>AI alignment</a>, open science, and finding elegant solutions to problems that seem impossibly complex. When I'm not writing code or reading papers, you'll find me contributing to <a href='https://github.com/pytorch/pytorch' target='_blank'>open-source projects</a>, exploring <a href='https://www.kaggle.com' target='_blank'>interesting datasets</a>, or pondering whether <a href='https://xkcd.com/1425/' target='_blank'>my model is actually learning anything meaningful</a>. Always happy to collaborate on ambitious research ideas or discuss the latest developments in the field over coffee (virtual or otherwise).",
 
     // Current affiliation
     affiliation: {
-      name: "Institute for Advanced Interdisciplinary Studies",
-      url: "https://academic.edu",
+      name: "Center for Advanced Computational Research",
+      url: "https://research.university.edu",
     },
   },
 
