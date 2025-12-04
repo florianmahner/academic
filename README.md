@@ -290,7 +290,46 @@ Traditional top header
 
 ### Publications
 
-Add to `src/content/publications.json`:
+**Two formats supported** - choose what works best for you:
+
+#### Option 1: BibTeX (Recommended for academics)
+
+Edit `src/content/papers.bib`:
+
+```bibtex
+@article{smith2024learning,
+  title = {Deep Learning for Computer Vision},
+  author = {Jane Smith and John Doe},
+  journal = {Nature Machine Intelligence},
+  year = {2024},
+  volume = {7},
+  pages = {123-145},
+  pdf = {https://arxiv.org/pdf/2024.12345.pdf},
+  html = {https://nature.com/articles/s123},
+  preview = {/previews/paper.gif},
+  selected = {true},
+  abbr = {NMI}
+}
+
+@inproceedings{smith2023vision,
+  title = {Vision Transformers for Object Recognition},
+  author = {Jane Smith and Alice Johnson},
+  booktitle = {Conference on Computer Vision and Pattern Recognition},
+  year = {2023},
+  pdf = {https://arxiv.org/pdf/2023.54321.pdf},
+  selected = {true}
+}
+```
+
+**Custom fields:**
+- `selected = {true}` - Shows on homepage (featured papers)
+- `preview = {/path/to/image.gif}` - Animated preview
+- `abbr = {VENUE}` - Abbreviated venue name
+- `pdf`, `html`, `code` - Links to resources
+
+#### Option 2: JSON
+
+Alternatively, use `src/content/publications.json`:
 
 ```json
 {
@@ -303,15 +342,14 @@ Add to `src/content/publications.json`:
       "journal": "Nature Machine Intelligence",
       "year": 2024,
       "pdf": "https://arxiv.org/pdf/...",
-      "html": "https://nature.com/articles/...",
-      "preview": "/previews/paper.gif",  // Optional: animated preview
-      "selected": true  // Shows on homepage
+      "preview": "/previews/paper.gif",
+      "selected": true
     }
   ]
 }
 ```
 
-**Pro tip:** Set `selected: true` for 3-4 of your best papers to feature them on your homepage!
+**Note:** The template automatically prefers `.bib` if both files exist. Most academics find BibTeX easier since you can export directly from reference managers (Zotero, Mendeley, etc.).
 
 ### Other Content Files
 

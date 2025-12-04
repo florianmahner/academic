@@ -1,13 +1,14 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { config } from '../config';
-import publications from '../content/publications.json';
+import { loadPublications, getSelectedPublications } from '../lib/bibtex';
 import educationData from '../content/education.json';
 
 const title = config.site.title;
 
-// Get selected publications
-const selectedPapers = publications.publications.filter(p => p.selected);
+// Load publications from BibTeX or JSON (prefers .bib)
+const publications = loadPublications(new URL('../content', import.meta.url).pathname);
+const selectedPapers = getSelectedPublications(publications);
 
 // Education data
 const education = educationData.education;

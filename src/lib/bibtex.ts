@@ -87,13 +87,22 @@ export function parseBibTeX(filePath: string): Publication[] {
 }
 
 /**
- * Load publications from BibTeX file
+ * Load publications from either BibTeX or JSON
+ * Automatically detects format based on file extension
  */
 export function loadPublications(contentDir: string): Publication[] {
   const bibPath = path.join(contentDir, 'papers.bib');
+  const jsonPath = path.join(contentDir, 'publications.json');
 
+  // Prefer BibTeX if it exists
   if (fs.existsSync(bibPath)) {
     return parseBibTeX(bibPath);
+  }
+
+  // Fall back to JSON
+  if (fs.existsSync(jsonPath)) {
+    const data = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'));
+    return data.publications || [];
   }
 
   return [];
