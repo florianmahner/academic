@@ -93,15 +93,15 @@ export const config = {
 
   about: {
     // Main bio paragraph
-    bio: "I am an Assistant Professor of Computer Science at University Name. My research focuses on machine learning, natural language processing, and their applications to real-world problems.",
+    bio: "I am a researcher passionate about understanding complex systems, from <a href='https://en.wikipedia.org/wiki/Quantum_entanglement' target='_blank'>quantum entanglement</a> to <a href='https://xkcd.com/1425/' target='_blank'>seemingly simple computer vision problems</a>. My work explores the intersection of computational thinking and interdisciplinary science.",
 
     // Research interests section
-    researchInterests: "My research interests include deep learning, computational linguistics, and neural machine translation.",
+    researchInterests: "My research spans artificial intelligence, cognitive science, and the philosophy of mind. I'm particularly interested in how we can build systems that are not just intelligent, but also <a href='https://www.youtube.com/watch?v=dQw4w9WgXcQ' target='_blank'>ethical and aligned with human values</a>. Currently exploring <a href='https://www.reddit.com/r/MachineLearning/' target='_blank'>emergent behaviors in neural networks</a> and the surprising connections between <a href='https://waitbutwhy.com/2015/01/artificial-intelligence-revolution-1.html' target='_blank'>AI safety and existential risk</a>.",
 
     // Current affiliation
     affiliation: {
-      name: "AI Research Lab",
-      url: "https://ai-lab.university.edu",
+      name: "Institute for Advanced Interdisciplinary Studies",
+      url: "https://academic.edu",
     },
   },
 
