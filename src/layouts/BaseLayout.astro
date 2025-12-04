@@ -31,7 +31,15 @@ const {
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const navMode = config.navigationMode;
-const navItems = config.navigation;
+
+// Get base path from Astro config (e.g., '/academic' for subdirectory deployments)
+const base = import.meta.env.BASE_URL;
+
+// Prepend base path to navigation items
+const navItems = config.navigation.map(item => ({
+  ...item,
+  href: base === '/' ? item.href : `${base}${item.href}`,
+}));
 
 const fullName = [config.name.first, config.name.middle, config.name.last].filter(Boolean).join(' ');
 
