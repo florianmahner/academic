@@ -2,44 +2,20 @@
   "github_user": "example-user",
   "repositories": [
     {
-      "name": "pytorch",
       "owner": "pytorch",
-      "description": "Tensors and Dynamic neural networks in Python with strong GPU acceleration",
-      "url": "https://github.com/pytorch/pytorch",
-      "language": "Python",
-      "stars": 85000,
-      "forks": 22000,
-      "topics": ["deep-learning", "machine-learning", "neural-network"]
+      "name": "pytorch"
     },
     {
-      "name": "tensorflow",
       "owner": "tensorflow",
-      "description": "An Open Source Machine Learning Framework for Everyone",
-      "url": "https://github.com/tensorflow/tensorflow",
-      "language": "C++",
-      "stars": 187000,
-      "forks": 74000,
-      "topics": ["machine-learning", "deep-learning", "tensorflow"]
+      "name": "tensorflow"
     },
     {
-      "name": "astro",
       "owner": "withastro",
-      "description": "The web framework for content-driven websites. Astro powers the web you're on!",
-      "url": "https://github.com/withastro/astro",
-      "language": "TypeScript",
-      "stars": 48000,
-      "forks": 2500,
-      "topics": ["astro", "static-site", "web-framework"]
+      "name": "astro"
     },
     {
-      "name": "zotero",
       "owner": "zotero",
-      "description": "Zotero is a free, easy-to-use tool to help you collect, organize, annotate, cite, and share research",
-      "url": "https://github.com/zotero/zotero",
-      "language": "JavaScript",
-      "stars": 10500,
-      "forks": 800,
-      "topics": ["bibliography", "research", "citation"]
+      "name": "zotero"
     }
   ]
 }

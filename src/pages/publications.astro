@@ -23,7 +23,7 @@ const years = Object.keys(pubsByYear).sort((a, b) => Number(b) - Number(a));
           <h2 class="year-label">{year}</h2>
           <div class="publications-list" data-animate="stagger">
             {pubsByYear[Number(year)].map(pub => (
-          <article class="paper-card paper-card--with-preview">
+          <article class:list={['paper-card', pub.preview && 'paper-card--with-preview']}>
             {pub.preview && (
               <div class="paper-preview">
                 <img src={pub.preview} alt={pub.title} loading="lazy" />

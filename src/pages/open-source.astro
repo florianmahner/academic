@@ -1,12 +1,13 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import repos from '../content/repositories.json';
+import reposData from '../content/repositories.json';
+import { loadRepositories } from '../lib/github';
 import { config } from '../config';
 
 const title = `Open Source | ${config.site.title}`;
 
-// Sort by stars (highest first)
-const sortedRepos = [...repos.repositories].sort((a, b) => (b.stars || 0) - (a.stars || 0));
+// Load and fetch repo data from GitHub API
+const sortedRepos = await loadRepositories(reposData.repositories);
 
 // Language colors (GitHub style)
 const langColors: Record<string, string> = {
@@ -56,7 +57,7 @@ const langColors: Record<string, string> = {
       </div>
 
       <p class="view-all" data-animate="fade">
-        <a href={`https://github.com/${repos.github_user}`} target="_blank" rel="noopener noreferrer">
+        <a href={`https://github.com/${reposData.github_user}`} target="_blank" rel="noopener noreferrer">
           View all on GitHub &rarr;
         </a>
       </p>

@@ -49,7 +49,7 @@ const displayName = config.name.middle
           <h2>Selected Publications</h2>
           <div class="selected-papers" data-animate="stagger">
             {selectedPapers.map(paper => (
-              <article class="paper-card paper-card--with-preview-lg">
+              <article class:list={['paper-card', paper.preview && 'paper-card--with-preview-lg']}>
                 {paper.preview && (
                   <div class="paper-preview paper-preview--lg">
                     <img src={paper.preview} alt={paper.title} loading="lazy" />
