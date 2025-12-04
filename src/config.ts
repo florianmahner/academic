@@ -33,7 +33,7 @@ export const config = {
   // ==========================================================================
 
   site: {
-    url: "https://florianmahner.github.io/academic",
+    url: "https://janesmith.github.io",
     title: "Jane Smith",
     description: "Personal academic website of Jane Smith - Research in machine learning, natural language processing, and computational linguistics",
     language: "en",
