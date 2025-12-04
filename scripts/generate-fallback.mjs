@@ -102,9 +102,13 @@ function createDiagonalStripes(ctx, colors, hash) {
   ctx.translate(WIDTH / 2, HEIGHT / 2);
   ctx.rotate(angle);
 
-  for (let i = -10; i < 20; i++) {
-    ctx.fillStyle = colors[Math.abs(i) % colors.length];
-    ctx.fillRect(i * totalWidth - WIDTH, -HEIGHT, stripeWidth, HEIGHT * 2);
+  // Center the stripes properly
+  const numStripes = Math.ceil((WIDTH + HEIGHT) / totalWidth) + 4;
+  const startOffset = -(numStripes / 2) * totalWidth;
+
+  for (let i = 0; i < numStripes; i++) {
+    ctx.fillStyle = colors[i % colors.length];
+    ctx.fillRect(startOffset + i * totalWidth, -HEIGHT * 1.5, stripeWidth, HEIGHT * 3);
   }
 
   ctx.restore();
@@ -170,8 +174,8 @@ function createWavePattern(ctx, colors, hash) {
 }
 
 function createTrianglesMosaic(ctx, colors, hash) {
-  const size = 140 + hash % 80; // Much larger triangles
-  const gap = 14;
+  const size = 100 + hash % 50; // Back to 2-row size
+  const gap = 12;
 
   const cols = Math.floor(WIDTH / size);
   const rows = Math.floor(HEIGHT / size);
