@@ -1,46 +1,45 @@
 {
-  "github_user": "florianmahner",
+  "github_user": "example-user",
   "repositories": [
     {
-      "name": "thingsvision",
-      "owner": "ViCCo-Group",
-      "description": "A Python toolbox for extracting and analyzing deep neural network representations",
-      "url": "https://github.com/ViCCo-Group/thingsvision",
+      "name": "pytorch",
+      "owner": "pytorch",
+      "description": "Tensors and Dynamic neural networks in Python with strong GPU acceleration",
+      "url": "https://github.com/pytorch/pytorch",
       "language": "Python",
-      "stars": 174,
-      "forks": 23,
-      "topics": ["deep-learning", "neural-networks", "representation-analysis"],
-      "featured": true
+      "stars": 85000,
+      "forks": 22000,
+      "topics": ["deep-learning", "machine-learning", "neural-network"]
     },
     {
-      "name": "tomlparse",
-      "owner": "florianmahner",
-      "description": "A simple TOML configuration parser for Python projects",
-      "url": "https://github.com/florianmahner/tomlparse",
-      "language": "Python",
-      "stars": 22,
-      "forks": 3,
-      "topics": ["config", "toml", "python"]
+      "name": "tensorflow",
+      "owner": "tensorflow",
+      "description": "An Open Source Machine Learning Framework for Everyone",
+      "url": "https://github.com/tensorflow/tensorflow",
+      "language": "C++",
+      "stars": 187000,
+      "forks": 74000,
+      "topics": ["machine-learning", "deep-learning", "tensorflow"]
     },
     {
-      "name": "object-dimensions",
-      "owner": "florianmahner",
-      "description": "Code for analyzing object dimensions in humans and DNNs",
-      "url": "https://github.com/florianmahner/object-dimensions",
-      "language": "Python",
-      "stars": 12,
-      "forks": 3,
-      "topics": ["deep-learning", "cognitive-science", "representation-learning"]
+      "name": "astro",
+      "owner": "withastro",
+      "description": "The web framework for content-driven websites. Astro powers the web you're on!",
+      "url": "https://github.com/withastro/astro",
+      "language": "TypeScript",
+      "stars": 48000,
+      "forks": 2500,
+      "topics": ["astro", "static-site", "web-framework"]
     },
     {
-      "name": "torch-multipletests",
-      "owner": "florianmahner",
-      "description": "PyTorch implementation of multiple testing corrections",
-      "url": "https://github.com/florianmahner/torch-multipletests",
-      "language": "Python",
-      "stars": 4,
-      "forks": 0,
-      "topics": ["pytorch", "statistics", "multiple-testing"]
+      "name": "zotero",
+      "owner": "zotero",
+      "description": "Zotero is a free, easy-to-use tool to help you collect, organize, annotate, cite, and share research",
+      "url": "https://github.com/zotero/zotero",
+      "language": "JavaScript",
+      "stars": 10500,
+      "forks": 800,
+      "topics": ["bibliography", "research", "citation"]
     }
   ]
 }

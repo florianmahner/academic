@@ -2,39 +2,38 @@
   "education": [
     {
       "degree": "PhD",
-      "field": "Machine Learning",
-      "institution": "Max Planck Research Group Vision and Computational Cognition",
-      "institutionUrl": "https://hebartlab.com/",
-      "startYear": 2021,
-      "endYear": 2025,
+      "field": "Computer Science",
+      "institution": "Stanford University",
+      "institutionUrl": "https://cs.stanford.edu",
+      "startYear": 2020,
+      "endYear": 2024,
       "supervisors": [
-        { "name": "Martin Hebart", "url": "http://martin-hebart.de" },
-        { "name": "Umut Güçlü", "url": "https://www.ru.nl/en/people/guclu-u" }
+        { "name": "Prof. Andrew Ng", "url": "https://www.andrewng.org" }
       ]
     },
     {
       "degree": "MSc",
       "field": "Artificial Intelligence",
-      "institution": "Radboud University",
-      "institutionUrl": "https://www.ru.nl/ai/",
+      "institution": "Massachusetts Institute of Technology",
+      "institutionUrl": "https://www.csail.mit.edu",
       "startYear": 2018,
-      "endYear": 2021,
-      "grade": "Excellent with distinction, top 1%",
+      "endYear": 2020,
+      "grade": "Summa Cum Laude",
       "thesis": {
-        "title": "Neural Decoding with Normalizing Flows",
+        "title": "Deep Reinforcement Learning for Robotics",
         "url": "/pdf/thesis-master.pdf"
       }
     },
     {
       "degree": "BSc",
-      "field": "Cognitive Science",
-      "institution": "Osnabrück University",
-      "institutionUrl": "https://www.ikw.uni-osnabrueck.de/en/home.html",
-      "startYear": 2013,
-      "endYear": 2017,
-      "grade": "Excellent",
+      "field": "Mathematics",
+      "institution": "University of Cambridge",
+      "institutionUrl": "https://www.maths.cam.ac.uk",
+      "startYear": 2014,
+      "endYear": 2018,
+      "grade": "First Class Honours",
       "thesis": {
-        "title": "View-independent human motion analysis",
+        "title": "Applications of Linear Algebra in Machine Learning",
         "url": "/pdf/thesis-bachelor.pdf"
       }
     }

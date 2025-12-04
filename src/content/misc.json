@@ -1,14 +1,14 @@
 {
   "tools": [
-    { "name": "Cursor", "url": "https://www.cursor.com/", "description": "AI-powered code editor" },
+    { "name": "Zotero", "url": "https://www.zotero.org/", "description": "Free reference manager for academics" },
     { "name": "Overleaf", "url": "https://www.overleaf.com", "description": "Collaborative LaTeX editor" },
-    { "name": "Arc", "url": "https://arc.net/", "description": "A better browser" },
-    { "name": "MathPix", "url": "https://mathpix.com", "description": "Convert images to LaTeX" },
-    { "name": "Raycast", "url": "https://www.raycast.com/", "description": "Productivity launcher for Mac" },
-    { "name": "Warp", "url": "https://www.warp.dev/", "description": "Terminal on steroids" },
-    { "name": "Notion", "url": "https://www.notion.so/", "description": "All-in-one workspace" },
-    { "name": "Paperpile", "url": "https://paperpile.com/", "description": "Reference management" },
-    { "name": "Obsidian", "url": "https://obsidian.md/", "description": "Knowledge base and note-taking" },
-    { "name": "Affinity", "url": "https://www.affinity.studio/", "description": "Like Illustrator but better" }    
+    { "name": "Obsidian", "url": "https://obsidian.md/", "description": "Knowledge base for research notes" },
+    { "name": "Notion", "url": "https://www.notion.so/", "description": "All-in-one workspace for research" },
+    { "name": "arXiv", "url": "https://arxiv.org/", "description": "Open-access preprint repository" },
+    { "name": "Google Scholar", "url": "https://scholar.google.com/", "description": "Academic search engine" },
+    { "name": "Connected Papers", "url": "https://www.connectedpapers.com/", "description": "Visual citation network explorer" },
+    { "name": "Sci-Hub", "url": "https://sci-hub.se/", "description": "Free access to research papers" },
+    { "name": "Anki", "url": "https://apps.ankiweb.net/", "description": "Spaced repetition flashcards" },
+    { "name": "Litmaps", "url": "https://www.litmaps.com/", "description": "Literature mapping tool" }
   ]
 }
