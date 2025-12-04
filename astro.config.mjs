@@ -6,7 +6,7 @@ import { config } from './src/config.ts';
 // https://astro.build/config
 export default defineConfig({
   site: config.site.url,
-  base: '/',
+  base: '/academic',
   integrations: [
     sitemap({
       changefreq: 'weekly',
