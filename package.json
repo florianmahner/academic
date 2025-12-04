@@ -14,5 +14,9 @@
     "astro": "^5.16.3",
     "bibtex-parse": "^2.1.0",
     "gsap": "^3.13.0"
+  },
+  "devDependencies": {
+    "canvas": "^3.2.0",
+    "gif-encoder-2": "^1.0.5"
   }
 }

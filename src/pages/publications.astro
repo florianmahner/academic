@@ -10,6 +10,14 @@ const title = `Publications | ${config.site.title}`;
 const contentDir = path.join(process.cwd(), 'src', 'content');
 const publications = loadPublications(contentDir);
 
+// Prepend base path to preview images
+const base = import.meta.env.BASE_URL;
+publications.forEach(pub => {
+  if (pub.preview && !pub.preview.startsWith('http')) {
+    pub.preview = base === '/' ? pub.preview : `${base}${pub.preview}`;
+  }
+});
+
 // Group by year
 const pubsByYear = groupByYear(publications);
 const years = Object.keys(pubsByYear).sort((a, b) => Number(b) - Number(a));
@@ -24,9 +32,23 @@ const years = Object.keys(pubsByYear).sort((a, b) => Number(b) - Number(a));
           <div class="publications-list" data-animate="stagger">
             {pubsByYear[Number(year)].map(pub => (
           <article class:list={['paper-card', pub.preview && 'paper-card--with-preview']}>
-            {pub.preview && (
+            {pub.preview ? (
               <div class="paper-preview">
-                <img src={pub.preview} alt={pub.title} loading="lazy" />
+                <img src={pub.preview} alt={pub.title} loading="lazy" class="preview-light" />
+                <img src={pub.preview.replace('-light.gif', '-dark.gif')} alt={pub.title} loading="lazy" class="preview-dark" />
+              </div>
+            ) : (
+              <div class="paper-preview">
+                <svg viewBox="0 0 140 90" xmlns="http://www.w3.org/2000/svg" class="preview-placeholder">
+                  <defs>
+                    <linearGradient id={`grad-${pub.id}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" style={`stop-color:${pub.year % 2 === 0 ? '#e0e7ff' : '#fce7f3'};stop-opacity:1`} />
+                      <stop offset="100%" style={`stop-color:${pub.year % 2 === 0 ? '#c7d2fe' : '#fbcfe8'};stop-opacity:1`} />
+                    </linearGradient>
+                  </defs>
+                  <rect width="140" height="90" fill={`url(#grad-${pub.id})`} />
+                  <text x="70" y="50" text-anchor="middle" font-size="24" font-weight="300" fill="#6b7280" opacity="0.6">{pub.year}</text>
+                </svg>
               </div>
             )}
             <div class="paper-content">

@@ -10,6 +10,14 @@ const title = config.site.title;
 const publications = loadPublications(new URL('../content', import.meta.url).pathname);
 const selectedPapers = getSelectedPublications(publications);
 
+// Prepend base path to preview images
+const base = import.meta.env.BASE_URL;
+selectedPapers.forEach(paper => {
+  if (paper.preview && !paper.preview.startsWith('http')) {
+    paper.preview = base === '/' ? paper.preview : `${base}${paper.preview}`;
+  }
+});
+
 // Education data
 const education = educationData.education;
 
@@ -50,9 +58,23 @@ const displayName = config.name.middle
           <div class="selected-papers" data-animate="stagger">
             {selectedPapers.map(paper => (
               <article class:list={['paper-card', paper.preview && 'paper-card--with-preview-lg']}>
-                {paper.preview && (
+                {paper.preview ? (
                   <div class="paper-preview paper-preview--lg">
-                    <img src={paper.preview} alt={paper.title} loading="lazy" />
+                    <img src={paper.preview} alt={paper.title} loading="lazy" class="preview-light" />
+                    <img src={paper.preview.replace('-light.gif', '-dark.gif')} alt={paper.title} loading="lazy" class="preview-dark" />
+                  </div>
+                ) : (
+                  <div class="paper-preview paper-preview--lg">
+                    <svg viewBox="0 0 180 120" xmlns="http://www.w3.org/2000/svg" class="preview-placeholder">
+                      <defs>
+                        <linearGradient id={`grad-${paper.id}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" style={`stop-color:${paper.year % 2 === 0 ? '#e0e7ff' : '#fce7f3'};stop-opacity:1`} />
+                          <stop offset="100%" style={`stop-color:${paper.year % 2 === 0 ? '#c7d2fe' : '#fbcfe8'};stop-opacity:1`} />
+                        </linearGradient>
+                      </defs>
+                      <rect width="180" height="120" fill={`url(#grad-${paper.id})`} />
+                      <text x="90" y="65" text-anchor="middle" font-size="32" font-weight="300" fill="#6b7280" opacity="0.6">{paper.year}</text>
+                    </svg>
                   </div>
                 )}
                 <div class="paper-content">
