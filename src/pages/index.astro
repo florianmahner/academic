@@ -33,9 +33,7 @@ const displayName = config.name.middle
     <div class="container">
       <!-- About Section -->
       <section class="about-section" data-animate="fade-up">
-        <p>
-          {config.about.bio}
-        </p>
+        <p set:html={config.about.bio} />
         {config.about.affiliation && (
           <p>
             I am affiliated with <a href={config.about.affiliation.url}>{config.about.affiliation.name}</a>.
@@ -46,9 +44,7 @@ const displayName = config.name.middle
       <!-- Research Interests -->
       <section class="section" data-animate="fade-up">
         <h2>Research Interests</h2>
-        <p>
-          {config.about.researchInterests}
-        </p>
+        <p set:html={config.about.researchInterests} />
       </section>
 
       <!-- Selected Publications -->
