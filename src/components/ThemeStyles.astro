@@ -1,80 +1,54 @@
 ---
 /**
  * Theme Styles Component
+ * Generates CSS custom properties from typography presets
+ * Include this in your <head> to apply theme customization
  *
- * Loads fonts and applies theme customization based on the selected preset.
- * Include this in your <head> to apply theme styling.
- *
- * Features:
- * - Loads preset-specific fonts from Google Fonts
- * - Applies config overrides on top of preset defaults
- * - Preconnect for faster font loading
- * - Uses display=swap to avoid FOIT
+ * Loads ALL fonts for all presets so users can switch themes
  */
-import { config } from '../config';
-import { getPreset, buildGoogleFontsUrl } from '../lib/presets';
+import { getAllFontsUrl, getPreset, DEFAULT_PRESET_ID } from '../lib/typography-presets';
 
-// Get the selected preset
-const presetId = config.theme.preset;
-const preset = getPreset(presetId);
+// Get the default preset for initial CSS values
+const defaultPreset = getPreset(DEFAULT_PRESET_ID);
 
-// Build Google Fonts URL for preset fonts
-const fontsUrl = buildGoogleFontsUrl(preset);
-
-// Get overrides from config
-const overrides = config.theme.overrides;
-const contentWidth = overrides.layout?.contentWidth || '750px';
-
-// Check if accent colors are overridden
-const hasAccentOverride = overrides.colors?.accent;
-const hasAccentDarkOverride = overrides.colors?.accentDark;
+// Load all fonts for all presets (enables theme switching)
+const fontsUrl = getAllFontsUrl();
 ---
 
-<!-- DNS prefetch and preconnect for faster font loading -->
-<link rel="dns-prefetch" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
-<!-- Load preset fonts -->
-{fontsUrl && (
-  <>
-    <link href={fontsUrl} rel="stylesheet" media="print" onload="this.media='all'" />
-    <noscript><link href={fontsUrl} rel="stylesheet" /></noscript>
-  </>
-)}
+<link href={fontsUrl} rel="stylesheet" />
 
 <style define:vars={{
-  contentWidth: contentWidth,
-  accentOverride: hasAccentOverride ? overrides.colors.accent : '',
-  accentDarkOverride: hasAccentDarkOverride ? overrides.colors.accentDark : '',
+  fontBody: defaultPreset.fonts.body,
+  fontHeading: defaultPreset.fonts.heading,
+  fontUi: defaultPreset.fonts.ui,
+  fontMono: defaultPreset.fonts.mono,
+  headingStyle: defaultPreset.styles.headingStyle,
+  headingWeight: defaultPreset.styles.headingWeight,
+  bodyWeight: defaultPreset.styles.bodyWeight,
 }}>
   :root {
-    /* Content width from config */
-    --content-max-width: var(--contentWidth);
+    /* Fonts from config (can be overridden by theme selector) */
+    --font-body: var(--fontBody), Georgia, serif;
+    --font-heading: var(--fontHeading), Georgia, serif;
+    --font-ui: var(--fontUi), system-ui, sans-serif;
+    --font-mono: var(--fontMono), 'SF Mono', monospace;
+
+    /* Typography style properties from default preset */
+    --heading-style: var(--headingStyle);
+    --heading-weight: var(--headingWeight);
+    --body-weight: var(--bodyWeight);
   }
 
-  /* Apply accent color overrides if specified */
-  :root {
-    --color-accent-override: var(--accentOverride);
-    --color-accent-dark-override: var(--accentDarkOverride);
+  /* Apply heading style from theme */
+  h1, h2, h3, h4, h5, h6 {
+    font-style: var(--heading-style);
+    font-weight: var(--heading-weight);
+  }
+
+  /* Apply body weight from theme */
+  body {
+    font-weight: var(--body-weight);
   }
 </style>
-
-{/* Apply accent overrides via inline style if specified */}
-{hasAccentOverride && (
-  <style>
-    :root {
-      --preset-accent: {overrides.colors.accent} !important;
-      --preset-accent-hover: color-mix(in srgb, {overrides.colors.accent} 85%, black) !important;
-    }
-  </style>
-)}
-
-{hasAccentDarkOverride && (
-  <style>
-    [data-theme="dark"] {
-      --preset-accent: {overrides.colors.accentDark} !important;
-      --preset-accent-hover: color-mix(in srgb, {overrides.colors.accentDark} 85%, white) !important;
-    }
-  </style>
-)}

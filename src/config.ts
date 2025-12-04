@@ -3,8 +3,6 @@
  * Edit this file to customize your website
  */
 
-import type { ThemePreset } from './lib/presets';
-
 export const config = {
   // ==========================================================================
   // PERSONAL INFORMATION
@@ -23,7 +21,7 @@ export const config = {
   email: "jane.smith@university.edu",
   social: {
     github: "janesmith",
-    scholar: "EXAMPLE_ID",
+    scholar: "EXAMPLE_ID", // Google Scholar ID
     linkedin: "janesmith",
     twitter: "janesmith_cs",
     orcid: "0000-0001-2345-6789",
@@ -42,102 +40,39 @@ export const config = {
   },
 
   // ==========================================================================
-  // SECTIONS
-  // Enable/disable site sections (pages)
-  // ==========================================================================
-
-  sections: {
-    publications: true,
-    opensource: true,
-    misc: true,
-    cv: true,
-    projects: true,
-    teaching: true,
-    blog: true,
-  },
-
-  // ==========================================================================
   // NAVIGATION
   // ==========================================================================
 
-  navigation: {
-    // Navigation display mode
-    // "inline" - Horizontal nav at top
-    // "minimal" - Compact fixed top bar, hides on scroll
-    // "floating-icon" - Fixed circular button bottom-right
-    // "sidebar" - Vertical nav on left side
-    mode: "inline" as const,
+  // Navigation items (order matters!)
+  navigation: [
+    { id: "about", label: "About", href: "/" },
+    { id: "publications", label: "Publications", href: "/publications" },
+    { id: "open-source", label: "Open Source", href: "/open-source" },
+    { id: "misc", label: "Misc", href: "/misc" },
+    // Add more pages here:
+    // { id: "cv", label: "CV", href: "/cv" },
+    // { id: "blog", label: "Blog", href: "/blog" },
+  ],
 
-    // Navigation items (order matters)
-    // Items are automatically filtered based on sections config
-    items: [
-      { id: "about", label: "About", href: "/" },
-      { id: "publications", label: "Publications", href: "/publications" },
-      { id: "open-source", label: "Open Source", href: "/open-source" },
-      { id: "cv", label: "CV", href: "/cv" },
-      { id: "projects", label: "Projects", href: "/projects" },
-      { id: "teaching", label: "Teaching", href: "/teaching" },
-      { id: "blog", label: "Blog", href: "/blog" },
-      { id: "misc", label: "Misc", href: "/misc" },
-    ],
-
-    // Optional style overrides (uses preset defaults if not set)
-    style: {
-      case: undefined as "none" | "lowercase" | "uppercase" | undefined,
-      weight: undefined as string | undefined,
-    },
-  },
+  // Navigation display mode
+  // "floating" - Safari-style pill at bottom (auto-hides on scroll)
+  // "sidebar" - Fixed left sidebar navigation
+  // "inline" - Traditional header navigation
+  navigationMode: "sidebar" as const,
 
   // ==========================================================================
   // THEME SYSTEM
   // ==========================================================================
 
   theme: {
-    // Theme preset selection
-    // "monograph" - Scholarly elegance, warm cream tones, Crimson Pro
-    // "brutalist" - Bold & raw, black/white/orange, extreme contrast
-    // "softwave" - Modern & calm, soft violet-blue, rounded elements
-    // "terminal" - Hacker aesthetic, IDE colors, monospace
-    preset: "monograph" as ThemePreset,
+    // Default typography preset
+    // Options: "crimson-classic", "editorial-newsreader", "modern-geist",
+    //          "classic-playfair", "brutalist-space", "humanist-inter"
+    defaultPreset: "editorial-newsreader",
 
-    // Color mode settings
-    colorMode: {
-      default: "system" as const, // "light" | "dark" | "system"
-      enableToggle: true,
-    },
-
-    // Override preset values (optional - merged with preset defaults)
-    overrides: {
-      // Font overrides
-      fonts: {
-        heading: undefined as string | undefined,
-        body: undefined as string | undefined,
-        ui: undefined as string | undefined,
-        mono: undefined as string | undefined,
-      },
-
-      // Color overrides
-      colors: {
-        accent: undefined as string | undefined,
-        accentDark: undefined as string | undefined,
-      },
-
-      // Layout overrides
-      layout: {
-        contentWidth: "750px",
-      },
-    },
-  },
-
-  // ==========================================================================
-  // MOTION & ANIMATIONS
-  // ==========================================================================
-
-  motion: {
-    enabled: true,
-    reduceMotion: "respect-system" as const, // "respect-system" | "reduce" | "none"
-    pageTransitions: true,
-    staggerAnimations: true,
+    // Optional: Override preset accent colors
+    accentLight: undefined as string | undefined, // e.g., "#c41e3a"
+    accentDark: undefined as string | undefined,  // e.g., "#ff4d6a"
   },
 
   // ==========================================================================
@@ -145,9 +80,29 @@ export const config = {
   // ==========================================================================
 
   features: {
-    selectedPublications: true, // Show selected papers on homepage
-    education: true, // Show education section on homepage
-    darkMode: true, // Enable dark mode toggle
+    selectedPublications: true,  // Show selected papers on homepage
+    education: true,             // Show academic background on homepage
+    darkMode: true,              // Enable dark/light mode toggle
+    animations: true,            // Enable GSAP scroll animations
+    settingsPanel: true,         // Show settings gear icon for customization
+  },
+
+  // ==========================================================================
+  // ABOUT PAGE CONTENT
+  // ==========================================================================
+
+  about: {
+    // Main bio paragraph
+    bio: "I am an Assistant Professor of Computer Science at University Name. My research focuses on machine learning, natural language processing, and their applications to real-world problems.",
+
+    // Research interests section
+    researchInterests: "My research interests include deep learning, computational linguistics, and neural machine translation.",
+
+    // Current affiliation
+    affiliation: {
+      name: "AI Research Lab",
+      url: "https://ai-lab.university.edu",
+    },
   },
 
   // ==========================================================================
@@ -155,25 +110,12 @@ export const config = {
   // ==========================================================================
 
   footer: {
-    copyright: true,
+    copyright: true, // Show copyright with current year
     links: [
       { label: "Email", href: "mailto:jane.smith@university.edu" },
     ],
-  },
-
-  // ==========================================================================
-  // BLOG SETTINGS
-  // ==========================================================================
-
-  blog: {
-    postsPerPage: 10,
-    showDrafts: false,
-    dateFormat: "MMMM D, YYYY",
   },
 };
 
 // Type exports
 export type SiteConfig = typeof config;
-export type SectionKey = keyof typeof config.sections;
-export type NavigationMode = typeof config.navigation.mode;
-export type ColorMode = typeof config.theme.colorMode.default;

@@ -3,63 +3,45 @@
  * Animation Initialization Component
  * Include this in your layout to enable GSAP scroll animations
  *
- * Controlled by config.features.animations
- *
  * Add data-animate attributes to elements:
  * - data-animate="fade-up" : Fade in and slide up
  * - data-animate="fade" : Fade in only
  * - data-animate="scale" : Scale up and fade in
  * - data-animate="stagger" : Stagger children animation
  */
-
-import { config } from '../config';
-
-const animationsEnabled = config.features.animations;
 ---
 
-{animationsEnabled && (
-  <script>
-    import { initScrollAnimations, cleanupAnimations } from '../scripts/animations';
+<script>
+  import { initScrollAnimations, cleanupAnimations } from '../scripts/animations';
 
-    // Initialize scroll animations
-    function init() {
-      initScrollAnimations();
-      initImageLoading();
-    }
+  // Initialize scroll animations
+  function init() {
+    initScrollAnimations();
+    initImageLoading();
+  }
 
-    // Handle lazy loaded images with smooth fade-in
-    function initImageLoading() {
-      const images = document.querySelectorAll('img[loading="lazy"]');
-      images.forEach((img) => {
-        if ((img as HTMLImageElement).complete) {
+  // Handle lazy loaded images with smooth fade-in
+  function initImageLoading() {
+    const images = document.querySelectorAll('img[loading="lazy"]');
+    images.forEach((img) => {
+      if ((img as HTMLImageElement).complete) {
+        img.classList.add('loaded');
+      } else {
+        img.addEventListener('load', () => {
           img.classList.add('loaded');
-        } else {
-          img.addEventListener('load', () => {
-            img.classList.add('loaded');
-          });
-        }
-      });
-    }
-
-    // Initialize on page load
-    document.addEventListener('DOMContentLoaded', init);
-
-    // Re-initialize on Astro page navigation
-    document.addEventListener('astro:page-load', init);
-
-    // Cleanup before navigation
-    document.addEventListener('astro:before-swap', () => {
-      cleanupAnimations();
+        });
+      }
     });
-  </script>
-)}
+  }
 
-{!animationsEnabled && (
-  <style>
-    /* When animations are disabled, show everything immediately */
-    [data-animate] {
-      opacity: 1 !important;
-      transform: none !important;
-    }
-  </style>
-)}
+  // Initialize on page load
+  document.addEventListener('DOMContentLoaded', init);
+
+  // Re-initialize on Astro page navigation
+  document.addEventListener('astro:page-load', init);
+
+  // Cleanup before navigation
+  document.addEventListener('astro:before-swap', () => {
+    cleanupAnimations();
+  });
+</script>

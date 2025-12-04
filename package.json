@@ -1,6 +1,6 @@
 {
-  "name": "florianmahner-website",
-  "description": "Personal academic website for Florian Mahner",
+  "name": "academic-website-template",
+  "description": "Modern academic website template built with Astro",
   "type": "module",
   "version": "0.0.1",
   "scripts": {

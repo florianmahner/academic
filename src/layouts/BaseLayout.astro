@@ -2,15 +2,18 @@
 /**
  * Base Layout
  * The main layout wrapper for all pages
- * Includes navigation, footer, and global styles
  *
- * All settings are controlled by src/config.ts
+ * Navigation modes:
+ * - floating: Safari-style floating pill nav
+ * - sidebar: Left sidebar next to content
+ * - inline: Simple header nav
  */
 
 import ThemeToggle from '../components/ThemeToggle.astro';
 import ThemeStyles from '../components/ThemeStyles.astro';
 import AnimationInit from '../components/AnimationInit.astro';
 import StructuredData from '../components/StructuredData.astro';
+import SettingsPanel from '../components/SettingsPanel.astro';
 import { config } from '../config';
 import '../styles/global.css';
 
@@ -27,34 +30,11 @@ const {
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
-const navMode = config.navigation.mode;
-const presetId = config.theme.preset;
+const navMode = config.navigationMode;
+const navItems = config.navigation;
 
-// Map navigation IDs to section keys
-const navIdToSection: Record<string, keyof typeof config.sections | null> = {
-  'about': null, // Always shown
-  'publications': 'publications',
-  'open-source': 'opensource',
-  'misc': 'misc',
-  'cv': 'cv',
-  'projects': 'projects',
-  'teaching': 'teaching',
-  'blog': 'blog',
-};
-
-// Filter navigation based on enabled sections
-const navItems = config.navigation.items.filter(item => {
-  const sectionKey = navIdToSection[item.id];
-  // Always show items without a section mapping (like 'about')
-  if (sectionKey === null) return true;
-  // Show if section is enabled
-  return config.sections[sectionKey] === true;
-});
-
-// Build full name from config
 const fullName = [config.name.first, config.name.middle, config.name.last].filter(Boolean).join(' ');
 
-// Build social links for footer
 const socialLinks = [
   config.social.github && { label: 'GitHub', href: `https://github.com/${config.social.github}` },
   config.social.scholar && { label: 'Scholar', href: `https://scholar.google.com/citations?user=${config.social.scholar}` },
@@ -63,67 +43,136 @@ const socialLinks = [
   config.social.orcid && { label: 'ORCID', href: `https://orcid.org/${config.social.orcid}` },
 ].filter(Boolean) as { label: string; href: string }[];
 
-const footerLinks = [
-  ...config.footer.links,
-  ...socialLinks,
-];
+const footerLinks = [...config.footer.links, ...socialLinks];
 ---
 
 <!DOCTYPE html>
-<html lang="en" data-nav-mode={navMode} data-preset={presetId}>
+<html lang="en" data-nav-mode={navMode}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="canonical" href={canonicalURL} />
     <meta name="generator" content={Astro.generator} />
-
-    <!-- Primary Meta Tags -->
     <title>{title}</title>
     <meta name="title" content={title} />
     <meta name="description" content={description} />
-
-    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={new URL(image, Astro.site)} />
-
-    <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content={canonicalURL} />
     <meta property="twitter:title" content={title} />
     <meta property="twitter:description" content={description} />
     <meta property="twitter:image" content={new URL(image, Astro.site)} />
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-
-    <!-- Structured Data -->
+    <link rel="icon" type="image/jpeg" href="/favicon.jpg" />
     <StructuredData type="WebSite" />
     <StructuredData type="Person" />
-
-    <!-- Theme & Fonts from config -->
     <ThemeStyles />
-
-    <!-- Prevent flash of wrong theme -->
     <script is:inline>
       (function() {
+        const html = document.documentElement;
+
+        // Apply light/dark theme
         const theme = localStorage.getItem('theme') ||
           (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-        document.documentElement.setAttribute('data-theme', theme);
+        html.setAttribute('data-theme', theme);
+
+        // Apply stored nav mode
+        const navMode = localStorage.getItem('nav-mode');
+        if (navMode) {
+          html.setAttribute('data-nav-mode', navMode);
+        }
+
+        // Apply stored typography preset (fonts, colors, styles)
+        try {
+          // Restore fonts
+          const fontsStr = localStorage.getItem('typography-fonts');
+          if (fontsStr) {
+            const fonts = JSON.parse(fontsStr);
+            html.style.setProperty('--font-body', '"' + fonts.body + '", Georgia, serif');
+            html.style.setProperty('--font-heading', '"' + fonts.heading + '", Georgia, serif');
+            html.style.setProperty('--font-ui', '"' + fonts.ui + '", system-ui, sans-serif');
+            html.style.setProperty('--font-mono', '"' + fonts.mono + '", monospace');
+          }
+
+          // Restore colors
+          const colorsStr = localStorage.getItem('typography-colors');
+          if (colorsStr) {
+            const colors = JSON.parse(colorsStr);
+            html.style.setProperty('--color-accent-light', colors.accentLight);
+            html.style.setProperty('--color-accent-dark', colors.accentDark);
+          }
+
+          // Restore typography styles
+          const stylesStr = localStorage.getItem('typography-styles');
+          if (stylesStr) {
+            const styles = JSON.parse(stylesStr);
+            html.style.setProperty('--heading-style', styles.headingStyle);
+            html.style.setProperty('--heading-weight', styles.headingWeight);
+            html.style.setProperty('--body-weight', styles.bodyWeight);
+          }
+
+          // Set typography attribute
+          const presetId = localStorage.getItem('typography-preset');
+          if (presetId) {
+            html.setAttribute('data-typography', presetId);
+          }
+        } catch (e) {}
       })();
     </script>
   </head>
-  <body>
-    <!-- Skip Link for Accessibility -->
-    <a href="#main-content" class="skip-link">Skip to main content</a>
 
-    <!-- OPTION A: Inline Navigation -->
-    {navMode === 'inline' && (
-      <header class="inline-header">
-        <nav class="inline-nav container" aria-label="Main navigation">
-          <ul class="inline-nav-links" role="list">
+  <body>
+    <div class="layout-wrapper">
+
+      <!-- Floating Nav (Safari-style pill) -->
+      <nav class="floating-nav" aria-label="Main navigation">
+        <div class="floating-nav-pill">
+          <ul class="floating-nav-links">
+            {navItems.map(item => (
+              <li>
+                <a
+                  href={item.href}
+                  class:list={['floating-nav-link', { active: Astro.url.pathname === item.href || (item.href !== '/' && Astro.url.pathname.startsWith(item.href)) }]}
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <div class="floating-nav-actions">
+            <ThemeToggle />
+          </div>
+        </div>
+      </nav>
+
+      <!-- Sidebar Nav (left of content) -->
+      <aside class="sidebar-nav" aria-label="Main navigation">
+        <nav class="sidebar-nav-inner">
+          <ul class="sidebar-nav-links">
+            {navItems.map(item => (
+              <li>
+                <a
+                  href={item.href}
+                  class:list={['sidebar-nav-link', { active: Astro.url.pathname === item.href || (item.href !== '/' && Astro.url.pathname.startsWith(item.href)) }]}
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <div class="sidebar-nav-footer">
+            <ThemeToggle />
+          </div>
+        </nav>
+      </aside>
+
+      <!-- Inline Nav (header style) -->
+      <header class="inline-nav" aria-label="Main navigation">
+        <nav class="inline-nav-inner container">
+          <ul class="inline-nav-links">
             {navItems.map(item => (
               <li>
                 <a
@@ -138,127 +187,48 @@ const footerLinks = [
           <ThemeToggle />
         </nav>
       </header>
-    )}
 
-    <!-- OPTION B: Floating Icon -->
-    {navMode === 'floating-icon' && (
-      <div class="floating-icon-nav">
-        <button class="menu-trigger" aria-label="Open menu" aria-expanded="false">
+      <!-- Mobile Nav (shared across modes) -->
+      <button class="mobile-nav-toggle" aria-label="Open menu" aria-expanded="false">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="4" y1="8" x2="20" y2="8"></line>
+          <line x1="4" y1="16" x2="20" y2="16"></line>
+        </svg>
+      </button>
+
+      <div class="mobile-nav-overlay"></div>
+
+      <div class="mobile-nav-panel">
+        <button class="mobile-nav-close" aria-label="Close menu">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="3" y1="12" x2="21" y2="12"></line>
-            <line x1="3" y1="6" x2="21" y2="6"></line>
-            <line x1="3" y1="18" x2="21" y2="18"></line>
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
         </button>
-        <div class="menu-panel">
-          <button class="menu-close" aria-label="Close menu">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
-          <nav aria-label="Main navigation">
-            <ul class="menu-links" role="list">
-              {navItems.map(item => (
-                <li>
-                  <a
-                    href={item.href}
-                    class:list={['menu-link', { active: Astro.url.pathname === item.href }]}
-                  >
-                    {item.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-          <div class="menu-theme">
-            <ThemeToggle />
-          </div>
-        </div>
-      </div>
-    )}
-
-    <!-- OPTION C: Minimal Top Bar -->
-    {navMode === 'minimal' && (
-      <header class="minimal-header">
-        <nav class="minimal-nav container" aria-label="Main navigation">
-          <ul class="minimal-nav-links" role="list">
-            {navItems.map(item => (
-              <li>
-                <a
-                  href={item.href}
-                  class:list={['minimal-nav-link', { active: Astro.url.pathname === item.href }]}
-                >
-                  {item.label}
-                </a>
-              </li>
-            ))}
-          </ul>
+        <ul class="mobile-nav-links">
+          {navItems.map(item => (
+            <li>
+              <a
+                href={item.href}
+                class:list={['mobile-nav-link', { active: Astro.url.pathname === item.href }]}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+        <div class="mobile-nav-footer">
           <ThemeToggle />
-        </nav>
-      </header>
-    )}
-
-    <!-- OPTION D: Sidebar Navigation -->
-    {navMode === 'sidebar' && (
-      <div class="sidebar-layout">
-        <aside class="sidebar">
-          <div class="sidebar-header">
-            <a href="/" class="sidebar-logo">{fullName}</a>
-          </div>
-          <nav class="sidebar-nav" aria-label="Main navigation">
-            <ul class="sidebar-links" role="list">
-              {navItems.map(item => (
-                <li>
-                  <a
-                    href={item.href}
-                    class:list={['sidebar-link', { active: Astro.url.pathname === item.href || (item.href !== '/' && Astro.url.pathname.startsWith(item.href)) }]}
-                  >
-                    {item.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-          <div class="sidebar-footer">
-            <ThemeToggle />
-          </div>
-        </aside>
-        <div class="sidebar-content">
-          <main id="main-content" tabindex="-1">
-            <slot />
-          </main>
-          <footer class="footer sidebar-footer-content">
-            <div class="footer-content">
-              {config.footer.copyright && (
-                <span class="footer-copy">&copy; {new Date().getFullYear()} {fullName}</span>
-              )}
-              <div class="footer-links">
-                {footerLinks.map(link => (
-                  <a
-                    href={link.href}
-                    target={link.href.startsWith('mailto:') ? undefined : '_blank'}
-                    rel={link.href.startsWith('mailto:') ? undefined : 'noopener noreferrer'}
-                  >
-                    {link.label}
-                  </a>
-                ))}
-              </div>
-            </div>
-          </footer>
         </div>
       </div>
-    )}
 
-    <!-- Main content for non-sidebar modes -->
-    {navMode !== 'sidebar' && (
-      <main id="main-content" tabindex="-1">
+      <!-- Main Content -->
+      <main class="main-content">
         <slot />
       </main>
-    )}
 
-    {navMode !== 'sidebar' && (
-      <footer class="footer">
+      <!-- Footer -->
+      <footer class="site-footer">
         <div class="container footer-content">
           {config.footer.copyright && (
             <span class="footer-copy">&copy; {new Date().getFullYear()} {fullName}</span>
@@ -276,47 +246,221 @@ const footerLinks = [
           </div>
         </div>
       </footer>
-    )}
+    </div>
 
     <style>
       /* ============================================
-         Skip Link (Accessibility)
+         Layout Structure
          ============================================ */
-      .skip-link {
-        position: absolute;
-        top: -100%;
-        left: var(--space-4);
-        z-index: var(--z-modal);
-        padding: var(--space-2) var(--space-4);
-        background-color: var(--color-accent);
-        color: white;
-        text-decoration: none;
-        border-radius: var(--radius-md);
-        font-size: var(--font-size-sm);
-        font-weight: var(--font-weight-medium);
-        transition: top 0.2s ease;
+      .layout-wrapper {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
       }
 
-      .skip-link:focus {
-        top: var(--space-4);
-        outline: 2px solid var(--color-text);
-        outline-offset: 2px;
-      }
-
-      /* Focus Styles for Main Content */
-      #main-content:focus {
-        outline: none;
+      .main-content {
+        flex: 1;
       }
 
       /* ============================================
-         OPTION A: Inline Navigation
+         Navigation Visibility by Mode
          ============================================ */
-      .inline-header {
-        padding: var(--space-6) 0;
-        margin-bottom: var(--space-4);
+      .floating-nav,
+      .sidebar-nav,
+      .inline-nav {
+        display: none;
       }
 
+      [data-nav-mode="floating"] .floating-nav { display: block; }
+      [data-nav-mode="sidebar"] .sidebar-nav { display: block; }
+      [data-nav-mode="inline"] .inline-nav { display: block; }
+
+      /* Legacy mode support */
+      [data-nav-mode="floating-icon"] .floating-nav { display: block; }
+      [data-nav-mode="minimal"] .sidebar-nav { display: block; }
+
+      /* ============================================
+         FLOATING NAV - Minimal bottom pill
+         Subtle, editorial design that integrates with content
+         ============================================ */
+      .floating-nav {
+        position: fixed;
+        bottom: calc(var(--space-8) + env(safe-area-inset-bottom, 0px));
+        left: 50%;
+        transform: translateX(-50%) translateY(0);
+        z-index: var(--z-sticky);
+        transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                    opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .floating-nav.hidden {
+        transform: translateX(-50%) translateY(calc(100% + var(--space-12)));
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .floating-nav-pill {
+        display: flex;
+        align-items: center;
+        gap: 0;
+        padding: 6px;
+        background: var(--color-bg);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-full);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+      }
+
+      [data-theme="dark"] .floating-nav-pill {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+      }
+
+      .floating-nav-links {
+        display: flex;
+        align-items: center;
+        gap: 0;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .floating-nav-links li {
+        display: flex;
+        align-items: center;
+        margin: 0;
+        padding: 0;
+      }
+
+      .floating-nav-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 32px;
+        padding: 0 16px;
+        font-family: var(--font-body);
+        font-size: var(--font-size-base);
+        font-weight: var(--font-weight-medium);
+        line-height: 1;
+        color: var(--color-text-muted);
+        text-decoration: none;
+        background: none;
+        border-radius: var(--radius-full);
+        transition: color 0.2s ease, background 0.2s ease;
+      }
+
+      .floating-nav-link:hover {
+        color: var(--color-text);
+      }
+
+      .floating-nav-link.active {
+        color: var(--color-text);
+      }
+
+      .floating-nav-actions {
+        display: flex;
+        align-items: center;
+      }
+
+      /* No content offset needed - nav is at bottom */
+      [data-nav-mode="floating"] .main-content,
+      [data-nav-mode="floating-icon"] .main-content {
+        padding-top: 0;
+        padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+      }
+
+      /* ============================================
+         SIDEBAR NAV - Alongside content (centered)
+         ============================================ */
+      [data-nav-mode="sidebar"] .layout-wrapper,
+      [data-nav-mode="minimal"] .layout-wrapper {
+        max-width: calc(var(--content-max-width) + 180px);
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 140px 1fr;
+        grid-template-rows: 1fr auto;
+        grid-template-areas:
+          "sidebar main"
+          "footer footer";
+        gap: var(--space-8);
+        padding: 0 var(--space-4);
+      }
+
+      .sidebar-nav {
+        grid-area: sidebar;
+        position: sticky;
+        top: 0;
+        height: fit-content;
+        /* Match article padding exactly */
+        padding-top: var(--content-top-padding);
+      }
+
+      .sidebar-nav-inner {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .sidebar-nav-links {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      /* First link - remove top padding and left padding for exact alignment */
+      .sidebar-nav-links li:first-child .sidebar-nav-link {
+        padding-top: 0;
+        padding-left: 0;
+      }
+
+      .sidebar-nav-link {
+        display: block;
+        padding: var(--space-2) 0;
+        font-family: var(--font-body);
+        font-size: var(--font-size-base);
+        line-height: var(--line-height-normal);
+        color: var(--color-text-muted);
+        text-decoration: none;
+        background: none;
+        transition: all 0.15s ease;
+      }
+
+      .sidebar-nav-link:hover {
+        color: var(--color-text);
+      }
+
+      .sidebar-nav-link.active {
+        color: var(--color-text);
+        font-weight: var(--font-weight-medium);
+      }
+
+      .sidebar-nav-footer {
+        margin-top: var(--space-6);
+        padding-top: var(--space-4);
+        border-top: 1px solid var(--color-border);
+      }
+
+      [data-nav-mode="sidebar"] .main-content,
+      [data-nav-mode="minimal"] .main-content {
+        grid-area: main;
+        min-width: 0;
+      }
+
+      [data-nav-mode="sidebar"] .site-footer,
+      [data-nav-mode="minimal"] .site-footer {
+        grid-area: footer;
+      }
+
+      /* ============================================
+         INLINE NAV - Header style
+         ============================================ */
       .inline-nav {
+        padding: var(--space-6) 0;
+        border-bottom: 1px solid var(--color-border);
+        margin-bottom: var(--space-6);
+      }
+
+      .inline-nav-inner {
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -332,12 +476,12 @@ const footerLinks = [
       }
 
       .inline-nav-link {
-        font-family: var(--font-ui);
-        font-size: var(--font-size-sm);
+        font-family: var(--font-body);
+        font-size: var(--font-size-base);
         color: var(--color-text-secondary);
         text-decoration: none;
         background: none;
-        transition: color var(--transition-fast);
+        transition: color 0.15s ease;
       }
 
       .inline-nav-link:hover {
@@ -348,326 +492,148 @@ const footerLinks = [
         color: var(--color-accent);
       }
 
-      @media (max-width: 500px) {
-        .inline-nav-links {
-          gap: var(--space-4);
-        }
-        .inline-nav-link {
-          font-size: var(--font-size-xs);
-        }
-      }
-
       /* ============================================
-         OPTION B: Floating Icon
+         MOBILE NAV
          ============================================ */
-      .floating-icon-nav {
+      .mobile-nav-toggle {
+        display: none;
         position: fixed;
-        bottom: var(--space-6);
-        right: var(--space-6);
-        z-index: var(--z-modal);
-      }
-
-      .menu-trigger {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        background-color: var(--color-bg);
-        border: 1px solid var(--color-border);
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        cursor: pointer;
-        display: flex;
+        top: var(--space-4);
+        right: var(--space-4);
+        z-index: var(--z-sticky);
+        width: 44px;
+        height: 44px;
         align-items: center;
         justify-content: center;
-        transition: all var(--transition-fast);
+        background: var(--color-bg);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
       }
 
-      .menu-trigger:hover {
-        background-color: var(--color-bg-alt);
-        transform: scale(1.05);
-      }
-
-      .menu-trigger svg {
+      .mobile-nav-toggle svg {
         color: var(--color-text);
       }
 
-      .menu-panel {
-        position: absolute;
-        bottom: 60px;
-        right: 0;
-        background-color: var(--color-bg);
-        border: 1px solid var(--color-border);
-        border-radius: var(--radius-lg);
-        padding: var(--space-4);
-        min-width: 180px;
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+      .mobile-nav-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: var(--z-modal);
         opacity: 0;
         visibility: hidden;
-        transform: translateY(10px) scale(0.95);
-        transition: all 0.2s ease;
+        transition: all 0.3s ease;
       }
 
-      .menu-panel.open {
+      .mobile-nav-overlay.visible {
         opacity: 1;
         visibility: visible;
-        transform: translateY(0) scale(1);
       }
 
-      [data-theme="dark"] .menu-panel {
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+      .mobile-nav-panel {
+        display: none;
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: min(280px, 85vw);
+        height: 100vh;
+        background: var(--color-bg);
+        z-index: calc(var(--z-modal) + 1);
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+        padding: var(--space-6);
+        flex-direction: column;
       }
 
-      .menu-close {
+      .mobile-nav-panel.open {
+        transform: translateX(0);
+      }
+
+      .mobile-nav-close {
         position: absolute;
-        top: var(--space-2);
-        right: var(--space-2);
+        top: var(--space-4);
+        right: var(--space-4);
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         background: none;
         border: none;
         cursor: pointer;
-        padding: var(--space-1);
         color: var(--color-text-secondary);
-        transition: color var(--transition-fast);
       }
 
-      .menu-close:hover {
-        color: var(--color-text);
-      }
-
-      .menu-links {
+      .mobile-nav-links {
         list-style: none;
-        margin: 0;
+        margin: var(--space-12) 0 0 0;
         padding: 0;
         display: flex;
         flex-direction: column;
-        gap: var(--space-1);
+        gap: var(--space-2);
       }
 
-      .menu-link {
+      .mobile-nav-link {
         display: block;
-        font-family: var(--font-ui);
-        font-size: var(--font-size-sm);
+        padding: var(--space-3) var(--space-4);
+        font-family: var(--font-body);
+        font-size: var(--font-size-base);
         color: var(--color-text-secondary);
         text-decoration: none;
-        background: none;
-        padding: var(--space-2) var(--space-3);
         border-radius: var(--radius-md);
-        transition: all var(--transition-fast);
+        transition: all 0.15s ease;
       }
 
-      .menu-link:hover {
+      .mobile-nav-link:hover,
+      .mobile-nav-link.active {
         color: var(--color-text);
-        background-color: var(--color-bg-alt);
+        background: var(--color-bg-alt);
       }
 
-      .menu-link.active {
+      .mobile-nav-link.active {
         color: var(--color-accent);
-        background-color: rgba(196, 30, 58, 0.1);
       }
 
-      .menu-theme {
-        margin-top: var(--space-3);
-        padding-top: var(--space-3);
-        border-top: 1px solid var(--color-border);
-        display: flex;
-        justify-content: center;
-      }
-
-      /* ============================================
-         OPTION C: Minimal Top Bar
-         ============================================ */
-      .minimal-header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: var(--z-sticky);
-        background-color: var(--color-bg);
-        transition: transform 0.3s ease;
-      }
-
-      .minimal-header.hidden {
-        transform: translateY(-100%);
-      }
-
-      .minimal-nav {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        height: 44px;
-      }
-
-      .minimal-nav-links {
-        display: flex;
-        align-items: center;
-        gap: var(--space-6);
-        list-style: none;
-        margin: 0;
-        padding: 0;
-      }
-
-      .minimal-nav-link {
-        font-family: var(--font-ui);
-        font-size: var(--font-size-xs);
-        color: var(--color-text-muted);
-        text-decoration: none;
-        background: none;
-        text-transform: lowercase;
-        letter-spacing: 0.02em;
-        transition: color var(--transition-fast);
-      }
-
-      .minimal-nav-link:hover {
-        color: var(--color-text);
-      }
-
-      .minimal-nav-link.active {
-        color: var(--color-text);
-      }
-
-      @media (max-width: 500px) {
-        .minimal-nav-links {
-          gap: var(--space-4);
-        }
-      }
-
-      /* ============================================
-         OPTION D: Sidebar Navigation
-         ============================================ */
-      .sidebar-layout {
-        display: grid;
-        grid-template-columns: 260px 1fr;
-        min-height: 100vh;
-      }
-
-      .sidebar {
-        position: sticky;
-        top: 0;
-        height: 100vh;
-        background-color: var(--color-bg-alt);
-        border-right: 1px solid var(--color-border-light);
-        display: flex;
-        flex-direction: column;
-        padding: var(--space-6);
-      }
-
-      .sidebar-header {
-        margin-bottom: var(--space-8);
-      }
-
-      .sidebar-logo {
-        font-family: var(--font-heading);
-        font-size: var(--font-size-lg);
-        font-weight: var(--font-weight-semibold);
-        color: var(--color-text);
-        text-decoration: none;
-        background: none;
-      }
-
-      .sidebar-nav {
-        flex: 1;
-      }
-
-      .sidebar-links {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-1);
-      }
-
-      .sidebar-link {
-        display: block;
-        font-family: var(--font-ui);
-        font-size: var(--font-size-sm);
-        color: var(--color-text-secondary);
-        text-decoration: none;
-        background: none;
-        padding: var(--space-2) var(--space-3);
-        border-radius: var(--radius-md);
-        transition: all var(--transition-fast);
-      }
-
-      .sidebar-link:hover {
-        color: var(--color-text);
-        background-color: var(--color-bg);
-      }
-
-      .sidebar-link.active {
-        color: var(--color-accent);
-        background-color: var(--color-bg);
-      }
-
-      .sidebar-footer {
+      .mobile-nav-footer {
         margin-top: auto;
         padding-top: var(--space-4);
-        border-top: 1px solid var(--color-border-light);
+        border-top: 1px solid var(--color-border);
       }
 
-      .sidebar-content {
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
-      }
-
-      .sidebar-content main {
-        flex: 1;
-        padding: var(--space-8);
-        max-width: var(--content-max-width);
-      }
-
-      .sidebar-footer-content {
-        padding: var(--space-6) var(--space-8);
-        margin-top: 0;
-      }
-
-      .sidebar-footer-content .footer-content {
-        max-width: var(--content-max-width);
-      }
-
-      @media (max-width: 900px) {
-        .sidebar-layout {
-          grid-template-columns: 1fr;
+      /* Mobile breakpoint */
+      @media (max-width: 768px) {
+        .mobile-nav-toggle,
+        .mobile-nav-overlay,
+        .mobile-nav-panel {
+          display: flex;
         }
 
-        .sidebar {
-          position: fixed;
-          left: -100%;
-          width: 260px;
-          z-index: var(--z-modal);
-          transition: left 0.3s ease;
+        .floating-nav,
+        .sidebar-nav,
+        .inline-nav {
+          display: none !important;
         }
 
-        .sidebar.open {
-          left: 0;
+        [data-nav-mode="sidebar"] .layout-wrapper,
+        [data-nav-mode="minimal"] .layout-wrapper {
+          display: flex;
+          flex-direction: column;
         }
 
-        .sidebar-content main {
-          padding: var(--space-6) var(--space-4);
+        .main-content {
+          padding-top: calc(60px + var(--space-4)) !important;
         }
       }
 
       /* ============================================
-         Main Content
+         FOOTER
          ============================================ */
-      main {
-        min-height: calc(100vh - 200px);
-        padding: var(--space-8) 0;
-      }
-
-      [data-nav-mode="inline"] main {
-        padding-top: 0;
-      }
-
-      [data-nav-mode="minimal"] main {
-        padding-top: calc(44px + var(--space-8));
-      }
-
-      /* ============================================
-         Footer
-         ============================================ */
-      .footer {
+      .site-footer {
         margin-top: var(--space-16);
         padding: var(--space-6) 0;
+        border-top: 1px solid var(--color-border);
       }
 
       .footer-content {
@@ -692,7 +658,7 @@ const footerLinks = [
         color: var(--color-text-muted);
         text-decoration: none;
         background: none;
-        transition: color var(--transition-fast);
+        transition: color 0.15s ease;
       }
 
       .footer-links a:hover {
@@ -704,87 +670,80 @@ const footerLinks = [
           flex-direction: column;
           gap: var(--space-2);
         }
-        .footer-links {
-          gap: var(--space-3);
-        }
       }
     </style>
 
     <script>
-      // Floating icon menu toggle
-      function initFloatingMenu() {
-        const trigger = document.querySelector('.menu-trigger');
-        const panel = document.querySelector('.menu-panel');
-        const close = document.querySelector('.menu-close');
+      // Mobile nav toggle
+      const toggle = document.querySelector('.mobile-nav-toggle');
+      const overlay = document.querySelector('.mobile-nav-overlay');
+      const panel = document.querySelector('.mobile-nav-panel');
+      const close = document.querySelector('.mobile-nav-close');
 
-        if (!trigger || !panel) return;
-
-        trigger.addEventListener('click', () => {
-          const isOpen = panel.classList.toggle('open');
-          trigger.setAttribute('aria-expanded', String(isOpen));
-        });
-
-        close?.addEventListener('click', () => {
-          panel.classList.remove('open');
-          trigger.setAttribute('aria-expanded', 'false');
-        });
-
-        // Close on click outside
-        document.addEventListener('click', (e) => {
-          if (!trigger.contains(e.target as Node) && !panel.contains(e.target as Node)) {
-            panel.classList.remove('open');
-            trigger.setAttribute('aria-expanded', 'false');
-          }
-        });
-
-        // Close on link click
-        panel.querySelectorAll('.menu-link').forEach(link => {
-          link.addEventListener('click', () => {
-            panel.classList.remove('open');
-            trigger.setAttribute('aria-expanded', 'false');
-          });
-        });
+      function openMobileNav() {
+        panel?.classList.add('open');
+        overlay?.classList.add('visible');
+        toggle?.setAttribute('aria-expanded', 'true');
+        document.body.style.overflow = 'hidden';
       }
 
-      // Minimal header scroll hide/show
-      function initMinimalHeader() {
-        const header = document.querySelector('.minimal-header');
-        if (!header) return;
+      function closeMobileNav() {
+        panel?.classList.remove('open');
+        overlay?.classList.remove('visible');
+        toggle?.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+      }
 
-        let lastScrollY = window.scrollY;
-        let ticking = false;
+      toggle?.addEventListener('click', openMobileNav);
+      close?.addEventListener('click', closeMobileNav);
+      overlay?.addEventListener('click', closeMobileNav);
 
-        function updateHeader() {
-          const currentScrollY = window.scrollY;
+      // Close on escape
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeMobileNav();
+      });
 
-          if (currentScrollY < 50) {
-            header.classList.remove('hidden');
-          } else if (currentScrollY > lastScrollY) {
-            header.classList.add('hidden');
-          } else {
-            header.classList.remove('hidden');
+      // Floating nav auto-hide on scroll
+      const floatingNav = document.querySelector('.floating-nav');
+      let lastScrollY = window.scrollY;
+      let ticking = false;
+      const scrollThreshold = 50; // Minimum scroll before hiding
+
+      function updateFloatingNav() {
+        const currentScrollY = window.scrollY;
+        const scrollDelta = currentScrollY - lastScrollY;
+
+        if (floatingNav) {
+          // Hide when scrolling down past threshold, show when scrolling up
+          if (scrollDelta > 10 && currentScrollY > scrollThreshold) {
+            floatingNav.classList.add('hidden');
+          } else if (scrollDelta < -10 || currentScrollY < scrollThreshold) {
+            floatingNav.classList.remove('hidden');
           }
-
-          lastScrollY = currentScrollY;
-          ticking = false;
         }
 
-        window.addEventListener('scroll', () => {
-          if (!ticking) {
-            requestAnimationFrame(updateHeader);
-            ticking = true;
-          }
-        }, { passive: true });
+        lastScrollY = currentScrollY;
+        ticking = false;
       }
 
-      initFloatingMenu();
-      initMinimalHeader();
-      document.addEventListener('astro:after-swap', () => {
-        initFloatingMenu();
-        initMinimalHeader();
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          requestAnimationFrame(updateFloatingNav);
+          ticking = true;
+        }
+      }, { passive: true });
+
+      // Show nav when hovering near bottom of screen
+      document.addEventListener('mousemove', (e) => {
+        if (floatingNav && window.innerHeight - e.clientY < 100) {
+          floatingNav.classList.remove('hidden');
+        }
       });
     </script>
 
     <AnimationInit />
+
+    {/* Settings panel - allows users to customize theme */}
+    <SettingsPanel />
   </body>
 </html>

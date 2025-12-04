@@ -1,16 +1,13 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { config } from '../config';
-import { loadPublications, getSelectedPublications } from '../lib/bibtex';
+import publications from '../content/publications.json';
 import educationData from '../content/education.json';
-import path from 'node:path';
 
 const title = config.site.title;
 
-// Load publications from BibTeX
-const contentDir = path.join(process.cwd(), 'src', 'content');
-const publications = loadPublications(contentDir);
-const selectedPapers = getSelectedPublications(publications);
+// Get selected publications
+const selectedPapers = publications.publications.filter(p => p.selected);
 
 // Education data
 const education = educationData.education;
@@ -25,22 +22,23 @@ const displayName = config.name.middle
 <BaseLayout title={title}>
   <article class="about-page">
     <div class="container">
-      <!-- Profile Section -->
-      <section class="profile-section" data-animate="fade-up">
-        <h1>{displayName} <span class="accent">{config.name.last}</span></h1>
+      <!-- About Section -->
+      <section class="about-section" data-animate="fade-up">
         <p>
-          I am an Assistant Professor at <a href="https://eecs.berkeley.edu/">UC Berkeley EECS</a> where I lead the <a href="https://lillab.berkeley.edu/">Language Intelligence Lab (LIL)</a>. Before that, I was a Research Scientist at <a href="https://research.google/">Google Research</a> and completed my PhD at <a href="https://cs.stanford.edu/">Stanford</a> advised by <a href="https://nlp.stanford.edu/manning/">Chris Manning</a>.
+          {config.about.bio}
         </p>
+        {config.about.affiliation && (
+          <p>
+            I am affiliated with <a href={config.about.affiliation.url}>{config.about.affiliation.name}</a>.
+          </p>
+        )}
       </section>
 
       <!-- Research Interests -->
       <section class="section" data-animate="fade-up">
         <h2>Research Interests</h2>
         <p>
-          My research focuses on making language models more efficient, interpretable, and capable of understanding longer contexts. I develop new attention mechanisms that scale to documents with hundreds of thousands of tokens while maintaining high quality.
-        </p>
-        <p>
-          I am also interested in multilingual NLP and cross-lingual transfer learning, working to make advances in language technology accessible across the world's languages. My group combines insights from linguistics, cognitive science, and machine learning.
+          {config.about.researchInterests}
         </p>
       </section>
 
@@ -50,9 +48,9 @@ const displayName = config.name.middle
           <h2>Selected Publications</h2>
           <div class="selected-papers" data-animate="stagger">
             {selectedPapers.map(paper => (
-              <article class="paper-card">
+              <article class="paper-card paper-card--with-preview-lg">
                 {paper.preview && (
-                  <div class="paper-preview">
+                  <div class="paper-preview paper-preview--lg">
                     <img src={paper.preview} alt={paper.title} loading="lazy" />
                   </div>
                 )}
@@ -113,7 +111,7 @@ const displayName = config.name.middle
               <div class="education-item">
                 <div class="education-period">{edu.startYear} – {edu.endYear}</div>
                 <div class="education-content">
-                  <h3>{edu.degree} in {edu.field}</h3>
+                  <p><strong>{edu.degree} in {edu.field}</strong></p>
                   <p class="education-institution">
                     <a href={edu.institutionUrl}>{edu.institution}</a>
                   </p>
@@ -145,176 +143,39 @@ const displayName = config.name.middle
 
 <style>
   .about-page {
-    padding: var(--space-8) 0;
-    /* User can customize content width by overriding these variables */
-    --page-max-width: var(--content-max-width, 750px);
+    /* Vertical padding handled by article in global.css */
   }
 
-  .about-page .container {
-    max-width: var(--page-max-width);
+  /* About Section - first element alignment */
+  .about-section {
+    margin-top: 0;
+    margin-bottom: var(--space-8);
   }
 
-  /* Profile Section */
-  .profile-section {
-    margin-bottom: var(--space-12);
+  .about-section p:first-child {
+    margin-top: 0;
   }
 
-  .profile-section h1 {
-    margin-bottom: var(--space-4);
-  }
-
-  .accent {
-    color: var(--color-accent);
-  }
-
-  .lead {
-    font-size: var(--font-size-lg);
-    color: var(--color-text-secondary);
-    font-style: italic;
-    margin-bottom: var(--space-6);
+  .about-section p {
+    font-size: var(--font-size-base);
+    font-family: var(--font-body);
+    line-height: var(--line-height-normal);
   }
 
   /* Sections */
   .section {
-    margin-bottom: var(--space-12);
+    margin-bottom: var(--space-8);
   }
 
   .section h2 {
-    margin-bottom: var(--space-6);
+    margin-bottom: var(--space-4);
   }
 
-  /* Selected Papers */
+  /* Selected Papers - uses global .paper-* classes from global.css */
   .selected-papers {
     display: flex;
     flex-direction: column;
-    gap: var(--space-6);
-  }
-
-  .paper-card {
-    display: grid;
-    grid-template-columns: 180px 1fr;
-    gap: var(--space-5);
-    padding: var(--space-4);
-    border-radius: var(--radius-md);
-    transition: all var(--transition-fast);
-  }
-
-  .paper-card:hover {
-    background-color: var(--color-bg-alt);
-  }
-
-  .paper-preview {
-    flex-shrink: 0;
-    width: 180px;
-    height: 120px;
-    overflow: hidden;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--color-border);
-  }
-
-  .paper-preview img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform var(--transition-normal);
-  }
-
-  .paper-card:hover .paper-preview img {
-    transform: scale(1.05);
-  }
-
-  .paper-content {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-  }
-
-  .paper-meta {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    margin-bottom: var(--space-2);
-  }
-
-  .paper-venue {
-    font-size: var(--font-size-xs);
-    font-family: var(--font-ui);
-    color: var(--color-accent);
-    font-weight: var(--font-weight-medium);
-  }
-
-  .paper-year {
-    font-size: var(--font-size-xs);
-    font-family: var(--font-mono);
-    color: var(--color-text-muted);
-  }
-
-  .paper-title {
-    font-size: var(--font-size-lg);
-    font-weight: var(--font-weight-medium);
-    font-style: normal;
-    margin: 0 0 var(--space-2);
-    line-height: var(--line-height-tight);
-  }
-
-  .paper-title a {
-    color: var(--color-text);
-    background: none;
-    transition: color var(--transition-fast);
-  }
-
-  .paper-title a:hover {
-    color: var(--color-accent);
-  }
-
-  .paper-authors {
-    font-size: var(--font-size-sm);
-    color: var(--color-text-secondary);
-    margin: 0 0 var(--space-4);
-    line-height: var(--line-height-relaxed);
-  }
-
-  .paper-links {
-    display: flex;
-    gap: var(--space-3);
-    margin-top: auto;
-  }
-
-  .paper-link {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    font-size: var(--font-size-sm);
-    font-family: var(--font-ui);
-    font-weight: var(--font-weight-medium);
-    color: var(--color-text-secondary);
-    background: none;
-    padding: var(--space-2) var(--space-3);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-full);
-    transition: all var(--transition-fast);
-  }
-
-  .paper-link:hover {
-    color: var(--color-accent);
-    border-color: var(--color-accent);
-    background-color: rgba(196, 30, 58, 0.05);
-  }
-
-  [data-theme="dark"] .paper-link:hover {
-    background-color: rgba(255, 77, 106, 0.1);
-  }
-
-  @media (max-width: 600px) {
-    .paper-card {
-      grid-template-columns: 1fr;
-      gap: var(--space-4);
-    }
-
-    .paper-preview {
-      width: 100%;
-      height: 140px;
-    }
+    gap: var(--space-4);
   }
 
   /* Education */
@@ -337,23 +198,19 @@ const displayName = config.name.middle
   }
 
   .education-period {
-    font-size: var(--font-size-sm);
-    font-family: var(--font-mono);
-    color: var(--color-text-muted);
-    padding-top: 2px;
-  }
-
-  .education-content h3 {
     font-size: var(--font-size-base);
-    font-weight: var(--font-weight-semibold);
-    font-style: normal;
-    margin: 0 0 var(--space-1);
-    color: var(--color-text);
+    font-family: var(--font-body);
+    font-weight: var(--font-weight-normal);
+    line-height: var(--line-height-normal);
+    color: var(--color-text-muted);
   }
 
-  .education-institution {
+  .education-content p {
     margin: 0 0 var(--space-1);
-    font-size: var(--font-size-sm);
+  }
+
+  .education-content strong {
+    font-weight: var(--font-weight-medium);
   }
 
   .education-institution a {
@@ -361,14 +218,12 @@ const displayName = config.name.middle
   }
 
   .education-details {
-    margin: 0 0 var(--space-2);
-    font-size: var(--font-size-sm);
     color: var(--color-text-muted);
   }
 
   .thesis-link {
     display: inline-block;
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-base);
     color: var(--color-accent);
     background: none;
   }
@@ -377,10 +232,6 @@ const displayName = config.name.middle
     .education-item {
       grid-template-columns: 1fr;
       gap: var(--space-1);
-    }
-
-    .education-period {
-      font-size: var(--font-size-xs);
     }
   }
 </style>

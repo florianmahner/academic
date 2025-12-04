@@ -1,10 +1,11 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
+import { config } from './src/config.ts';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://florianmahner.github.io',
+  site: config.site.url,
   base: '/',
   integrations: [
     sitemap({

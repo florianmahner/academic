@@ -1,264 +1,524 @@
 # Academic Website Template
 
-A modern, customizable academic website template built with [Astro](https://astro.build). Features **4 distinctive theme presets**, flexible navigation, BibTeX support, and a centralized configuration system.
+<div align="center">
 
-## Theme Presets
+### A beautiful, modern template for academic personal websites
 
-Choose from four distinctive visual identities:
+**6 Typography Presets** · **3 Navigation Modes** · **Dark Mode** · **Fully Responsive**
 
-### Monograph (Default)
-Scholarly elegance with warm cream tones and classic serif typography.
-- **Fonts**: Crimson Pro, Space Grotesk
-- **Colors**: Warm cream background, crimson accents
+[Live Demo](#) · [Getting Started](#-quick-start) · [Documentation](#-configuration)
 
-### Brutalist
-Bold, raw design with extreme typographic contrast.
-- **Fonts**: Bricolage Grotesque, IBM Plex Sans
-- **Colors**: Black/white with orange accents
+[![Astro](https://img.shields.io/badge/Astro-5.0-FF5D01?logo=astro&logoColor=white)](https://astro.build)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-Ready-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 
-### Softwave
-Modern and approachable with soft shadows and rounded elements.
-- **Fonts**: Plus Jakarta Sans, Fira Code
-- **Colors**: Cool white, violet-blue accents
+</div>
 
-### Terminal
-Hacker aesthetic with IDE-inspired colors.
-- **Fonts**: Space Grotesk, JetBrains Mono
-- **Colors**: Deep space dark, cyan glow
+---
 
-## Features
+## 📸 Preview
 
-- **4 theme presets** - Distinctive designs, not generic AI aesthetics
-- **4 navigation modes** - Inline, minimal, floating-icon, sidebar
-- **BibTeX support** - Manage publications in standard `.bib` format
-- **Dark mode** - Automatic theme switching with manual toggle
-- **GSAP animations** - Smooth scroll-triggered animations
-- **Fully responsive** - Mobile-first design
-- **SEO optimized** - Structured data, sitemap, meta tags
-- **Optional sections** - Enable/disable CV, Projects, Teaching, Blog
+> **Note:** Add screenshots here showing:
+> - Homepage with different typography presets
+> - Navigation modes (floating, sidebar, inline)
+> - Publications page
+> - Dark/light mode comparison
+> - Mobile responsive view
 
-## Quick Start
+**Suggested structure:**
+```
+public/
+└── screenshots/
+    ├── hero.png           # Main homepage screenshot
+    ├── presets.png        # Typography presets comparison
+    ├── nav-modes.png      # Navigation modes comparison
+    ├── dark-mode.png      # Dark mode example
+    └── mobile.png         # Mobile responsive view
+```
+
+---
+
+## ✨ Key Features
+
+<table>
+<tr>
+<td width="50%">
+
+### 🎨 Typography Presets
+6 professionally designed font combinations:
+- **Crimson Classic** - Traditional academic serif
+- **Editorial Newsreader** - Magazine-style elegance
+- **Modern Geist** - Clean Vercel-inspired design
+- **Classic Playfair** - High-contrast traditional
+- **Brutalist Space** - Bold contemporary geometric
+- **Humanist Inter** - Warm friendly sans-serif
+
+</td>
+<td width="50%">
+
+### 🧭 Navigation Modes
+3 distinct navigation styles:
+- **Floating** - Safari-style pill at bottom
+- **Sidebar** - Fixed left sidebar
+- **Inline** - Traditional top header
+
+All modes auto-switch to hamburger menu on mobile!
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+### ⚙️ Zero Config Needed
+- Edit **one file** (`config.ts`)
+- No HTML/CSS knowledge required
+- Full TypeScript autocomplete
+- Instant preview with hot reload
+
+</td>
+<td width="50%">
+
+### 🎯 Built for Academics
+- BibTeX support
+- Publication previews (GIFs/images)
+- Education timeline
+- GitHub repos showcase
+- Structured data for SEO
+
+</td>
+</tr>
+</table>
+
+**Plus:** Dark mode, scroll animations (GSAP), settings panel, mobile-first responsive design, sitemap generation
+
+---
+
+## 🚀 Quick Start
 
 ```bash
-# Clone or use as template
-git clone https://github.com/florianmahner/academic.git my-website
+# 1. Clone or download
+git clone https://github.com/YOUR_USERNAME/academic-template.git my-website
 cd my-website
 
-# Install dependencies
+# 2. Install dependencies
 npm install
 
-# Start development server
+# 3. Start dev server
 npm run dev
 ```
 
-Site available at http://localhost:4321
+Your site is now live at **http://localhost:4321** 🎉
 
-## Configuration
+### Next Steps
 
-Edit `src/config.ts` to customize your site:
+1. **Edit** `src/config.ts` with your information
+2. **Add** your publications to `src/content/publications.json`
+3. **Choose** a typography preset and navigation mode
+4. **Deploy** to GitHub Pages (see [Deployment](#-deployment))
+
+---
+
+## ⚙️ Configuration
+
+The template is designed so you **only need to edit one file**: `src/config.ts`
+
+<details>
+<summary><b>📝 View Full Config Example</b></summary>
 
 ```typescript
 export const config = {
-  // Your name
+  // ==================== PERSONAL INFO ====================
   name: {
-    first: "Your",
-    middle: "",
-    last: "Name",
+    first: "Jane",
+    middle: "M",
+    last: "Smith",
   },
+  title: "PhD Candidate in Computer Science",
+  email: "jane.smith@university.edu",
 
-  // Professional title
-  title: "PhD Candidate in ...",
-
-  // Contact & social
-  email: "you@example.com",
+  // ==================== SOCIAL LINKS ====================
   social: {
-    github: "username",
+    github: "janesmith",
     scholar: "SCHOLAR_ID",
-    linkedin: "username",
-    twitter: "",
-    orcid: "",
+    linkedin: "janesmith",
+    twitter: "janesmith_cs",
+    orcid: "0000-0001-2345-6789",
+    researchgate: "",  // leave empty to hide
   },
 
-  // Enable/disable sections
-  sections: {
-    publications: true,
-    opensource: true,
-    cv: true,
-    projects: true,
-    teaching: true,
-    blog: true,
-    misc: true,
+  // ==================== SITE METADATA ====================
+  site: {
+    url: "https://janesmith.github.io",
+    title: "Jane Smith",
+    description: "Personal academic website of Jane Smith",
+    language: "en",
   },
 
-  // Navigation
-  navigation: {
-    mode: "inline", // "inline" | "minimal" | "floating-icon" | "sidebar"
-    items: [
-      { id: "about", label: "About", href: "/" },
-      // ... add more pages
-    ],
-  },
+  // ==================== NAVIGATION ====================
+  navigation: [
+    { id: "about", label: "About", href: "/" },
+    { id: "publications", label: "Publications", href: "/publications" },
+    { id: "open-source", label: "Open Source", href: "/open-source" },
+    { id: "misc", label: "Misc", href: "/misc" },
+  ],
 
-  // Theme System
+  // Choose: "floating" | "sidebar" | "inline"
+  navigationMode: "sidebar",
+
+  // ==================== THEME ====================
   theme: {
-    preset: "monograph", // "monograph" | "brutalist" | "softwave" | "terminal"
-    colorMode: {
-      default: "system", // "light" | "dark" | "system"
-      enableToggle: true,
-    },
-    overrides: {
-      // Optional: override preset values
-      colors: {
-        accent: undefined, // e.g., "#8B2332"
-        accentDark: undefined,
-      },
-      layout: {
-        contentWidth: "750px",
-      },
+    // Choose from 6 presets (see Typography Presets below)
+    defaultPreset: "editorial-newsreader",
+
+    // Optional: Override colors
+    accentLight: undefined,  // e.g., "#c41e3a"
+    accentDark: undefined,   // e.g., "#ff4d6a"
+  },
+
+  // ==================== FEATURES ====================
+  features: {
+    selectedPublications: true,  // Show selected papers on homepage
+    education: true,             // Show education section on homepage
+    darkMode: true,              // Enable dark/light toggle
+    animations: true,            // Enable scroll animations
+    settingsPanel: true,         // Show settings gear icon
+  },
+
+  // ==================== ABOUT PAGE ====================
+  about: {
+    bio: "I am an Assistant Professor of Computer Science at University. My research focuses on machine learning and AI.",
+    researchInterests: "My work centers on deep learning, NLP, and computer vision.",
+    affiliation: {
+      name: "AI Research Lab",
+      url: "https://ai-lab.university.edu",
     },
   },
 
-  // Motion & Animations
-  motion: {
-    enabled: true,
-    reduceMotion: "respect-system",
-    pageTransitions: true,
-    staggerAnimations: true,
+  // ==================== FOOTER ====================
+  footer: {
+    copyright: true,
+    links: [
+      { label: "Email", href: "mailto:jane.smith@university.edu" },
+    ],
   },
 };
 ```
 
-## Navigation Modes
+</details>
 
-### Inline
-Traditional horizontal navigation at the top of the page.
+---
 
-### Minimal
-Compact fixed top bar that hides on scroll down, shows on scroll up.
+## 🎨 Typography Presets
 
-### Floating-icon
-Fixed circular button in the bottom-right corner that opens a popup menu.
+Choose from **6 professionally designed** presets, each with unique character:
 
-### Sidebar
-Vertical navigation on the left side with content on the right.
+| Preset | Vibe | Fonts | Best For |
+|--------|------|-------|----------|
+| **Crimson Classic** | 📚 Traditional Academic | Crimson Pro | Classic scholarly look |
+| **Editorial Newsreader** ⭐ | 📰 Magazine Editorial | Newsreader + JetBrains Mono | Modern editorial style |
+| **Modern Geist** | 💻 Tech Minimal | Geist | Clean contemporary sites |
+| **Classic Playfair** | 🎩 Elegant Traditional | Playfair + Lora | High-contrast elegance |
+| **Brutalist Space** | 🔨 Bold Contemporary | Space Grotesk | Statement-making design |
+| **Humanist Inter** | 👥 Warm & Friendly | Inter | Maximum readability |
 
-## Content Files
+⭐ = Default preset
 
-### Publications (BibTeX)
-
-Edit `src/content/papers.bib`:
-
-```bibtex
-@article{yourname2024paper,
-  title = {Your Paper Title},
-  author = {Your Name and Coauthor},
-  journal = {Journal Name},
-  year = {2024},
-  pdf = {https://link-to-pdf.pdf},
-  html = {https://paper-webpage.com},
-  preview = {/previews/paper.gif},
-  selected = {true},
-  abbr = {JNL}
-}
-```
-
-### Other Content
-
-- `src/content/education.json` - Academic background
-- `src/content/cv.json` - Experience, skills, awards
-- `src/content/projects.json` - Portfolio projects
-- `src/content/teaching.json` - Courses
-- `src/content/repositories.json` - Open source
-- `src/content/blog/*.md` - Blog posts in Markdown
-
-## Project Structure
-
-```
-src/
-├── config.ts              # All site configuration
-├── lib/
-│   └── presets.ts         # Theme preset definitions
-├── content/               # Content files (JSON, BibTeX, Markdown)
-├── components/            # UI components
-├── layouts/
-│   └── BaseLayout.astro   # Main layout with navigation
-├── pages/                 # Site pages
-└── styles/
-    ├── global.css         # Main stylesheet
-    ├── variables.css      # CSS variable bridge
-    └── presets/           # Theme preset CSS files
-        ├── monograph.css
-        ├── brutalist.css
-        ├── softwave.css
-        └── terminal.css
-```
-
-## Commands
-
-| Command           | Action                                     |
-| :---------------- | :----------------------------------------- |
-| `npm install`     | Install dependencies                       |
-| `npm run dev`     | Start dev server at `localhost:4321`       |
-| `npm run build`   | Build production site to `./dist/`         |
-| `npm run preview` | Preview production build locally           |
-
-## Customization
-
-### Changing Theme Preset
-
+**To change:**
 ```typescript
 theme: {
-  preset: "brutalist", // Try different presets
+  defaultPreset: "brutalist-space", // Just change this line!
 }
 ```
 
-### Override Accent Colors
+**Live Switching:** The settings panel (gear icon ⚙️) lets visitors try different presets in real-time!
 
-```typescript
-theme: {
-  preset: "monograph",
-  overrides: {
-    colors: {
-      accent: "#0066cc",     // Custom light mode accent
-      accentDark: "#4da6ff", // Custom dark mode accent
-    },
-  },
+---
+
+## 🧭 Navigation Modes
+
+<table>
+<tr>
+<th width="33%">Floating</th>
+<th width="33%">Sidebar</th>
+<th width="33%">Inline</th>
+</tr>
+<tr>
+<td>
+
+Safari-style pill at bottom
+
+**Features:**
+- Auto-hides on scroll
+- Shows on hover
+- Space-efficient
+
+**Use when:** Modern minimal aesthetic
+
+</td>
+<td>
+
+Fixed left sidebar
+
+**Features:**
+- Always visible
+- Clean separation
+- Easy scanning
+
+**Use when:** Lots of nav items
+
+</td>
+<td>
+
+Traditional top header
+
+**Features:**
+- Familiar pattern
+- Horizontal layout
+- Compact
+
+**Use when:** Standard look preferred
+
+</td>
+</tr>
+</table>
+
+**Mobile:** All modes automatically switch to a hamburger menu below 768px 📱
+
+---
+
+## 📝 Content Management
+
+### Publications
+
+Add to `src/content/publications.json`:
+
+```json
+{
+  "publications": [
+    {
+      "id": "smith2024learning",
+      "type": "article",
+      "title": "Deep Learning for Computer Vision",
+      "authors": ["Jane Smith", "John Doe"],
+      "journal": "Nature Machine Intelligence",
+      "year": 2024,
+      "pdf": "https://arxiv.org/pdf/...",
+      "html": "https://nature.com/articles/...",
+      "preview": "/previews/paper.gif",  // Optional: animated preview
+      "selected": true  // Shows on homepage
+    }
+  ]
 }
 ```
 
-### Change Navigation Style
+**Pro tip:** Set `selected: true` for 3-4 of your best papers to feature them on your homepage!
 
-```typescript
-navigation: {
-  mode: "sidebar", // Try sidebar navigation
-}
+### Other Content Files
+
+| File | Purpose |
+|------|---------|
+| `education.json` | Academic background, degrees, advisors |
+| `repositories.json` | GitHub projects showcase |
+| `misc.json` | Tools, configs, other resources |
+
+All files use simple JSON format - no coding required!
+
+---
+
+## 🎯 Project Structure
+
+```
+academic-template/
+├── src/
+│   ├── config.ts              ⭐ EDIT THIS - main configuration
+│   ├── components/            Reusable UI components
+│   ├── content/               📝 Your content (JSON files)
+│   │   ├── publications.json
+│   │   ├── education.json
+│   │   ├── repositories.json
+│   │   └── misc.json
+│   ├── layouts/
+│   │   └── BaseLayout.astro   Main layout wrapper
+│   ├── lib/
+│   │   ├── typography-presets.ts  Typography system
+│   │   └── bibtex.ts              BibTeX parser
+│   ├── pages/                 Site pages (Astro)
+│   └── styles/                Global styles
+├── public/                    Static assets
+│   ├── favicon.jpg
+│   └── previews/              📸 Publication preview images
+└── package.json
 ```
 
-## Deployment
+---
 
-### GitHub Pages
+## 🚢 Deployment
 
-The template includes a GitHub Actions workflow (`.github/workflows/deploy.yml`).
+### GitHub Pages (Recommended)
 
-1. Go to repo Settings > Pages
-2. Set Source to "GitHub Actions"
-3. Push to `master` branch to trigger deployment
+1. **Update config:**
+   ```typescript
+   site: {
+     url: "https://YOUR_USERNAME.github.io",
+   }
+   ```
+
+2. **Push to GitHub**
+
+3. **Enable Pages:**
+   - Go to repo **Settings** > **Pages**
+   - Set Source to **"GitHub Actions"**
+   - Done! Auto-deploys on every push ✨
 
 ### Other Platforms
 
+**Build:**
 ```bash
 npm run build
 ```
 
-Deploy the `dist/` folder to any static hosting (Netlify, Vercel, etc.)
+**Deploy `dist/` folder to:**
+- **Netlify:** Drag & drop or connect repo
+- **Vercel:** Import repo, set build to `npm run build`
+- **Cloudflare Pages:** Connect repo
 
-## Technologies
+---
 
-- [Astro 5](https://astro.build) - Static site generator
-- [GSAP](https://gsap.com) - Scroll animations
-- [bibtex-parse](https://www.npmjs.com/package/bibtex-parse) - BibTeX parsing
-- Google Fonts - Typography
+## 🛠️ Development
 
-## License
+| Command | Action |
+|---------|--------|
+| `npm install` | Install dependencies |
+| `npm run dev` | Start dev server (`localhost:4321`) |
+| `npm run build` | Build for production |
+| `npm run preview` | Preview production build |
 
-MIT License - feel free to use this template for your own website.
+---
+
+## 💡 Customization Examples
+
+<details>
+<summary><b>🎨 Change Accent Colors</b></summary>
+
+```typescript
+theme: {
+  defaultPreset: "editorial-newsreader",
+  accentLight: "#0066cc",  // Custom blue in light mode
+  accentDark: "#4da6ff",   // Lighter blue in dark mode
+}
+```
+
+</details>
+
+<details>
+<summary><b>🚫 Hide Sections</b></summary>
+
+```typescript
+features: {
+  selectedPublications: false,  // Hide selected papers
+  education: false,             // Hide education section
+  settingsPanel: false,         // Hide settings gear
+}
+```
+
+</details>
+
+<details>
+<summary><b>➕ Add Custom Pages</b></summary>
+
+1. Create `src/pages/teaching.astro`
+2. Add to navigation:
+```typescript
+navigation: [
+  { id: "about", label: "About", href: "/" },
+  { id: "teaching", label: "Teaching", href: "/teaching" },
+  // ...
+]
+```
+
+</details>
+
+<details>
+<summary><b>🔤 Customize Typography</b></summary>
+
+Want to create your own preset? Edit `src/lib/typography-presets.ts`:
+
+```typescript
+{
+  id: 'my-custom-preset',
+  name: 'My Custom Style',
+  description: 'Unique typography for my site',
+  fonts: {
+    body: 'Your Font',
+    heading: 'Another Font',
+    ui: 'UI Font',
+    mono: 'Monospace Font',
+  },
+  colors: {
+    accentLight: '#your-color',
+    accentDark: '#your-dark-color',
+  },
+  styles: {
+    headingStyle: 'normal',
+    headingWeight: 600,
+    bodyWeight: 400,
+    letterSpacing: 'normal',
+  },
+}
+```
+
+</details>
+
+---
+
+## 🆚 Why This Template?
+
+| Feature | This Template | Jekyll/Hugo | WordPress |
+|---------|---------------|-------------|-----------|
+| **Setup Time** | 5 minutes | 30 minutes | Hours |
+| **Typography Presets** | 6 built-in | Manual | Theme-dependent |
+| **Navigation Modes** | 3 built-in | Manual | Plugin-dependent |
+| **Type Safety** | ✅ TypeScript | ❌ | ❌ |
+| **Live Reload** | ⚡ Instant | Slow | N/A |
+| **Build Speed** | ⚡ Fast | Medium | N/A |
+| **Hosting Cost** | Free | Free | Paid |
+
+---
+
+## 📚 Tech Stack
+
+- **[Astro 5](https://astro.build)** - Lightning-fast static site generator
+- **[GSAP](https://gsap.com)** - Professional-grade animations
+- **[TypeScript](https://www.typescriptlang.org/)** - Type-safe configuration
+- **Google Fonts** - Beautiful web typography
+- **[bibtex-parse](https://www.npmjs.com/package/bibtex-parse)** - BibTeX support
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📄 License
+
+MIT License - Free to use for personal and commercial projects.
+
+## 🙏 Credits
+
+Created by [Florian Mahner](https://florianmahner.github.io)
+
+Inspired by the academic web community and templates like [al-folio](https://github.com/alshedivat/al-folio).
+
+## ⭐ Show Your Support
+
+If this template helped you create your academic website, please give it a star on GitHub!
+
+---
+
+<div align="center">
+
+**[⬆ Back to Top](#academic-website-template)**
+
+Made with ❤️ for the academic community
+
+</div>

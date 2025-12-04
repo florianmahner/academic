@@ -1,58 +1,46 @@
 {
-  "github_user": "janesmith",
+  "github_user": "florianmahner",
   "repositories": [
     {
-      "name": "efficient-transformers",
-      "owner": "janesmith",
-      "description": "Library for training and deploying efficient transformer models with linear attention mechanisms",
-      "url": "https://github.com/janesmith/efficient-transformers",
+      "name": "thingsvision",
+      "owner": "ViCCo-Group",
+      "description": "A Python toolbox for extracting and analyzing deep neural network representations",
+      "url": "https://github.com/ViCCo-Group/thingsvision",
       "language": "Python",
-      "stars": 1247,
-      "forks": 189,
-      "topics": ["transformers", "efficient-attention", "deep-learning"],
+      "stars": 174,
+      "forks": 23,
+      "topics": ["deep-learning", "neural-networks", "representation-analysis"],
       "featured": true
     },
     {
-      "name": "multilingual-nlp",
-      "owner": "janesmith",
-      "description": "Toolkit for cross-lingual transfer learning and multilingual model evaluation",
-      "url": "https://github.com/janesmith/multilingual-nlp",
+      "name": "tomlparse",
+      "owner": "florianmahner",
+      "description": "A simple TOML configuration parser for Python projects",
+      "url": "https://github.com/florianmahner/tomlparse",
       "language": "Python",
-      "stars": 856,
-      "forks": 124,
-      "topics": ["nlp", "multilingual", "transfer-learning"],
-      "featured": true
+      "stars": 22,
+      "forks": 3,
+      "topics": ["config", "toml", "python"]
     },
     {
-      "name": "neural-summarization",
-      "owner": "janesmith",
-      "description": "State-of-the-art neural document summarization with controllable generation",
-      "url": "https://github.com/janesmith/neural-summarization",
+      "name": "object-dimensions",
+      "owner": "florianmahner",
+      "description": "Code for analyzing object dimensions in humans and DNNs",
+      "url": "https://github.com/florianmahner/object-dimensions",
       "language": "Python",
-      "stars": 523,
-      "forks": 87,
-      "topics": ["summarization", "nlp", "generation"],
-      "featured": true
+      "stars": 12,
+      "forks": 3,
+      "topics": ["deep-learning", "cognitive-science", "representation-learning"]
     },
     {
-      "name": "attention-analysis",
-      "owner": "janesmith",
-      "description": "Tools for analyzing and visualizing attention patterns in transformer models",
-      "url": "https://github.com/janesmith/attention-analysis",
+      "name": "torch-multipletests",
+      "owner": "florianmahner",
+      "description": "PyTorch implementation of multiple testing corrections",
+      "url": "https://github.com/florianmahner/torch-multipletests",
       "language": "Python",
-      "stars": 312,
-      "forks": 45,
-      "topics": ["interpretability", "attention", "visualization"]
-    },
-    {
-      "name": "llm-benchmark",
-      "owner": "janesmith",
-      "description": "Comprehensive benchmarking suite for large language models",
-      "url": "https://github.com/janesmith/llm-benchmark",
-      "language": "Python",
-      "stars": 198,
-      "forks": 32,
-      "topics": ["benchmarks", "llm", "evaluation"]
+      "stars": 4,
+      "forks": 0,
+      "topics": ["pytorch", "statistics", "multiple-testing"]
     }
   ]
 }

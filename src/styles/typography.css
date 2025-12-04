@@ -20,63 +20,58 @@ body {
   background-color: var(--color-bg);
 }
 
-/* Headings - Modern Sans (tighter line-heights, slight negative tracking) */
+/* Headings - compact margins */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-normal);
   line-height: var(--line-height-tight);
   letter-spacing: var(--letter-spacing-tight);
-  margin-top: var(--space-12);
-  margin-bottom: var(--space-4);
-  color: var(--color-heading);
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  color: var(--color-text);
 }
 
 h1 {
   font-size: var(--font-size-4xl);
-  font-weight: var(--font-weight-semibold);
-  line-height: 1.1;
-  letter-spacing: -0.02em;
   margin-top: 0;
-  margin-bottom: var(--space-6);
+  margin-bottom: 0.75rem;
 }
 
 h2 {
   font-size: var(--font-size-2xl);
-  font-weight: var(--font-weight-semibold);
-  line-height: 1.15;
-  letter-spacing: -0.01em;
+  font-weight: var(--font-weight-medium);
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
 }
 
 h3 {
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-medium);
-  line-height: 1.2;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
 }
 
 h4 {
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-medium);
-  line-height: 1.25;
-  letter-spacing: var(--letter-spacing-normal);
+  letter-spacing: var(--letter-spacing-wide);
 }
 
 h5, h6 {
   font-size: var(--font-size-base);
-  font-weight: var(--font-weight-semibold);
-  line-height: 1.3;
+  font-weight: var(--font-weight-medium);
 }
 
-/* Paragraphs */
+/* Paragraphs - compact spacing */
 p {
   margin-top: 0;
-  margin-bottom: var(--space-4);
-  max-width: 65ch; /* Optimal line length */
+  margin-bottom: 1rem;
 }
 
 /* Lead paragraph */
 .lead, p.subtitle {
   font-size: var(--font-size-lg);
-  line-height: var(--line-height-relaxed);
+  line-height: var(--line-height-normal);
   color: var(--color-text-secondary);
   margin-bottom: var(--space-8);
 }
@@ -101,11 +96,11 @@ a:visited {
   color: var(--color-link-visited);
 }
 
-/* Tufte-style new thought */
+/* Tufte-style new thought - using weight instead of small-caps */
 .newthought {
-  font-variant: small-caps;
-  font-size: 1.1em;
-  letter-spacing: var(--letter-spacing-wide);
+  font-weight: var(--font-weight-medium);
+  font-size: 1em;
+  letter-spacing: var(--letter-spacing-normal);
 }
 
 /* Lists */
@@ -194,9 +189,11 @@ hr {
   margin: var(--space-12) 0;
 }
 
-/* Small caps utility */
+/* Small caps utility - deprecated, using weight for emphasis instead */
 .smallcaps {
-  font-variant: small-caps;
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  font-size: 0.85em;
   letter-spacing: var(--letter-spacing-wide);
 }
 
@@ -234,7 +231,7 @@ th, td {
 }
 
 th {
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-medium);
   border-bottom: 2px solid var(--color-text);
 }
 

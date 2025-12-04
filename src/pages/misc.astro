@@ -10,12 +10,8 @@ const tools = misc.tools;
 <BaseLayout title={title} description="Tools and resources I use">
   <article class="misc-page">
     <div class="container">
-      <header class="page-header" data-animate="fade-up">
-        <h1>Miscellaneous</h1>
-      </header>
-
       <section class="section" data-animate="fade-up">
-        <h2 class="section-label">Tools</h2>
+        <h2>Tools</h2>
         <div class="tools-grid" data-animate="stagger">
           {tools.map(tool => (
             <a href={tool.url} class="tool-chip" target="_blank" rel="noopener noreferrer">
@@ -27,7 +23,7 @@ const tools = misc.tools;
       </section>
 
       <section class="section" data-animate="fade-up">
-        <h2 class="section-label">Configs</h2>
+        <h2>Configs</h2>
         <div class="config-list">
           <a href="/vimrc" class="config-item" download>
             <div class="config-info">
@@ -48,10 +44,17 @@ const tools = misc.tools;
 
 <style>
   .misc-page {
-    padding: var(--space-8) 0;
+    /* Vertical padding handled by article in global.css */
   }
 
-  /* Use global .page-header and .section patterns */
+  /* First section alignment */
+  .misc-page .section:first-child {
+    margin-top: 0;
+  }
+
+  .misc-page .section:first-child h2:first-child {
+    margin-top: 0;
+  }
 
   /* Tools grid */
   .tools-grid {
@@ -75,7 +78,8 @@ const tools = misc.tools;
   }
 
   .tool-name {
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-base);
+    font-family: var(--font-body);
     color: var(--color-text);
   }
 
@@ -84,7 +88,8 @@ const tools = misc.tools;
   }
 
   .tool-desc {
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-base);
+    font-family: var(--font-body);
     color: var(--color-text-muted);
   }
 
@@ -124,8 +129,8 @@ const tools = misc.tools;
   }
 
   .config-name {
-    font-family: var(--font-mono);
-    font-size: var(--font-size-sm);
+    font-family: var(--font-body);
+    font-size: var(--font-size-base);
     color: var(--color-text);
   }
 
@@ -134,7 +139,8 @@ const tools = misc.tools;
   }
 
   .config-desc {
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-base);
+    font-family: var(--font-body);
     color: var(--color-text-muted);
   }
 
