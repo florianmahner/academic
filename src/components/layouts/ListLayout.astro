@@ -151,6 +151,10 @@ const shouldShowField = (field: string) => fields.includes(field as any);
                   <a href={item.links.html || item.links.website} target="_blank" rel="noopener noreferrer">
                     {item.title}
                   </a>
+                ) : collection ? (
+                  <a href={`/${collection}/${item.slug}`}>
+                    {item.title}
+                  </a>
                 ) : (
                   item.title
                 )}
@@ -261,6 +265,10 @@ const shouldShowField = (field: string) => fields.includes(field as any);
                   <h3 class="item-title">
                     {item.links?.html || item.links?.website ? (
                       <a href={item.links.html || item.links.website} target="_blank" rel="noopener noreferrer">
+                        {item.title}
+                      </a>
+                    ) : collection ? (
+                      <a href={`/${collection}/${item.slug}`}>
                         {item.title}
                       </a>
                     ) : (
