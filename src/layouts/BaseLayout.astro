@@ -246,13 +246,6 @@ const footerLinks = [...config.footer.links, ...socialLinks];
       <!-- Footer -->
       <footer class="site-footer">
         <div class="container footer-content">
-          <div class="footer-secondary-nav">
-            <a href={`${base}/cv`}>CV</a>
-            <span class="footer-separator">·</span>
-            <a href={`${base}/contact`}>Contact</a>
-            <span class="footer-separator">·</span>
-            <a href={`${base}/misc`}>Misc</a>
-          </div>
           {config.footer.copyright && (
             <span class="footer-copy">&copy; {new Date().getFullYear()} {fullName}</span>
           )}
@@ -273,7 +266,8 @@ const footerLinks = [...config.footer.links, ...socialLinks];
 
     <style>
       /* ============================================
-         Layout Structure
+         Skip Link (accessibility feature)
+         ============================================ */
       .skip-link {
         position: absolute;
         top: -100%;
@@ -290,6 +284,9 @@ const footerLinks = [...config.footer.links, ...socialLinks];
       .skip-link:focus {
         top: 16px;
       }
+
+      /* ============================================
+         Layout Structure
          ============================================ */
       .layout-wrapper {
         min-height: 100vh;
@@ -664,30 +661,6 @@ const footerLinks = [...config.footer.links, ...socialLinks];
         align-items: center;
         gap: var(--space-3);
         text-align: center;
-      }
-
-      .footer-secondary-nav {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: var(--space-2);
-        font-size: var(--font-size-sm);
-        margin-bottom: var(--space-2);
-      }
-
-      .footer-secondary-nav a {
-        color: var(--color-text-muted);
-        text-decoration: none;
-        transition: color 0.2s ease;
-      }
-
-      .footer-secondary-nav a:hover {
-        color: var(--color-accent);
-      }
-
-      .footer-separator {
-        color: var(--color-border);
-        user-select: none;
       }
 
       .footer-copy {
