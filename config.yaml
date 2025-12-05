@@ -50,7 +50,7 @@ site:
   title: Jane Smith
   description: Personal academic website of Jane Smith - Research in machine learning, natural language processing, and computational linguistics
   language: en
-  base: /  # Base URL for subdirectory deployments (e.g., /academic/)
+  base: /academic/  # Base URL for subdirectory deployments
 
 # =============================================================================
 # NAVIGATION
