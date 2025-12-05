@@ -820,6 +820,41 @@ img:not([loading="lazy"]) {
 }
 
 /* ==========================================================================
+   Code Block Theme Switching (Shiki dual themes)
+   ========================================================================== */
+
+/* Dark theme: swap to dark colors from inline CSS variables */
+[data-theme="dark"] .astro-code,
+[data-theme="dark"] .astro-code span {
+  color: var(--shiki-dark) !important;
+}
+
+[data-theme="dark"] .astro-code {
+  background-color: var(--shiki-dark-bg) !important;
+}
+
+/* Code block container styling */
+.astro-code {
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+  margin: var(--space-4) 0;
+}
+
+/* Inline code styling */
+:not(pre) > code {
+  padding: 0.2em 0.4em;
+  border-radius: var(--radius-sm);
+  font-size: 0.9em;
+  font-family: var(--font-mono);
+  background-color: var(--color-bg-alt);
+  color: var(--color-text);
+}
+
+/* ==========================================================================
    Print Styles
    ========================================================================== */
 
