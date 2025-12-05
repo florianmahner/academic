@@ -5,6 +5,7 @@
  */
 
 import BaseLayout from './BaseLayout.astro';
+import StructuredData from '../components/StructuredData.astro';
 import { config } from '../config';
 
 interface Props {
@@ -35,7 +36,26 @@ const formattedDate = new Date(date).toLocaleDateString('en-US', {
 });
 
 const pageTitle = `${title} | ${config.site.title}`;
+
+// Breadcrumbs for blog posts
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Blog', url: '/blog' },
+  { name: title, url: Astro.url.pathname }
+];
 ---
+
+<StructuredData
+  type="article"
+  article={{
+    title: title,
+    description: description || '',
+    datePublished: new Date(date),
+    dateModified: new Date(date),
+    image: image
+  }}
+  breadcrumbs={breadcrumbs}
+/>
 
 <BaseLayout title={pageTitle} description={description} image={image}>
   <article class="blog-article">

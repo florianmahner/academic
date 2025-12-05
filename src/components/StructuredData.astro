@@ -1,106 +1,109 @@
 ---
 /**
  * Structured Data Component
- * Provides JSON-LD structured data for SEO
+ * Provides JSON-LD structured data for SEO using config values
  */
 
+import { config } from '../config';
+
 interface Props {
-  type: 'Person' | 'WebPage' | 'Article' | 'WebSite';
-  data?: Record<string, unknown>;
+  type?: 'website' | 'article' | 'person';
+  article?: {
+    title: string;
+    description: string;
+    datePublished: Date;
+    dateModified?: Date;
+    image?: string;
+  };
+  breadcrumbs?: Array<{ name: string; url: string }>;
 }
 
-const { type, data = {} } = Astro.props;
+const { type = 'website', article, breadcrumbs } = Astro.props;
+const siteUrl = config.site.url.replace(/\/$/, '');
 
-const baseUrl = Astro.site?.toString() || 'https://florianmahner.github.io';
+// Build full name
+const fullName = [config.name.first, config.name.middle, config.name.last].filter(Boolean).join(' ');
 
-// Person schema for academic profile
+// Build Person schema
 const personSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'Person',
-  name: 'Florian Mahner',
-  url: baseUrl,
-  jobTitle: 'PhD Candidate',
-  affiliation: {
-    '@type': 'Organization',
-    name: 'Max Planck Research Group Vision and Computational Cognition',
-    url: 'https://hebartlab.com/',
-  },
-  alumniOf: [
-    {
-      '@type': 'CollegeOrUniversity',
-      name: 'Radboud University',
-      url: 'https://www.ru.nl/ai/',
-    },
-    {
-      '@type': 'CollegeOrUniversity',
-      name: 'Osnabrück University',
-      url: 'https://www.ikw.uni-osnabrueck.de/',
-    },
-  ],
-  knowsAbout: [
-    'Computational Neuroscience',
-    'Machine Learning',
-    'Representation Learning',
-    'Deep Learning',
-    'Computer Vision',
-    'Cognitive Science',
-  ],
-  sameAs: [
-    'https://github.com/florianmahner',
-    'https://www.linkedin.com/in/florianmahner',
-  ],
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": fullName,
+  "jobTitle": config.title || undefined,
+  "url": siteUrl,
+  "sameAs": [
+    config.social?.github ? `https://github.com/${config.social.github}` : null,
+    config.social?.twitter ? `https://twitter.com/${config.social.twitter}` : null,
+    config.social?.linkedin ? `https://linkedin.com/in/${config.social.linkedin}` : null,
+    config.social?.scholar ? `https://scholar.google.com/citations?user=${config.social.scholar}` : null,
+    config.social?.orcid ? `https://orcid.org/${config.social.orcid}` : null,
+  ].filter(Boolean),
+  "affiliation": config.institution ? {
+    "@type": "Organization",
+    "name": config.institution.name,
+    "url": config.institution.url
+  } : undefined,
+  "knowsAbout": config.about?.research_interests?.split(',').map(i => i.trim()) || []
 };
 
-// WebSite schema
+// Build WebSite schema
 const websiteSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'WebSite',
-  name: 'Florian Mahner',
-  description: 'Personal academic website of Florian Mahner - Research in computational neuroscience and machine learning',
-  url: baseUrl,
-  author: {
-    '@type': 'Person',
-    name: 'Florian Mahner',
-  },
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": config.site.title || fullName,
+  "url": siteUrl,
+  "description": config.site.description,
+  "author": {
+    "@type": "Person",
+    "name": fullName
+  }
 };
 
-// WebPage schema
-const webPageSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'WebPage',
-  url: new URL(Astro.url.pathname, baseUrl).toString(),
-  isPartOf: {
-    '@type': 'WebSite',
-    url: baseUrl,
-    name: 'Florian Mahner',
+// Build Article schema
+const articleSchema = article ? {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": article.title,
+  "description": article.description,
+  "datePublished": article.datePublished.toISOString(),
+  "dateModified": (article.dateModified || article.datePublished).toISOString(),
+  "author": {
+    "@type": "Person",
+    "name": fullName,
+    "url": siteUrl
   },
-  ...data,
-};
-
-// Article schema (for blog posts)
-const articleSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'Article',
-  author: {
-    '@type': 'Person',
-    name: 'Florian Mahner',
-    url: baseUrl,
+  "publisher": {
+    "@type": "Person",
+    "name": fullName
   },
-  publisher: {
-    '@type': 'Person',
-    name: 'Florian Mahner',
-  },
-  ...data,
-};
+  "image": article.image ? new URL(article.image, siteUrl).toString() : undefined
+} : null;
 
-const schemas: Record<string, object> = {
-  Person: personSchema,
-  WebSite: websiteSchema,
-  WebPage: webPageSchema,
-  Article: articleSchema,
-};
-
-const schema = schemas[type];
+// Build Breadcrumb schema
+const breadcrumbSchema = breadcrumbs ? {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": breadcrumbs.map((item, index) => ({
+    "@type": "ListItem",
+    "position": index + 1,
+    "name": item.name,
+    "item": item.url.startsWith('http') ? item.url : `${siteUrl}${item.url}`
+  }))
+} : null;
 ---
 
-<script type="application/ld+json" set:html={JSON.stringify(schema)} />
+{type === 'person' && (
+  <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
+)}
+
+{type === 'website' && (
+  <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+)}
+
+{articleSchema && (
+  <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+)}
+
+{breadcrumbSchema && (
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+)}

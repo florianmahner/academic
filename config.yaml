@@ -90,10 +90,13 @@ navigation:
     - id: open-source
       label: Open Source
       href: /open-source
+    - id: cv
+      label: CV
+      href: /cv
+    - id: contact
+      label: Contact
+      href: /contact
     # Optional pages:
-    # - id: cv
-    #   label: CV
-    #   href: /cv
     # - id: misc
     #   label: Misc
     #   href: /misc

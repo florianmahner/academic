@@ -3,6 +3,7 @@
  * PaperCard Component
  * Display academic publication with preview, metadata, and links
  */
+import Picture from '../ui/Picture.astro';
 
 interface Props {
   title: string;
@@ -36,7 +37,7 @@ const primaryLink = pdf || html;
 <article class:list={['paper-card', className]}>
   {preview && (
     <div class="paper-preview">
-      <img src={preview} alt={title} loading="lazy" decoding="async" />
+      <Picture src={preview} alt={title} width={140} height={90} loading="lazy" />
     </div>
   )}
   <div class="paper-content">

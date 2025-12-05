@@ -1,6 +1,22 @@
 /**
  * Navigation System
  * Auto-generates navigation from pages and config
+ *
+ * IMPORTANT: Navigation items are defined in config.yaml, NOT in page frontmatter.
+ * The `nav: true` frontmatter option is NOT currently used by the system.
+ *
+ * To add a page to navigation:
+ * 1. Add it to config.yaml under navigation.items
+ * 2. Ensure the page exists in src/pages/ or src/content/pages/
+ *
+ * Navigation Configuration Example:
+ * ```yaml
+ * navigation:
+ *   items:
+ *     - id: cv
+ *       label: CV
+ *       href: /cv
+ * ```
  */
 
 import { getCollection } from 'astro:content';
