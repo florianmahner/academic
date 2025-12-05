@@ -94,6 +94,7 @@ const prependBase = (path: string) => {
 <BaseLayout title={title}>
   <article class="about-page">
     <div class="container">
+      <h1 class="sr-only">{config.personal.name} - Academic Portfolio</h1>
       <!-- About Section -->
       <section class="about-section" data-animate="fade-up">
         <p set:html={config.about.bio} />
@@ -187,6 +188,17 @@ const prependBase = (path: string) => {
 </BaseLayout>
 
 <style>
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
   .about-page {
     /* Vertical padding handled by article in global.css */
   }
