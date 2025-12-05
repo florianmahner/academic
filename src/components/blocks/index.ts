@@ -21,7 +21,3 @@ export { default as UpdatesList } from './UpdatesList.astro';
 
 // Export UpdateItem type for convenience
 export type { UpdateItem } from './UpdatesList.astro';
-
-// Legacy aliases (for backward compatibility)
-export { default as BlogPostCard } from './BlogCard.astro';
-export { default as CourseCard } from './TeachingCard.astro';
