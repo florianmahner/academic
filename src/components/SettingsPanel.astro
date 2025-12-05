@@ -506,9 +506,9 @@ const navModes = [
       });
     });
 
-    // Typography selection
+    // Typography selection (async for font loading)
     typographyOptions.forEach(btn => {
-      btn.addEventListener('click', () => applyPreset(btn));
+      btn.addEventListener('click', async () => await applyPreset(btn));
     });
 
     // Theme selection
