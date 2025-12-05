@@ -118,9 +118,12 @@ export function applyBasePath(items: NavItem[], base: string): NavItem[] {
     return items;
   }
 
+  // Normalize base by removing trailing slash to avoid double slashes
+  const normalizedBase = base.endsWith('/') ? base.slice(0, -1) : base;
+
   return items.map(item => ({
     ...item,
-    href: item.external ? item.href : `${base}${item.href}`,
+    href: item.external ? item.href : `${normalizedBase}${item.href}`,
   }));
 }
 

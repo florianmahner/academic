@@ -19,7 +19,7 @@ const __dirname = dirname(__filename);
 const OUTPUT_DIR = join(__dirname, '..', 'public', 'previews');
 const WIDTH = 600;
 const HEIGHT = 340;
-const FPS = 20;
+const FPS = 15;
 const DURATION = 7; // seconds - long duration for very smooth, fluid animations
 const FRAMES = FPS * DURATION;
 

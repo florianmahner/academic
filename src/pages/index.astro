@@ -87,7 +87,10 @@ const education = educationData.education;
 const base = import.meta.env.BASE_URL;
 const prependBase = (path: string) => {
   if (!path || path.startsWith('http')) return path;
-  return base === '/' ? path : `${base}${path}`;
+  if (base === '/') return path;
+  // Avoid double slashes: remove trailing slash from base before joining
+  const normalizedBase = base.endsWith('/') ? base.slice(0, -1) : base;
+  return `${normalizedBase}${path}`;
 };
 ---
 
