@@ -14,6 +14,13 @@ const sortedRepos = await loadRepositories(reposData.repositories);
 <BaseLayout title={title} description="Open source tools and libraries">
   <article class="opensource-page">
     <div class="container">
+      <header class="page-header" data-animate="fade-up">
+        <h1>Open Source</h1>
+        <p class="page-description">
+          Open source tools and libraries I contribute to or maintain.
+        </p>
+      </header>
+
       <div class="repos-grid" data-animate="stagger">
         {sortedRepos.map(repo => (
           <RepoCard
@@ -37,6 +44,21 @@ const sortedRepos = await loadRepositories(reposData.repositories);
 </BaseLayout>
 
 <style>
+  .page-header {
+    margin-bottom: var(--space-8);
+  }
+
+  .page-header h1 {
+    margin-top: 0;
+    margin-bottom: var(--space-2);
+  }
+
+  .page-description {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-base);
+    margin: 0;
+  }
+
   /* 2x2 Grid like GitHub pinned repos */
   .repos-grid {
     display: grid;

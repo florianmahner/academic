@@ -5,8 +5,6 @@ nav_order: 6
 description: "Get in touch for research collaborations, speaking opportunities, or academic inquiries."
 ---
 
-# Contact
-
 ## Email
 
 For research inquiries: [email protected]

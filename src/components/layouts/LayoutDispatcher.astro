@@ -66,9 +66,9 @@ if (!validLayouts.includes(layout)) {
 
 <div class="layout-wrapper">
   {(title || description) && (
-    <header class="layout-header">
-      {title && <h1 class="layout-title">{title}</h1>}
-      {description && <p class="layout-description">{description}</p>}
+    <header class="page-header" data-animate="fade-up">
+      {title && <h1>{title}</h1>}
+      {description && <p class="page-description">{description}</p>}
     </header>
   )}
 
@@ -88,34 +88,22 @@ if (!validLayouts.includes(layout)) {
     width: 100%;
   }
 
-  .layout-header {
-    margin-bottom: 2rem;
+  .page-header {
+    margin-bottom: var(--space-8);
   }
 
-  .layout-title {
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    color: var(--text-primary, #1a1a1a);
+  .page-header h1 {
+    margin-top: 0;
+    margin-bottom: var(--space-2);
   }
 
-  .layout-description {
-    font-size: 1.125rem;
-    color: var(--text-secondary, #666);
-    line-height: 1.6;
+  .page-description {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-base);
+    margin: 0;
   }
 
   .layout-content {
     width: 100%;
-  }
-
-  @media (max-width: 768px) {
-    .layout-title {
-      font-size: 1.5rem;
-    }
-
-    .layout-description {
-      font-size: 1rem;
-    }
   }
 </style>

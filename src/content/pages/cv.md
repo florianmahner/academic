@@ -5,8 +5,6 @@ nav_order: 5
 description: "Academic CV including education, research experience, publications, teaching, and service."
 ---
 
-# Curriculum Vitae
-
 ## Education
 
 - **PhD in Computer Science** | Top University | 2016-2021
