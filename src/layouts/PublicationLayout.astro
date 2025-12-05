@@ -5,6 +5,7 @@
  */
 
 import BaseLayout from './BaseLayout.astro';
+import StructuredData from '../components/StructuredData.astro';
 import { config } from '../config';
 
 interface Author {
@@ -47,7 +48,25 @@ const {
 
 const pageTitle = `${title} | ${config.site.title}`;
 const pageDescription = description || abstract || `${title} published in ${venue} ${year}`;
+
+// Breadcrumbs for publications
+const breadcrumbs = [
+  { name: 'Home', url: '/' },
+  { name: 'Publications', url: '/publications' },
+  { name: title, url: Astro.url.pathname }
+];
 ---
+
+<StructuredData
+  type="article"
+  article={{
+    title: title,
+    description: pageDescription,
+    datePublished: new Date(`${year}-01-01`),
+    image: image
+  }}
+  breadcrumbs={breadcrumbs}
+/>
 
 <BaseLayout title={pageTitle} description={pageDescription} image={image}>
   <article class="publication-article">
