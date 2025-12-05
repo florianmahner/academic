@@ -120,10 +120,94 @@ const pages = defineCollection({
   }),
 });
 
+// Collection Pages - defines how collection index pages are displayed
+// These configs control the layout of pages like /blog, /projects, /talks, /teaching
+const collectionPages = defineCollection({
+  type: 'content',
+  schema: z.object({
+    // Basic metadata
+    title: z.string(),
+    description: z.string(),
+
+    // Which content collection this page displays
+    collection: z.enum(['blog', 'projects', 'talks', 'teaching', 'publications', 'news']),
+
+    // Layout type selection (named pageLayout to avoid Astro 5 reserved 'layout' field)
+    pageLayout: LayoutTypeEnum,
+
+    // Flexible layout-specific configuration
+    layoutConfig: z.object({
+      // List layout options
+      groupBy: z.string().optional(), // e.g., 'year', 'category', 'tag'
+      showThumbnail: z.boolean().optional(),
+      thumbnailSize: z.enum(['small', 'medium', 'large']).optional(),
+      compact: z.boolean().optional(),
+      fields: z.array(z.string()).optional(), // Which fields to display
+
+      // Card layout options
+      style: z.enum(['default', 'bordered', 'elevated', 'minimal']).optional(),
+      columns: z.number().min(1).max(6).optional(), // Grid columns
+      aspectRatio: z.string().optional(), // e.g., '16/9', '4/3', '1/1'
+      showDescription: z.boolean().optional(),
+      showTags: z.boolean().optional(),
+      gap: z.enum(['small', 'medium', 'large']).optional(),
+
+      // Timeline layout options
+      timelineStyle: z.enum(['vertical', 'horizontal', 'alternating']).optional(),
+      showThumbnails: z.boolean().optional(),
+      expandable: z.boolean().optional(),
+
+      // Node/Graph layout options
+      nodeSize: z.enum(['small', 'medium', 'large']).optional(),
+      linkDistance: z.number().optional(),
+      chargeStrength: z.number().optional(),
+
+      // Masonry layout options
+      columnWidth: z.number().optional(),
+      gutter: z.number().optional(),
+
+      // Accordion layout options
+      defaultExpanded: z.boolean().optional(),
+      allowMultiple: z.boolean().optional(),
+
+      // Minimal layout options
+      showDates: z.boolean().optional(),
+      showDescriptions: z.boolean().optional(),
+
+      // Common options for all layouts
+      itemsPerPage: z.number().optional(),
+      enableSearch: z.boolean().optional(),
+      enableFilters: z.boolean().optional(),
+      filterBy: z.array(z.string()).optional(), // Which fields can be filtered
+    }).optional(),
+
+    // Sorting configuration
+    sortBy: z.string().optional(), // Field to sort by (default: 'date')
+    sortOrder: z.enum(['asc', 'desc']).optional().default('desc'),
+
+    // Display options
+    showCount: z.boolean().optional().default(true),
+    emptyMessage: z.string().optional(),
+  }),
+});
+
+// News/Announcements collection - standalone news items without a full page
+const news = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    date: z.coerce.date(),
+    link: z.string().optional(), // Optional external link
+    draft: z.boolean().default(false),
+  }),
+});
+
 export const collections = {
   blog,
   projects,
   talks,
   teaching,
   pages,
+  news,
+  'collection-pages': collectionPages,
 };

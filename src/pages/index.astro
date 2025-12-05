@@ -1,56 +1,84 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { PaperCard, ProjectCard, BlogCard } from '../components/blocks';
+import { PaperCard } from '../components/blocks';
+import NewsTimeline from '../components/blocks/NewsTimeline.astro';
 import { config } from '../config';
 import educationData from '../content/education.json';
+import { loadPublications, getSelectedPublications } from '../lib/bibtex';
+import path from 'node:path';
 
 const title = config.site.title;
 
-// Load selected publications from content collection
+// Load selected publications from BibTeX file
 let selectedPublications: any[] = [];
 if (config.features.selectedPublications) {
-  try {
-    const allPublications = await getCollection('publications');
-    if (allPublications.length > 0) {
-      selectedPublications = allPublications
-        .filter(pub => pub.data.selected)
-        .sort((a, b) => b.data.year - a.data.year);
-    }
-  } catch (e) {
-    // Fallback to JSON if collection doesn't exist
-    console.log('Using publications from JSON file');
-  }
+  const contentDir = path.join(process.cwd(), 'src', 'content');
+  const allPublications = loadPublications(contentDir);
+  selectedPublications = getSelectedPublications(allPublications);
 }
 
-// Load featured projects from content collection
-let featuredProjects: any[] = [];
-if (config.features.selectedPublications) { // Using same feature flag as publications for now
-  try {
-    const allProjects = await getCollection('projects');
-    if (allProjects.length > 0) {
-      featuredProjects = allProjects
-        .filter(proj => proj.data.featured)
-        .slice(0, 3);
-    }
-  } catch (e) {
-    console.log('No projects available');
-  }
+// Featured projects section removed per user request
+
+// Load recent items for news timeline (blog posts + talks + standalone news)
+interface NewsItem {
+  type: 'blog' | 'talk' | 'publication' | 'project' | 'news';
+  title: string;
+  date: Date;
+  href?: string;
 }
 
-// Load recent blog posts from content collection
-let recentPosts: any[] = [];
+let newsItems: NewsItem[] = [];
+
+// Load blog posts
 try {
   const allPosts = await getCollection('blog');
-  if (allPosts.length > 0) {
-    recentPosts = allPosts
-      .filter(post => !post.data.draft)
-      .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-      .slice(0, 3);
-  }
+  newsItems.push(...allPosts
+    .filter(post => !post.data.draft)
+    .map(post => ({
+      type: 'blog' as const,
+      title: post.data.title,
+      date: post.data.date,
+      href: `/blog/${post.slug}`,
+    }))
+  );
 } catch (e) {
   console.log('Blog collection not available');
 }
+
+// Load talks
+try {
+  const allTalks = await getCollection('talks');
+  newsItems.push(...allTalks.map(talk => ({
+    type: 'talk' as const,
+    title: talk.data.title,
+    date: talk.data.date,
+    href: `/talks/${talk.slug}`,
+  })));
+} catch (e) {
+  console.log('Talks collection not available');
+}
+
+// Load standalone news items
+try {
+  const allNews = await getCollection('news');
+  newsItems.push(...allNews
+    .filter(item => !item.data.draft)
+    .map(item => ({
+      type: 'news' as const,
+      title: item.data.title,
+      date: item.data.date,
+      href: item.data.link, // Optional external link
+    }))
+  );
+} catch (e) {
+  console.log('News collection not available');
+}
+
+// Sort all news items by date (newest first) and limit to 5
+newsItems = newsItems
+  .sort((a, b) => b.date.valueOf() - a.date.valueOf())
+  .slice(0, 5);
 
 // Education data
 const education = educationData.education;
@@ -81,6 +109,31 @@ const prependBase = (path: string) => {
         <h2>Research Interests</h2>
         <p set:html={config.about.researchInterests} />
       </section>
+
+      <!-- Selected Publications -->
+      {config.features.selectedPublications && selectedPublications.length > 0 && (
+        <section class="section" data-animate="fade-up">
+          <h2>Selected Publications</h2>
+          <div class="selected-papers" data-animate="stagger">
+            {selectedPublications.map(pub => (
+              <PaperCard
+                title={pub.title}
+                authors={pub.authors}
+                venue={pub.journal || pub.booktitle}
+                year={pub.year}
+                preview={prependBase(pub.preview)}
+                pdf={pub.pdf}
+                html={pub.html}
+                code={pub.code}
+                abbr={pub.abbr}
+              />
+            ))}
+          </div>
+          <p class="view-all">
+            <a href="/publications">View all publications &rarr;</a>
+          </p>
+        </section>
+      )}
 
       <!-- Academic Background -->
       {config.features.education && education.length > 0 && (
@@ -119,77 +172,13 @@ const prependBase = (path: string) => {
         </section>
       )}
 
-      <!-- Selected Publications -->
-      {config.features.selectedPublications && selectedPublications.length > 0 && (
+      <!-- News & Updates -->
+      {newsItems.length > 0 && (
         <section class="section" data-animate="fade-up">
-          <h2>Selected Publications</h2>
-          <div class="selected-papers" data-animate="stagger">
-            {selectedPublications.map(pub => (
-              <PaperCard
-                title={pub.data.title}
-                authors={pub.data.authors}
-                venue={pub.data.venue || pub.data.journal || pub.data.booktitle}
-                year={pub.data.year}
-                preview={prependBase(pub.data.preview)}
-                pdf={pub.data.pdf}
-                html={pub.data.html}
-                code={pub.data.code}
-                abbr={pub.data.abbr}
-              />
-            ))}
-          </div>
+          <h2>News</h2>
+          <NewsTimeline items={newsItems} limit={5} showType={true} />
           <p class="view-all">
-            <a href="/publications">View all publications &rarr;</a>
-          </p>
-        </section>
-      )}
-
-      <!-- Featured Projects -->
-      {featuredProjects.length > 0 && (
-        <section class="section" data-animate="fade-up">
-          <h2>Featured Projects</h2>
-          <div class="featured-projects" data-animate="stagger">
-            {featuredProjects.map(project => {
-              const data = project.data;
-              return (
-                <ProjectCard
-                  title={data.title}
-                  description={data.description}
-                  technologies={data.technologies}
-                  tags={data.tags}
-                  github={data.github || data.url}
-                  url={data.url}
-                  demo={data.demo}
-                  image={prependBase(data.image)}
-                  status={data.status}
-                />
-              );
-            })}
-          </div>
-          <p class="view-all">
-            <a href="/projects">View all projects &rarr;</a>
-          </p>
-        </section>
-      )}
-
-      <!-- Recent Blog Posts -->
-      {recentPosts.length > 0 && (
-        <section class="section" data-animate="fade-up">
-          <h2>Recent Posts</h2>
-          <div class="recent-posts" data-animate="stagger">
-            {recentPosts.map(post => (
-              <BlogCard
-                title={post.data.title}
-                description={post.data.description}
-                date={post.data.date}
-                slug={post.slug}
-                tags={post.data.tags}
-                image={prependBase(post.data.image)}
-              />
-            ))}
-          </div>
-          <p class="view-all">
-            <a href="/blog">View all posts &rarr;</a>
+            <a href="/news">View all news &rarr;</a>
           </p>
         </section>
       )}
@@ -234,25 +223,7 @@ const prependBase = (path: string) => {
     gap: var(--space-4);
   }
 
-  /* Featured Projects */
-  .featured-projects {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: var(--space-4);
-  }
-
-  @media (max-width: 768px) {
-    .featured-projects {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  /* Recent Posts */
-  .recent-posts {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
-  }
+  /* News section spacing handled by NewsTimeline component */
 
   /* View all link */
   .view-all {

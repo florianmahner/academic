@@ -1,350 +1,59 @@
 ---
-import { getCollection } from 'astro:content';
+/**
+ * Projects Index Page
+ * Reads layout configuration from collection-pages/projects.md frontmatter
+ */
+import { getCollection, getEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { config } from '../../config';
-import StatusIndicator from '../../components/ui/StatusIndicator.astro';
-import LinkButton from '../../components/ui/LinkButton.astro';
+import LayoutDispatcher from '../../components/layouts/LayoutDispatcher.astro';
 
-const title = `Projects | ${config.site.title}`;
+// Get page configuration from frontmatter
+const pageConfig = await getEntry('collection-pages', 'projects');
+if (!pageConfig) {
+  throw new Error('Missing collection-pages/projects.md - please create this file with layout configuration');
+}
+
+const { title, description, pageLayout, layoutConfig, sortBy, sortOrder } = pageConfig.data;
 
 // Get all projects
 const projects = await getCollection('projects');
 
-// Sort by featured first, then by start date (most recent first)
-const sortedProjects = projects.sort((a, b) => {
+// Sort entries based on frontmatter config (with featured items first)
+const sortedEntries = projects.sort((a, b) => {
+  // Featured items always come first
   if (a.data.featured && !b.data.featured) return -1;
   if (!a.data.featured && b.data.featured) return 1;
 
-  const dateA = a.data.startDate?.valueOf() || 0;
-  const dateB = b.data.startDate?.valueOf() || 0;
-  return dateB - dateA;
+  const fieldA = (a.data as any)[sortBy || 'startDate'];
+  const fieldB = (b.data as any)[sortBy || 'startDate'];
+
+  const valA = fieldA?.valueOf?.() ?? fieldA ?? 0;
+  const valB = fieldB?.valueOf?.() ?? fieldB ?? 0;
+
+  return sortOrder === 'asc' ? valA - valB : valB - valA;
 });
 
-// Group by status
-const featuredProjects = sortedProjects.filter(p => p.data.featured);
-const activeProjects = sortedProjects.filter(p => p.data.status === 'active' && !p.data.featured);
-const completedProjects = sortedProjects.filter(p => p.data.status === 'completed');
-const archivedProjects = sortedProjects.filter(p => p.data.status === 'archived');
+const pageTitle = `${title} | ${config.site.title}`;
 ---
 
-<BaseLayout title={title} description={`Research and development projects by ${config.name.first} ${config.name.last}`}>
-  <article class="projects-page">
+<BaseLayout title={pageTitle} description={description}>
+  <article class="collection-page">
     <div class="container">
-      <header class="page-header" data-animate="fade-up">
-        <h1>Projects</h1>
-        <p class="page-description">
-          Research projects, open-source contributions, and side experiments.
-        </p>
-      </header>
-
-      {featuredProjects.length > 0 && (
-        <section class="projects-section" data-animate="fade-up">
-          <h2 class="section-label">Featured</h2>
-          <div class="projects-grid" data-animate="stagger">
-            {featuredProjects.map(project => (
-              <article class="project-card featured">
-                <div class="project-status-badge">
-                  <StatusIndicator status="featured" />
-                </div>
-                {project.data.image && (
-                  <div class="project-image">
-                    <img src={project.data.image} alt={project.data.title} />
-                  </div>
-                )}
-                <div class="project-content">
-                  <h3 class="project-title">
-                    <a href={`/projects/${project.slug}`}>{project.data.title}</a>
-                  </h3>
-                  <p class="project-description">{project.data.description}</p>
-                  {project.data.technologies && project.data.technologies.length > 0 && (
-                    <div class="project-technologies">
-                      {project.data.technologies.map(tech => (
-                        <span class="tech-tag">{tech}</span>
-                      ))}
-                    </div>
-                  )}
-                  <div class="project-links">
-                    {project.data.github && (
-                      <LinkButton href={project.data.github} type="github" />
-                    )}
-                    {project.data.url && (
-                      <LinkButton href={project.data.url} type="website" />
-                    )}
-                    {project.data.demo && (
-                      <LinkButton href={project.data.demo} type="demo" />
-                    )}
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {activeProjects.length > 0 && (
-        <section class="projects-section" data-animate="fade-up">
-          <h2 class="section-label">Active</h2>
-          <div class="projects-grid" data-animate="stagger">
-            {activeProjects.map(project => (
-              <article class="project-card">
-                <div class="project-status-badge">
-                  <StatusIndicator status="active" />
-                </div>
-                {project.data.image && (
-                  <div class="project-image">
-                    <img src={project.data.image} alt={project.data.title} />
-                  </div>
-                )}
-                <div class="project-content">
-                  <h3 class="project-title">
-                    <a href={`/projects/${project.slug}`}>{project.data.title}</a>
-                  </h3>
-                  <p class="project-description">{project.data.description}</p>
-                  {project.data.technologies && project.data.technologies.length > 0 && (
-                    <div class="project-technologies">
-                      {project.data.technologies.map(tech => (
-                        <span class="tech-tag">{tech}</span>
-                      ))}
-                    </div>
-                  )}
-                  <div class="project-links">
-                    {project.data.github && (
-                      <LinkButton href={project.data.github} type="github" />
-                    )}
-                    {project.data.url && (
-                      <LinkButton href={project.data.url} type="website" />
-                    )}
-                    {project.data.demo && (
-                      <LinkButton href={project.data.demo} type="demo" />
-                    )}
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {completedProjects.length > 0 && (
-        <section class="projects-section" data-animate="fade-up">
-          <h2 class="section-label">Completed</h2>
-          <div class="projects-grid" data-animate="stagger">
-            {completedProjects.map(project => (
-              <article class="project-card">
-                <div class="project-status-badge">
-                  <StatusIndicator status="completed" />
-                </div>
-                <div class="project-content">
-                  <h3 class="project-title">
-                    <a href={`/projects/${project.slug}`}>{project.data.title}</a>
-                  </h3>
-                  <p class="project-description">{project.data.description}</p>
-                  {project.data.technologies && project.data.technologies.length > 0 && (
-                    <div class="project-technologies">
-                      {project.data.technologies.map(tech => (
-                        <span class="tech-tag">{tech}</span>
-                      ))}
-                    </div>
-                  )}
-                  <div class="project-links">
-                    {project.data.github && (
-                      <LinkButton href={project.data.github} type="github" />
-                    )}
-                    {project.data.url && (
-                      <LinkButton href={project.data.url} type="website" />
-                    )}
-                    {project.data.demo && (
-                      <LinkButton href={project.data.demo} type="demo" />
-                    )}
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-      )}
+      <LayoutDispatcher
+        collection="projects"
+        entries={sortedEntries}
+        title={title}
+        description={description}
+        layoutOverride={pageLayout}
+        configOverride={layoutConfig}
+      />
     </div>
   </article>
 </BaseLayout>
 
 <style>
-  .projects-page {
+  .collection-page {
     /* Vertical padding handled by article in global.css */
-  }
-
-  .page-header {
-    margin-bottom: var(--space-8);
-  }
-
-  .page-header h1 {
-    margin-top: 0;
-    margin-bottom: var(--space-2);
-  }
-
-  .page-description {
-    color: var(--color-text-muted);
-    font-size: var(--font-size-base);
-    margin: 0;
-  }
-
-  .projects-section {
-    margin-bottom: var(--space-12);
-  }
-
-  .section-label {
-    font-size: var(--font-size-lg);
-    font-weight: var(--font-weight-medium);
-    color: var(--color-text-muted);
-    margin-top: 0;
-    margin-bottom: var(--space-4);
-    font-family: var(--font-body);
-  }
-
-  .projects-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 350px), 1fr));
-    gap: var(--space-6);
-  }
-
-  /* Enhanced project card styles */
-  .project-card {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    overflow: hidden;
-    transition: all 0.3s ease;
-    background-color: var(--color-bg);
-  }
-
-  /* Enhanced hover effect with lift and glow */
-  .project-card:hover {
-    transform: translateY(-4px);
-    border-color: color-mix(in srgb, var(--color-accent) 30%, var(--color-border));
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-  }
-
-  [data-theme="dark"] .project-card:hover {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-  }
-
-  /* Featured card with accent left border and subtle gradient */
-  .project-card.featured {
-    border-left: 3px solid var(--color-accent);
-    background: linear-gradient(
-      to right,
-      color-mix(in srgb, var(--color-accent) 3%, var(--color-bg)) 0%,
-      var(--color-bg) 100%
-    );
-  }
-
-  /* Status badge positioning */
-  .project-status-badge {
-    position: absolute;
-    top: var(--space-3);
-    right: var(--space-3);
-    z-index: 2;
-    background: var(--color-bg);
-    padding: var(--space-1) var(--space-2);
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--color-border);
-    font-size: var(--font-size-xs);
-  }
-
-  .project-image {
-    width: 100%;
-    height: 200px;
-    overflow: hidden;
-    background-color: var(--color-bg-alt);
-  }
-
-  .project-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-  }
-
-  /* Image scale on hover */
-  .project-card:hover .project-image img {
-    transform: scale(1.03);
-  }
-
-  .project-content {
-    padding: var(--space-5);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-    flex: 1;
-  }
-
-  .project-title {
-    font-size: var(--font-size-lg);
-    font-weight: var(--font-weight-medium);
-    margin: 0;
-    line-height: var(--line-height-tight);
-  }
-
-  .project-title a {
-    color: var(--color-text);
-    text-decoration: none;
-    transition: color 0.2s ease;
-  }
-
-  .project-title a:hover {
-    color: var(--color-accent);
-  }
-
-  .project-description {
-    color: var(--color-text-secondary);
-    margin: 0;
-    font-size: var(--font-size-base);
-    line-height: var(--line-height-normal);
-    flex: 1;
-  }
-
-  .project-technologies {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-  }
-
-  /* Enhanced tech tags with border style */
-  .tech-tag {
-    font-size: var(--font-size-xs);
-    color: var(--color-text-secondary);
-    background-color: transparent;
-    border: 1px solid var(--color-border);
-    padding: var(--space-1) var(--space-2);
-    border-radius: var(--radius-sm);
-    font-family: var(--font-mono);
-    transition: all 0.2s ease;
-  }
-
-  .tech-tag:hover {
-    background-color: color-mix(in srgb, var(--color-accent) 10%, transparent);
-    border-color: color-mix(in srgb, var(--color-accent) 40%, var(--color-border));
-    color: var(--color-accent);
-  }
-
-  .project-links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-4);
-    margin-top: auto;
-    padding-top: var(--space-3);
-    border-top: 1px solid var(--color-border);
-  }
-
-  @media (max-width: 500px) {
-    .projects-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .project-status-badge {
-      top: var(--space-2);
-      right: var(--space-2);
-    }
   }
 </style>

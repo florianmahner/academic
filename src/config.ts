@@ -11,27 +11,15 @@ import {
   config as yamlConfig,
   type SiteConfig,
   type LayoutType,
-  type ListLayoutConfig,
-  type CardsLayoutConfig,
-  type TimelineLayoutConfig,
-  type NodeLayoutConfig,
-  type MasonryLayoutConfig,
-  type AccordionLayoutConfig,
-  type MinimalLayoutConfig,
 } from "./lib/config-loader";
 
 // Re-export the config loaded from YAML
 export const config = yamlConfig;
 
 // Re-export types
+// NOTE: Layout config types are now in src/lib/layout-config.ts
+// and configured via frontmatter in src/content/collection-pages/
 export type {
   SiteConfig,
   LayoutType,
-  ListLayoutConfig,
-  CardsLayoutConfig,
-  TimelineLayoutConfig,
-  NodeLayoutConfig,
-  MasonryLayoutConfig,
-  AccordionLayoutConfig,
-  MinimalLayoutConfig,
 };

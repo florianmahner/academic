@@ -1,187 +1,55 @@
 ---
-import { getCollection } from 'astro:content';
+/**
+ * Blog Index Page
+ * Reads layout configuration from collection-pages/blog.md frontmatter
+ */
+import { getCollection, getEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { config } from '../../config';
+import LayoutDispatcher from '../../components/layouts/LayoutDispatcher.astro';
 
-const title = `Blog | ${config.site.title}`;
+// Get page configuration from frontmatter
+const pageConfig = await getEntry('collection-pages', 'blog');
+if (!pageConfig) {
+  throw new Error('Missing collection-pages/blog.md - please create this file with layout configuration');
+}
+
+const { title, description, pageLayout, layoutConfig, sortBy, sortOrder } = pageConfig.data;
 
 // Get all blog posts, excluding drafts
 const posts = await getCollection('blog', ({ data }) => !data.draft);
 
-// Sort by date (newest first)
-const sortedPosts = posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+// Sort entries based on frontmatter config
+const sortedEntries = posts.sort((a, b) => {
+  const fieldA = (a.data as any)[sortBy || 'date'];
+  const fieldB = (b.data as any)[sortBy || 'date'];
 
-// Group posts by year
-const postsByYear = sortedPosts.reduce((acc, post) => {
-  const year = post.data.date.getFullYear();
-  if (!acc[year]) acc[year] = [];
-  acc[year].push(post);
-  return acc;
-}, {} as Record<number, typeof posts>);
+  const valA = fieldA?.valueOf?.() ?? fieldA ?? 0;
+  const valB = fieldB?.valueOf?.() ?? fieldB ?? 0;
 
-const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
+  return sortOrder === 'asc' ? valA - valB : valB - valA;
+});
 
-// Format date helper
-const formatDate = (date: Date) => {
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
-};
+const pageTitle = `${title} | ${config.site.title}`;
 ---
 
-<BaseLayout title={title} description={`Blog posts by ${config.name.first} ${config.name.last}`}>
-  <article class="blog-page">
+<BaseLayout title={pageTitle} description={description}>
+  <article class="collection-page">
     <div class="container">
-      <header class="page-header" data-animate="fade-up">
-        <h1>Blog</h1>
-        <p class="page-description">
-          Thoughts on research, machine learning, and academia.
-        </p>
-      </header>
-
-      {years.map(year => (
-        <section class="year-section" data-animate="fade-up">
-          <h2 class="year-label">{year}</h2>
-          <div class="posts-list" data-animate="stagger">
-            {postsByYear[Number(year)].map(post => (
-              <article class="post-card">
-                <div class="post-date">
-                  {formatDate(post.data.date)}
-                </div>
-                <div class="post-content">
-                  <h3 class="post-title">
-                    <a href={`/blog/${post.slug}`}>{post.data.title}</a>
-                  </h3>
-                  {post.data.description && (
-                    <p class="post-description">{post.data.description}</p>
-                  )}
-                  {post.data.tags && post.data.tags.length > 0 && (
-                    <div class="post-tags">
-                      {post.data.tags.map(tag => (
-                        <span class="tag">{tag}</span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-      ))}
+      <LayoutDispatcher
+        collection="blog"
+        entries={sortedEntries}
+        title={title}
+        description={description}
+        layoutOverride={pageLayout}
+        configOverride={layoutConfig}
+      />
     </div>
   </article>
 </BaseLayout>
 
 <style>
-  .blog-page {
+  .collection-page {
     /* Vertical padding handled by article in global.css */
-  }
-
-  .page-header {
-    margin-bottom: var(--space-8);
-  }
-
-  .page-header h1 {
-    margin-top: 0;
-    margin-bottom: var(--space-2);
-  }
-
-  .page-description {
-    color: var(--color-text-muted);
-    font-size: var(--font-size-base);
-    margin: 0;
-  }
-
-  .year-section {
-    margin-bottom: var(--space-12);
-  }
-
-  .year-label {
-    font-size: var(--font-size-lg);
-    font-weight: var(--font-weight-medium);
-    color: var(--color-text-muted);
-    margin-top: 0;
-    margin-bottom: var(--space-4);
-    font-family: var(--font-body);
-  }
-
-  .posts-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
-  }
-
-  .post-card {
-    display: grid;
-    grid-template-columns: 140px 1fr;
-    gap: var(--space-5);
-    padding: var(--space-4);
-    border-radius: var(--radius-md);
-    transition: all var(--transition-fast);
-  }
-
-  .post-card:hover {
-    background-color: var(--color-bg-alt);
-  }
-
-  .post-date {
-    font-size: var(--font-size-sm);
-    color: var(--color-text-muted);
-    font-family: var(--font-body);
-  }
-
-  .post-content {
-    min-width: 0;
-  }
-
-  .post-title {
-    font-size: var(--font-size-base);
-    font-weight: var(--font-weight-medium);
-    margin: 0 0 var(--space-2);
-    line-height: var(--line-height-tight);
-  }
-
-  .post-title a {
-    color: var(--color-text);
-    text-decoration: none;
-  }
-
-  .post-title a:hover {
-    color: var(--color-accent);
-  }
-
-  .post-description {
-    color: var(--color-text-secondary);
-    margin: 0 0 var(--space-2);
-    font-size: var(--font-size-base);
-    line-height: var(--line-height-normal);
-  }
-
-  .post-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-  }
-
-  .tag {
-    font-size: var(--font-size-sm);
-    color: var(--color-text-muted);
-    background-color: var(--color-bg-alt);
-    padding: var(--space-1) var(--space-2);
-    border-radius: var(--radius-sm);
-    font-family: var(--font-body);
-  }
-
-  @media (max-width: 500px) {
-    .post-card {
-      grid-template-columns: 1fr;
-      gap: var(--space-2);
-    }
-
-    .post-date {
-      font-size: var(--font-size-xs);
-    }
   }
 </style>

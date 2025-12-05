@@ -1,234 +1,56 @@
 ---
-import { getCollection } from 'astro:content';
+/**
+ * Teaching Index Page
+ * Reads layout configuration from collection-pages/teaching.md frontmatter
+ */
+import { getCollection, getEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { config } from '../../config';
+import LayoutDispatcher from '../../components/layouts/LayoutDispatcher.astro';
 
-const title = `Teaching | ${config.site.title}`;
+// Get page configuration from frontmatter
+const pageConfig = await getEntry('collection-pages', 'teaching');
+if (!pageConfig) {
+  throw new Error('Missing collection-pages/teaching.md - please create this file with layout configuration');
+}
+
+const { title, description, pageLayout, layoutConfig, sortBy, sortOrder } = pageConfig.data;
 
 // Get all teaching entries
 const teaching = await getCollection('teaching');
 
-// Sort by year and semester (most recent first)
-const sortedTeaching = teaching.sort((a, b) => {
-  const yearA = a.data.year || parseInt(a.data.semester.match(/\d{4}/)?.[0] || '0');
-  const yearB = b.data.year || parseInt(b.data.semester.match(/\d{4}/)?.[0] || '0');
+// Sort entries based on frontmatter config
+const sortedEntries = teaching.sort((a, b) => {
+  const fieldA = (a.data as any)[sortBy || 'year'] ?? (a.data as any).semester;
+  const fieldB = (b.data as any)[sortBy || 'year'] ?? (b.data as any).semester;
 
-  if (yearA !== yearB) return yearB - yearA;
+  // Handle year sorting
+  const yearA = typeof fieldA === 'number' ? fieldA : parseInt(String(fieldA).match(/\d{4}/)?.[0] || '0');
+  const yearB = typeof fieldB === 'number' ? fieldB : parseInt(String(fieldB).match(/\d{4}/)?.[0] || '0');
 
-  // If same year, sort by semester (Fall > Spring > Summer)
-  const semesterOrder = { fall: 3, spring: 2, summer: 1, winter: 0 };
-  const semA = a.data.semester.toLowerCase();
-  const semB = b.data.semester.toLowerCase();
-
-  const orderA = Object.entries(semesterOrder).find(([key]) => semA.includes(key))?.[1] || 0;
-  const orderB = Object.entries(semesterOrder).find(([key]) => semB.includes(key))?.[1] || 0;
-
-  return orderB - orderA;
+  return sortOrder === 'asc' ? yearA - yearB : yearB - yearA;
 });
 
-// Group by year
-const teachingByYear = sortedTeaching.reduce((acc, entry) => {
-  const year = entry.data.year || parseInt(entry.data.semester.match(/\d{4}/)?.[0] || '0');
-  if (!acc[year]) acc[year] = [];
-  acc[year].push(entry);
-  return acc;
-}, {} as Record<number, typeof teaching>);
-
-const years = Object.keys(teachingByYear).sort((a, b) => Number(b) - Number(a));
+const pageTitle = `${title} | ${config.site.title}`;
 ---
 
-<BaseLayout title={title} description={`Teaching experience of ${config.name.first} ${config.name.last}`}>
-  <article class="teaching-page">
+<BaseLayout title={pageTitle} description={description}>
+  <article class="collection-page">
     <div class="container">
-      <header class="page-header" data-animate="fade-up">
-        <h1>Teaching</h1>
-        <p class="page-description">
-          Courses taught and teaching assistantships.
-        </p>
-      </header>
-
-      {years.map(year => (
-        <section class="year-section" data-animate="fade-up">
-          <h2 class="year-label">{year}</h2>
-          <div class="teaching-list" data-animate="stagger">
-            {teachingByYear[Number(year)].map(entry => (
-              <article class="teaching-card">
-                <div class="teaching-semester">
-                  {entry.data.semester}
-                </div>
-                <div class="teaching-content">
-                  <div class="teaching-role-badge">
-                    {entry.data.role}
-                  </div>
-                  <h3 class="teaching-title">
-                    <a href={`/teaching/${entry.slug}`}>{entry.data.title}</a>
-                  </h3>
-                  <div class="teaching-institution">{entry.data.institution}</div>
-                  {entry.data.students && (
-                    <div class="teaching-students">
-                      👥 {entry.data.students} students
-                    </div>
-                  )}
-                  {entry.data.description && (
-                    <p class="teaching-description">{entry.data.description}</p>
-                  )}
-                  {(entry.data.materials || entry.data.syllabus) && (
-                    <div class="teaching-links">
-                      {entry.data.materials && (
-                        <a href={entry.data.materials} class="teaching-link" target="_blank" rel="noopener noreferrer">
-                          Course Materials
-                        </a>
-                      )}
-                      {entry.data.syllabus && (
-                        <a href={entry.data.syllabus} class="teaching-link" target="_blank" rel="noopener noreferrer">
-                          Syllabus
-                        </a>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-      ))}
+      <LayoutDispatcher
+        collection="teaching"
+        entries={sortedEntries}
+        title={title}
+        description={description}
+        layoutOverride={pageLayout}
+        configOverride={layoutConfig}
+      />
     </div>
   </article>
 </BaseLayout>
 
 <style>
-  .teaching-page {
+  .collection-page {
     /* Vertical padding handled by article in global.css */
-  }
-
-  .page-header {
-    margin-bottom: var(--space-8);
-  }
-
-  .page-header h1 {
-    margin-top: 0;
-    margin-bottom: var(--space-2);
-  }
-
-  .page-description {
-    color: var(--color-text-muted);
-    font-size: var(--font-size-base);
-    margin: 0;
-  }
-
-  .year-section {
-    margin-bottom: var(--space-12);
-  }
-
-  .year-label {
-    font-size: var(--font-size-lg);
-    font-weight: var(--font-weight-medium);
-    color: var(--color-text-muted);
-    margin-top: 0;
-    margin-bottom: var(--space-4);
-    font-family: var(--font-body);
-  }
-
-  .teaching-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
-  }
-
-  .teaching-card {
-    display: grid;
-    grid-template-columns: 140px 1fr;
-    gap: var(--space-5);
-    padding: var(--space-4);
-    border-radius: var(--radius-md);
-    transition: all var(--transition-fast);
-  }
-
-  .teaching-card:hover {
-    background-color: var(--color-bg-alt);
-  }
-
-  .teaching-semester {
-    font-size: var(--font-size-sm);
-    color: var(--color-text-muted);
-    font-family: var(--font-body);
-  }
-
-  .teaching-content {
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-  }
-
-  .teaching-role-badge {
-    font-size: var(--font-size-xs);
-    color: var(--color-accent);
-    font-weight: var(--font-weight-medium);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .teaching-title {
-    font-size: var(--font-size-base);
-    font-weight: var(--font-weight-medium);
-    margin: 0;
-    line-height: var(--line-height-tight);
-  }
-
-  .teaching-title a {
-    color: var(--color-text);
-    text-decoration: none;
-  }
-
-  .teaching-title a:hover {
-    color: var(--color-accent);
-  }
-
-  .teaching-institution {
-    color: var(--color-text-secondary);
-    font-size: var(--font-size-base);
-    font-style: italic;
-  }
-
-  .teaching-students {
-    color: var(--color-text-muted);
-    font-size: var(--font-size-sm);
-  }
-
-  .teaching-description {
-    color: var(--color-text-secondary);
-    margin: var(--space-2) 0 0;
-    font-size: var(--font-size-base);
-    line-height: var(--line-height-normal);
-  }
-
-  .teaching-links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-3);
-    margin-top: var(--space-2);
-  }
-
-  .teaching-link {
-    color: var(--color-accent);
-    text-decoration: none;
-    font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-medium);
-  }
-
-  .teaching-link:hover {
-    text-decoration: underline;
-  }
-
-  @media (max-width: 500px) {
-    .teaching-card {
-      grid-template-columns: 1fr;
-      gap: var(--space-2);
-    }
-
-    .teaching-semester {
-      font-size: var(--font-size-xs);
-    }
   }
 </style>

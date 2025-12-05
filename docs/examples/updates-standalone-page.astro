@@ -1,0 +1,192 @@
+---
+/**
+ * Example: Standalone Updates Page
+ * Full page showing all updates with month grouping and filtering
+ */
+
+import BaseLayout from '../../src/layouts/BaseLayout.astro';
+import { UpdatesList } from '../../src/components/blocks';
+import type { UpdateItem } from '../../src/components/blocks';
+import { getAllUpdates } from '../../src/lib/updates';
+
+// Get all updates
+const allUpdates = await getAllUpdates();
+
+// Extract unique years for filtering
+const years = Array.from(
+  new Set(allUpdates.map(u => u.date.getFullYear()))
+).sort((a, b) => b - a);
+
+// Get URL parameters for filtering (in a real implementation)
+// const url = new URL(Astro.request.url);
+// const yearFilter = url.searchParams.get('year');
+// const typeFilter = url.searchParams.get('type');
+---
+
+<BaseLayout
+  title="Updates & Activity"
+  description="Recent publications, talks, blog posts, and other academic activities"
+>
+  <article class="container">
+    <header class="page-header">
+      <h1>Updates & Activity</h1>
+      <p class="page-description">
+        A chronological timeline of recent publications, talks, blog posts, and other academic activities.
+      </p>
+    </header>
+
+    <!-- Filtering Options (Optional) -->
+    <div class="filters">
+      <div class="filter-group">
+        <label>Show:</label>
+        <div class="filter-buttons">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="blog">Blog</button>
+          <button class="filter-btn" data-filter="publication">Papers</button>
+          <button class="filter-btn" data-filter="talk">Talks</button>
+          <button class="filter-btn" data-filter="teaching">Teaching</button>
+          <button class="filter-btn" data-filter="project">Projects</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Updates Timeline -->
+    <div class="updates-timeline">
+      <UpdatesList
+        items={allUpdates}
+        groupByMonth={true}
+        showType={true}
+      />
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .page-header {
+    margin-bottom: var(--space-12);
+  }
+
+  .page-header h1 {
+    margin-bottom: var(--space-3);
+  }
+
+  .page-description {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-relaxed);
+    max-width: 65ch;
+  }
+
+  /* ============================================
+     Filtering UI (Optional Enhancement)
+     ============================================ */
+  .filters {
+    margin-bottom: var(--space-8);
+    padding: var(--space-4);
+    background: var(--color-bg-alt);
+    border-radius: var(--radius-md);
+  }
+
+  .filter-group {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+  }
+
+  .filter-group label {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+  }
+
+  .filter-buttons {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--font-size-sm);
+    font-family: var(--font-ui);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .filter-btn:hover {
+    color: var(--color-text);
+    border-color: var(--color-accent);
+  }
+
+  .filter-btn.active {
+    color: white;
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  .updates-timeline {
+    margin-top: var(--space-8);
+  }
+
+  /* ============================================
+     Responsive Adjustments
+     ============================================ */
+  @media (max-width: 768px) {
+    .filter-group {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-2);
+    }
+
+    .filter-buttons {
+      width: 100%;
+    }
+
+    .filter-btn {
+      flex: 1;
+      min-width: fit-content;
+    }
+  }
+</style>
+
+<script>
+  // Simple client-side filtering (optional enhancement)
+  document.addEventListener('DOMContentLoaded', () => {
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const updateItems = document.querySelectorAll('.update-item');
+
+    filterButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const filter = button.getAttribute('data-filter');
+
+        // Update active state
+        filterButtons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+
+        // Filter items
+        updateItems.forEach(item => {
+          if (filter === 'all') {
+            item.style.display = '';
+          } else {
+            const badge = item.querySelector('.badge');
+            const badgeText = badge?.textContent?.toLowerCase();
+            const typeMap: Record<string, string> = {
+              'blog': 'blog',
+              'publication': 'paper',
+              'talk': 'talk',
+              'teaching': 'teaching',
+              'project': 'project'
+            };
+            item.style.display = badgeText === typeMap[filter] ? '' : 'none';
+          }
+        });
+      });
+    });
+  });
+</script>

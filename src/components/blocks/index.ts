@@ -17,6 +17,10 @@ export { default as PublicationList } from './PublicationList.astro';
 export { default as ProjectGrid } from './ProjectGrid.astro';
 export { default as BlogList } from './BlogList.astro';
 export { default as TalkList } from './TalkList.astro';
+export { default as UpdatesList } from './UpdatesList.astro';
+
+// Export UpdateItem type for convenience
+export type { UpdateItem } from './UpdatesList.astro';
 
 // Legacy aliases (for backward compatibility)
 export { default as BlogPostCard } from './BlogCard.astro';

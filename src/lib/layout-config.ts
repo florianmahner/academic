@@ -1,15 +1,13 @@
 /**
  * Layout Configuration System
  *
- * Provides a 3-tier cascade system for layout configuration:
- * 1. Global defaults from config.yaml
- * 2. Collection-level overrides
- * 3. Entry-level overrides (frontmatter)
+ * Provides layout configuration utilities with frontmatter-based overrides:
+ * 1. Default configurations for each layout type
+ * 2. Optional frontmatter overrides per entry
  *
  * Supports multiple layout types with full type safety and validation.
  */
 
-import { config } from '../config';
 import { z } from 'zod';
 
 // =============================================================================
@@ -200,23 +198,13 @@ export type LayoutConfig =
   | MinimalLayoutConfig;
 
 // =============================================================================
-// COLLECTION-LEVEL CONFIGURATION
+// FRONTMATTER OVERRIDES
 // =============================================================================
 
 /**
- * Layout configuration that can be specified at collection level
+ * Layout override that can be specified in frontmatter
  */
-export interface CollectionLayoutConfig {
-  /** Default layout for this collection */
-  layout?: LayoutType;
-  /** Layout-specific configuration */
-  layoutConfig?: LayoutConfig;
-}
-
-/**
- * Entry-level override from frontmatter
- */
-export interface EntryLayoutOverride {
+export interface LayoutOverride {
   /** Override layout type */
   layout?: LayoutType;
   /** Override layout configuration */
@@ -318,57 +306,6 @@ export function getLayoutDefaults(layout: LayoutType): LayoutConfig {
 
   return defaults[layout];
 }
-
-/**
- * Collection-specific default layouts
- * These can be overridden in config.yaml
- */
-const COLLECTION_DEFAULTS: Record<string, CollectionLayoutConfig> = {
-  publications: {
-    layout: 'list',
-    layoutConfig: {
-      groupBy: 'year',
-      showThumbnail: false,
-      compact: true,
-      fields: ['title', 'authors', 'venue', 'year'],
-    } as ListLayoutConfig,
-  },
-  projects: {
-    layout: 'cards',
-    layoutConfig: {
-      style: 'image',
-      columns: 3,
-      aspectRatio: '16:9',
-      showDescription: true,
-      showTags: true,
-    } as CardsLayoutConfig,
-  },
-  blog: {
-    layout: 'cards',
-    layoutConfig: {
-      style: 'text',
-      columns: 2,
-      showDescription: true,
-      gap: 'large',
-    } as CardsLayoutConfig,
-  },
-  talks: {
-    layout: 'timeline',
-    layoutConfig: {
-      style: 'left',
-      groupBy: 'year',
-      showThumbnails: true,
-    } as TimelineLayoutConfig,
-  },
-  teaching: {
-    layout: 'accordion',
-    layoutConfig: {
-      groupBy: 'year',
-      defaultOpen: 'first',
-      showCount: true,
-    } as AccordionLayoutConfig,
-  },
-};
 
 // =============================================================================
 // CONFIGURATION MERGING
@@ -533,67 +470,35 @@ export function validateLayoutConfig(
 // =============================================================================
 
 /**
- * Resolve layout configuration using 3-tier cascade:
- * 1. Global defaults for the layout type
- * 2. Collection-level defaults
- * 3. Entry-level overrides from frontmatter
+ * Resolve layout configuration with optional frontmatter overrides
  *
- * @param collection - Collection name (e.g., 'publications', 'projects')
- * @param entryOverrides - Optional overrides from entry frontmatter
- * @returns Resolved layout type and configuration
+ * @param layout - The layout type to use
+ * @param configOverrides - Optional configuration overrides from frontmatter
+ * @returns Validated and merged layout configuration
  *
  * @example
  * ```typescript
- * // Get default publication layout
- * const { layout, config } = resolveLayoutConfig('publications');
+ * // Get default configuration for a layout
+ * const config = resolveLayoutConfig('cards');
  *
- * // Get with entry-level overrides
- * const { layout, config } = resolveLayoutConfig('publications', {
- *   layout: 'timeline',
- *   layoutConfig: { style: 'compact' }
- * });
+ * // Get with frontmatter overrides
+ * const config = resolveLayoutConfig('cards', { columns: 4, gap: 'large' });
  * ```
  */
 export function resolveLayoutConfig(
-  collection: string,
-  entryOverrides?: EntryLayoutOverride
-): { layout: LayoutType; config: LayoutConfig } {
-  // Step 1: Get collection defaults (or fallback to 'list')
-  const collectionDefaults = COLLECTION_DEFAULTS[collection] || {
-    layout: 'list' as LayoutType,
-    layoutConfig: getLayoutDefaults('list'),
-  };
-
-  // Step 2: Determine final layout type
-  const layoutType = entryOverrides?.layout || collectionDefaults.layout || 'list';
-
-  // Step 3: Build configuration cascade
+  layout: LayoutType,
+  configOverrides?: Partial<LayoutConfig>
+): LayoutConfig {
   // Start with layout type defaults
-  let resolvedConfig = getLayoutDefaults(layoutType);
+  const defaults = getLayoutDefaults(layout);
 
-  // Apply collection-level config if it matches the layout type
-  if (collectionDefaults.layoutConfig) {
-    resolvedConfig = mergeLayoutConfig(
-      resolvedConfig,
-      collectionDefaults.layoutConfig as Partial<typeof resolvedConfig>
-    );
-  }
+  // Merge with overrides if provided
+  const merged = mergeLayoutConfig(defaults, configOverrides);
 
-  // Apply entry-level overrides
-  if (entryOverrides?.layoutConfig) {
-    resolvedConfig = mergeLayoutConfig(
-      resolvedConfig,
-      entryOverrides.layoutConfig as Partial<typeof resolvedConfig>
-    );
-  }
+  // Validate final configuration
+  validateLayoutConfig(layout, merged);
 
-  // Step 4: Validate final configuration
-  validateLayoutConfig(layoutType, resolvedConfig);
-
-  return {
-    layout: layoutType,
-    config: resolvedConfig,
-  };
+  return merged;
 }
 
 // =============================================================================
@@ -720,12 +625,33 @@ export function isMinimalLayoutConfig(config: LayoutConfig): config is MinimalLa
 // =============================================================================
 
 /**
- * Alias for resolveLayoutConfig - used by LayoutDispatcher
- * Returns layout configuration for a collection
+ * Get default layout configuration for a collection
+ * Maps collection names to appropriate default layouts
+ * Actual configuration comes from pages collection frontmatter
  *
  * @param collection - Collection name
- * @returns Layout type and configuration
+ * @returns Layout type and default configuration
+ *
+ * @example
+ * ```typescript
+ * const { layout, config } = getLayoutForCollection('projects');
+ * // Returns: { layout: 'cards', config: { style: 'elevated', columns: 'auto', ... } }
+ * ```
  */
 export function getLayoutForCollection(collection: string): { layout: LayoutType; config: LayoutConfig } {
-  return resolveLayoutConfig(collection);
+  // Default layout mappings
+  // Pages collection frontmatter will override these defaults
+  const defaultLayouts: Record<string, LayoutType> = {
+    blog: 'list',
+    projects: 'cards',
+    talks: 'timeline',
+    teaching: 'list',
+    publications: 'list',
+  };
+
+  const layout = defaultLayouts[collection] || 'list';
+  return {
+    layout,
+    config: getLayoutDefaults(layout),
+  };
 }

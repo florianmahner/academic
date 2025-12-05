@@ -1,0 +1,329 @@
+---
+/**
+ * NewsCard Component
+ * Universal card for displaying news items (blog posts, talks, publications)
+ */
+
+import { formatDate } from '../../lib/blog';
+import Badge from '../ui/Badge.astro';
+
+interface Props {
+  type: 'blog' | 'talk' | 'publication';
+  title: string;
+  description?: string;
+  date: Date;
+  tags?: string[];
+  slug?: string;
+  event?: string;
+  location?: string;
+  slides?: string;
+  video?: string;
+  authors?: string[];
+  venue?: string;
+  pdf?: string;
+  code?: string;
+  image?: string;
+  class?: string;
+}
+
+const {
+  type,
+  title,
+  description,
+  date,
+  tags = [],
+  slug,
+  event,
+  location,
+  slides,
+  video,
+  authors,
+  venue,
+  pdf,
+  code,
+  image,
+  class: className,
+} = Astro.props;
+
+// Determine the link based on type
+let href = '#';
+if (type === 'blog' && slug) {
+  href = `/blog/${slug}`;
+} else if (type === 'talk' && slug) {
+  href = `/talks/${slug}`;
+}
+
+// Type badge styling
+const typeBadgeVariants = {
+  blog: 'default',
+  talk: 'accent',
+  publication: 'success',
+} as const;
+
+// Type display names
+const typeLabels = {
+  blog: 'Blog Post',
+  talk: 'Talk',
+  publication: 'Publication',
+};
+---
+
+<article class:list={['news-card', `news-card--${type}`, className]} data-animate="fade-up">
+  <div class="news-card-inner">
+    {image && type === 'blog' && (
+      <div class="news-image">
+        <img src={image} alt={title} loading="lazy" decoding="async" />
+      </div>
+    )}
+
+    <div class="news-content">
+      <div class="news-meta">
+        <time datetime={date.toISOString()} class="news-date">{formatDate(date)}</time>
+        <Badge size="sm" variant={typeBadgeVariants[type]}>{typeLabels[type]}</Badge>
+      </div>
+
+      <h3 class="news-title">
+        {href !== '#' ? (
+          <a href={href} class="news-link">{title}</a>
+        ) : (
+          <span>{title}</span>
+        )}
+      </h3>
+
+      {description && (
+        <p class="news-description">{description}</p>
+      )}
+
+      {type === 'talk' && (event || location) && (
+        <div class="news-event">
+          {event && <span class="event-name">{event}</span>}
+          {location && <span class="event-location"> · {location}</span>}
+        </div>
+      )}
+
+      {type === 'publication' && (
+        <div class="news-publication-meta">
+          {authors && authors.length > 0 && (
+            <p class="publication-authors">
+              {authors.slice(0, 3).join(', ')}
+              {authors.length > 3 && ', et al.'}
+            </p>
+          )}
+          {venue && <p class="publication-venue">{venue}</p>}
+        </div>
+      )}
+
+      {tags && tags.length > 0 && (
+        <div class="news-tags">
+          {tags.slice(0, 3).map(tag => (
+            <Badge size="sm" variant="outline">{tag}</Badge>
+          ))}
+        </div>
+      )}
+
+      {(slides || video || pdf || code) && (
+        <div class="news-links">
+          {slides && (
+            <a href={slides} class="news-action-link" target="_blank" rel="noopener noreferrer">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                <line x1="8" y1="21" x2="16" y2="21"></line>
+                <line x1="12" y1="17" x2="12" y2="21"></line>
+              </svg>
+              Slides
+            </a>
+          )}
+          {video && (
+            <a href={video} class="news-action-link" target="_blank" rel="noopener noreferrer">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+              </svg>
+              Video
+            </a>
+          )}
+          {pdf && (
+            <a href={pdf} class="news-action-link" target="_blank" rel="noopener noreferrer">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+              </svg>
+              PDF
+            </a>
+          )}
+          {code && (
+            <a href={code} class="news-action-link" target="_blank" rel="noopener noreferrer">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="16 18 22 12 16 6"></polyline>
+                <polyline points="8 6 2 12 8 18"></polyline>
+              </svg>
+              Code
+            </a>
+          )}
+        </div>
+      )}
+    </div>
+  </div>
+</article>
+
+<style>
+  .news-card {
+    border-radius: var(--radius-md);
+    transition: background-color var(--transition-fast);
+  }
+
+  .news-card:hover {
+    background-color: var(--color-bg-alt);
+  }
+
+  .news-card-inner {
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-4);
+  }
+
+  .news-image {
+    margin-bottom: var(--space-3);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+  }
+
+  .news-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-normal);
+  }
+
+  .news-card:hover .news-image img {
+    transform: scale(1.05);
+  }
+
+  .news-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .news-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+  }
+
+  .news-date {
+    font-size: var(--font-size-xs);
+    font-family: var(--font-mono);
+    color: var(--color-text-muted);
+  }
+
+  .news-title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-medium);
+    margin: 0;
+    line-height: var(--line-height-snug);
+  }
+
+  .news-link {
+    color: inherit;
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .news-link:hover {
+    color: var(--color-accent);
+  }
+
+  .news-description {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin: 0;
+    line-height: var(--line-height-normal);
+  }
+
+  .news-event {
+    font-size: var(--font-size-sm);
+    margin-top: var(--space-1);
+  }
+
+  .event-name {
+    color: var(--color-accent);
+    font-weight: var(--font-weight-medium);
+  }
+
+  .event-location {
+    color: var(--color-text-muted);
+  }
+
+  .news-publication-meta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    margin-top: var(--space-1);
+  }
+
+  .publication-authors {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin: 0;
+  }
+
+  .publication-venue {
+    font-size: var(--font-size-sm);
+    color: var(--color-accent);
+    font-weight: var(--font-weight-medium);
+    margin: 0;
+  }
+
+  .news-tags {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+    margin-top: var(--space-1);
+  }
+
+  .news-links {
+    display: flex;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+    margin-top: var(--space-2);
+  }
+
+  .news-action-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-size-sm);
+    font-family: var(--font-ui);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+    background: none;
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    transition: all var(--transition-fast);
+    text-decoration: none;
+  }
+
+  .news-action-link:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+    background-color: rgba(196, 30, 58, 0.05);
+  }
+
+  [data-theme="dark"] .news-action-link:hover {
+    background-color: rgba(255, 77, 106, 0.1);
+  }
+
+  @media (max-width: 640px) {
+    .news-title {
+      font-size: var(--font-size-base);
+    }
+
+    .news-links {
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+  }
+</style>

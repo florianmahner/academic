@@ -1,0 +1,84 @@
+---
+/**
+ * Example: Homepage Recent Updates Section
+ * Shows how to add a "Recent Activity" section to the homepage
+ */
+
+import BaseLayout from '../../src/layouts/BaseLayout.astro';
+import { UpdatesList } from '../../src/components/blocks';
+import { getRecentUpdates } from '../../src/lib/updates';
+
+// Get the 5 most recent updates from all sources
+const recentUpdates = await getRecentUpdates(5);
+---
+
+<BaseLayout title="Home">
+  <article class="container">
+    <!-- Hero / About section -->
+    <section class="hero">
+      <h1>John Doe</h1>
+      <p class="lead">
+        Assistant Professor of Computer Science<br />
+        Research in Machine Learning and Computer Vision
+      </p>
+    </section>
+
+    <!-- Recent Updates Section -->
+    <section class="recent-updates">
+      <div class="section-header">
+        <h2>Recent Activity</h2>
+        <a href="/updates" class="view-all-link">View all →</a>
+      </div>
+
+      <UpdatesList
+        items={recentUpdates}
+        compact={true}
+        showType={true}
+      />
+    </section>
+
+    <!-- Other homepage sections (Research, Selected Publications, etc.) -->
+  </article>
+</BaseLayout>
+
+<style>
+  /* Homepage-specific styling */
+  .hero {
+    margin-bottom: var(--space-16);
+  }
+
+  .lead {
+    font-size: var(--font-size-xl);
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .recent-updates {
+    margin-top: var(--space-12);
+    margin-bottom: var(--space-12);
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-6);
+  }
+
+  .section-header h2 {
+    margin: 0;
+  }
+
+  .view-all-link {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-accent);
+    text-decoration: none;
+    background: none;
+    transition: color var(--transition-fast);
+  }
+
+  .view-all-link:hover {
+    color: var(--color-text);
+  }
+</style>

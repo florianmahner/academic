@@ -1,0 +1,237 @@
+---
+/**
+ * News & Updates Index Page
+ * Aggregates recent items from blog, talks, and publications
+ */
+import { getCollection, getEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { config } from '../../config';
+import NewsCard from '../../components/blocks/NewsCard.astro';
+import { loadPublications } from '../../lib/bibtex';
+import path from 'node:path';
+
+// Get page configuration from frontmatter
+const pageConfig = await getEntry('collection-pages', 'news');
+if (!pageConfig) {
+  throw new Error('Missing collection-pages/news.md - please create this file with layout configuration');
+}
+
+const { title, description, sortBy, sortOrder } = pageConfig.data;
+
+// Fetch all content collections
+const blogPosts = await getCollection('blog', ({ data }) => !data.draft);
+const talks = await getCollection('talks');
+
+// Load publications from BibTeX
+const contentDir = path.join(process.cwd(), 'src', 'content');
+const publications = loadPublications(contentDir);
+
+// Transform and combine all items into a unified format
+interface NewsItem {
+  type: 'blog' | 'talk' | 'publication';
+  date: Date;
+  title: string;
+  description?: string;
+  slug?: string;
+  tags?: string[];
+  // Blog specific
+  image?: string;
+  // Talk specific
+  event?: string;
+  location?: string;
+  slides?: string;
+  video?: string;
+  // Publication specific
+  authors?: string[];
+  venue?: string;
+  pdf?: string;
+  code?: string;
+}
+
+const newsItems: NewsItem[] = [
+  // Blog posts
+  ...blogPosts.map(post => ({
+    type: 'blog' as const,
+    date: post.data.date,
+    title: post.data.title,
+    description: post.data.description,
+    slug: post.slug,
+    tags: post.data.tags,
+    image: post.data.image,
+  })),
+
+  // Talks
+  ...talks.map(talk => ({
+    type: 'talk' as const,
+    date: talk.data.date,
+    title: talk.data.title,
+    description: talk.data.description || talk.data.abstract,
+    slug: talk.slug,
+    tags: talk.data.tags,
+    event: talk.data.event,
+    location: talk.data.location,
+    slides: talk.data.slides,
+    video: talk.data.video,
+  })),
+
+  // Publications (limit to recent ones)
+  ...publications.slice(0, 10).map(pub => ({
+    type: 'publication' as const,
+    date: new Date(pub.year, 0, 1), // Use January 1st of the year
+    title: pub.title,
+    description: pub.abstract,
+    tags: pub.abbr ? [pub.abbr] : [],
+    authors: pub.authors,
+    venue: pub.journal || pub.booktitle,
+    pdf: pub.pdf,
+    code: pub.code,
+  })),
+];
+
+// Sort by date (most recent first)
+const sortedItems = newsItems.sort((a, b) => {
+  const dateA = a.date.valueOf();
+  const dateB = b.date.valueOf();
+  return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
+});
+
+// Group by year
+interface GroupedItems {
+  [year: string]: NewsItem[];
+}
+
+const groupedByYear = sortedItems.reduce((acc, item) => {
+  const year = item.date.getFullYear().toString();
+  if (!acc[year]) {
+    acc[year] = [];
+  }
+  acc[year].push(item);
+  return acc;
+}, {} as GroupedItems);
+
+const years = Object.keys(groupedByYear).sort((a, b) => parseInt(b) - parseInt(a));
+
+const pageTitle = `${title} | ${config.site.title}`;
+
+// Prepend base path to images
+const base = import.meta.env.BASE_URL;
+sortedItems.forEach(item => {
+  if (item.image && !item.image.startsWith('http')) {
+    item.image = base === '/' ? item.image : `${base}${item.image}`;
+  }
+});
+---
+
+<BaseLayout title={pageTitle} description={description}>
+  <article class="news-page">
+    <div class="container">
+      <header class="page-header" data-animate="fade-up">
+        <h1>{title}</h1>
+        <p class="page-description">{description}</p>
+      </header>
+
+      <div class="news-list">
+        {years.map(year => (
+          <section class="year-section" data-animate="fade-up">
+            <h2 class="year-heading">{year}</h2>
+            <div class="news-items">
+              {groupedByYear[year].map(item => (
+                <NewsCard
+                  type={item.type}
+                  title={item.title}
+                  description={item.description}
+                  date={item.date}
+                  tags={item.tags}
+                  slug={item.slug}
+                  image={item.image}
+                  event={item.event}
+                  location={item.location}
+                  slides={item.slides}
+                  video={item.video}
+                  authors={item.authors}
+                  venue={item.venue}
+                  pdf={item.pdf}
+                  code={item.code}
+                />
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
+
+      {sortedItems.length === 0 && (
+        <div class="empty-state" data-animate="fade-up">
+          <p>No news items to display yet. Check back soon!</p>
+        </div>
+      )}
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .news-page {
+    /* Vertical padding handled by article in global.css */
+  }
+
+  .page-header {
+    margin-bottom: var(--space-8);
+  }
+
+  .page-header h1 {
+    margin-top: 0;
+    margin-bottom: var(--space-2);
+  }
+
+  .page-description {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-base);
+    margin: 0;
+  }
+
+  .news-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+  }
+
+  .year-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .year-heading {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-accent);
+    margin: 0;
+    padding-bottom: var(--space-2);
+    border-bottom: 2px solid var(--color-border);
+  }
+
+  .news-items {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: var(--space-12) var(--space-4);
+    color: var(--color-text-muted);
+  }
+
+  @media (max-width: 768px) {
+    .page-header {
+      margin-bottom: var(--space-6);
+    }
+
+    .news-list {
+      gap: var(--space-6);
+    }
+
+    .year-heading {
+      font-size: var(--font-size-lg);
+    }
+  }
+</style>

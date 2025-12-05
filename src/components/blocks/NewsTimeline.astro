@@ -1,0 +1,181 @@
+---
+/**
+ * NewsTimeline Component
+ * Compact timeline showing recent news/updates with date + title + type
+ * Designed for 1-2 lines per item, similar to talks timeline
+ */
+
+interface NewsItem {
+  type: 'blog' | 'talk' | 'publication' | 'project' | 'news';
+  title: string;
+  date: Date;
+  href?: string;
+  description?: string;
+}
+
+interface Props {
+  items: NewsItem[];
+  limit?: number;
+  showType?: boolean;
+  class?: string;
+}
+
+const { items, limit = 5, showType = true, class: className } = Astro.props;
+
+// Sort by date descending and limit
+const displayItems = items
+  .sort((a, b) => b.date.valueOf() - a.date.valueOf())
+  .slice(0, limit);
+
+// Format date as "Mon YYYY" or "DD Mon YYYY"
+const formatDate = (date: Date) => {
+  return date.toLocaleDateString('en-US', {
+    month: 'short',
+    year: 'numeric'
+  });
+};
+
+// Type labels (short)
+const typeLabels: Record<string, string> = {
+  blog: 'Post',
+  talk: 'Talk',
+  publication: 'Paper',
+  project: 'Project',
+  news: 'News',
+};
+---
+
+<div class:list={['news-timeline', className]}>
+  {displayItems.map(item => (
+    <div class="news-item" data-animate="fade-up">
+      <span class="news-date">{formatDate(item.date)}</span>
+      <div class="news-content">
+        {item.href ? (
+          <a href={item.href} class="news-title">{item.title}</a>
+        ) : (
+          <span class="news-title">{item.title}</span>
+        )}
+        {showType && (
+          <span class={`news-type news-type--${item.type}`}>{typeLabels[item.type]}</span>
+        )}
+      </div>
+    </div>
+  ))}
+</div>
+
+<style>
+  .news-timeline {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .news-item {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: var(--space-4);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-sm);
+    transition: background-color var(--transition-fast);
+  }
+
+  .news-item:hover {
+    background-color: var(--color-bg-alt);
+  }
+
+  .news-date {
+    font-size: var(--font-size-sm);
+    font-family: var(--font-mono);
+    color: var(--color-text-muted);
+    white-space: nowrap;
+  }
+
+  .news-content {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+    min-width: 0;
+  }
+
+  .news-title {
+    font-size: var(--font-size-base);
+    color: var(--color-text);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+    /* Truncate long titles */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+  }
+
+  a.news-title:hover {
+    color: var(--color-accent);
+  }
+
+  .news-type {
+    font-size: var(--font-size-xs);
+    font-family: var(--font-ui);
+    font-weight: var(--font-weight-medium);
+    padding: 0 var(--space-2);
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .news-type--blog {
+    color: var(--color-accent);
+    background-color: rgba(196, 30, 58, 0.1);
+  }
+
+  .news-type--talk {
+    color: #059669;
+    background-color: rgba(5, 150, 105, 0.1);
+  }
+
+  .news-type--publication {
+    color: #7c3aed;
+    background-color: rgba(124, 58, 237, 0.1);
+  }
+
+  .news-type--project {
+    color: #0891b2;
+    background-color: rgba(8, 145, 178, 0.1);
+  }
+
+  .news-type--news {
+    color: #d97706;
+    background-color: rgba(217, 119, 6, 0.1);
+  }
+
+  [data-theme="dark"] .news-type--blog {
+    background-color: rgba(255, 77, 106, 0.15);
+  }
+
+  [data-theme="dark"] .news-type--talk {
+    background-color: rgba(52, 211, 153, 0.15);
+  }
+
+  [data-theme="dark"] .news-type--publication {
+    background-color: rgba(167, 139, 250, 0.15);
+  }
+
+  [data-theme="dark"] .news-type--project {
+    background-color: rgba(34, 211, 238, 0.15);
+  }
+
+  [data-theme="dark"] .news-type--news {
+    background-color: rgba(251, 191, 36, 0.15);
+  }
+
+  @media (max-width: 500px) {
+    .news-item {
+      grid-template-columns: 1fr;
+      gap: var(--space-1);
+    }
+
+    .news-date {
+      font-size: var(--font-size-xs);
+    }
+  }
+</style>

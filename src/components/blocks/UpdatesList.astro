@@ -1,0 +1,426 @@
+---
+/**
+ * UpdatesList Component
+ * Generic timeline-style display for recent activity across multiple content types
+ *
+ * Design Philosophy:
+ * - Unified display for blog posts, publications, talks, and teaching updates
+ * - Chronological sorting with clear date hierarchy
+ * - Type indicators using badges for quick scanning
+ * - Compact mode for homepage, detailed mode for standalone page
+ * - Tufte-inspired clean typography with subtle hover states
+ */
+
+import Badge from '../ui/Badge.astro';
+import { formatDate } from '../../lib/blog';
+
+// Union type for all possible update items
+export interface UpdateItem {
+  type: 'blog' | 'publication' | 'talk' | 'teaching' | 'project';
+  title: string;
+  date: Date;
+  description?: string;
+  url?: string;
+
+  // Type-specific metadata
+  venue?: string;        // For publications and talks
+  event?: string;        // For talks
+  location?: string;     // For talks
+  tags?: string[];       // For blog posts
+  authors?: string[];    // For publications
+
+  // Visual enhancements
+  icon?: string;         // Custom icon/emoji
+  highlight?: boolean;   // Featured/important items
+}
+
+interface Props {
+  items: UpdateItem[];
+  limit?: number;
+  showType?: boolean;      // Show type badges
+  compact?: boolean;       // Compact mode (less spacing, shorter descriptions)
+  groupByMonth?: boolean;  // Group items by month
+  filterTypes?: UpdateItem['type'][]; // Show only specific types
+  class?: string;
+}
+
+const {
+  items,
+  limit,
+  showType = true,
+  compact = false,
+  groupByMonth = false,
+  filterTypes,
+  class: className,
+} = Astro.props;
+
+// Filter by type if specified
+let filteredItems = filterTypes
+  ? items.filter(item => filterTypes.includes(item.type))
+  : items;
+
+// Sort by date (newest first)
+filteredItems = filteredItems.sort((a, b) =>
+  b.date.getTime() - a.date.getTime()
+);
+
+// Apply limit if specified
+if (limit) {
+  filteredItems = filteredItems.slice(0, limit);
+}
+
+// Type badge configuration
+const typeConfig: Record<UpdateItem['type'], { label: string; variant: 'default' | 'primary' | 'success' | 'warning' | 'error' | 'outline' }> = {
+  blog: { label: 'Blog', variant: 'primary' },
+  publication: { label: 'Paper', variant: 'success' },
+  talk: { label: 'Talk', variant: 'warning' },
+  teaching: { label: 'Teaching', variant: 'outline' },
+  project: { label: 'Project', variant: 'default' },
+};
+
+// Group by month if requested
+const itemsByMonth: Map<string, UpdateItem[]> = new Map();
+if (groupByMonth) {
+  filteredItems.forEach(item => {
+    const monthKey = item.date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+    if (!itemsByMonth.has(monthKey)) {
+      itemsByMonth.set(monthKey, []);
+    }
+    itemsByMonth.get(monthKey)!.push(item);
+  });
+}
+---
+
+<div class:list={['updates-list', { compact }, className]}>
+  {groupByMonth ? (
+    // Grouped by month view
+    Array.from(itemsByMonth.entries()).map(([month, monthItems]) => (
+      <section class="month-section" data-animate="fade-up">
+        <h3 class="month-label">{month}</h3>
+        <div class="updates-group" data-animate="stagger">
+          {monthItems.map(item => (
+            <article class:list={['update-item', { highlight: item.highlight }]} data-animate="fade-up">
+              <div class="update-header">
+                <div class="update-meta">
+                  <time datetime={item.date.toISOString()} class="update-date">
+                    {formatDate(item.date)}
+                  </time>
+                  {showType && (
+                    <Badge size="sm" variant={typeConfig[item.type].variant}>
+                      {typeConfig[item.type].label}
+                    </Badge>
+                  )}
+                </div>
+
+                {item.url ? (
+                  <a href={item.url} class="update-title-link">
+                    <h4 class="update-title">
+                      {item.icon && <span class="update-icon">{item.icon}</span>}
+                      {item.title}
+                    </h4>
+                  </a>
+                ) : (
+                  <h4 class="update-title">
+                    {item.icon && <span class="update-icon">{item.icon}</span>}
+                    {item.title}
+                  </h4>
+                )}
+              </div>
+
+              {/* Type-specific metadata */}
+              {(item.venue || item.event) && (
+                <div class="update-venue">
+                  {item.venue || item.event}
+                  {item.location && <span class="update-location"> · {item.location}</span>}
+                </div>
+              )}
+
+              {item.authors && (
+                <div class="update-authors">
+                  {item.authors.join(', ')}
+                </div>
+              )}
+
+              {item.description && (
+                <p class="update-description">
+                  {compact && item.description.length > 120
+                    ? item.description.slice(0, 120) + '...'
+                    : item.description
+                  }
+                </p>
+              )}
+
+              {item.tags && item.tags.length > 0 && (
+                <div class="update-tags">
+                  {item.tags.slice(0, 3).map(tag => (
+                    <Badge size="sm">{tag}</Badge>
+                  ))}
+                </div>
+              )}
+            </article>
+          ))}
+        </div>
+      </section>
+    ))
+  ) : (
+    // Flat list view
+    <div class="updates-group" data-animate="stagger">
+      {filteredItems.map(item => (
+        <article class:list={['update-item', { highlight: item.highlight }]} data-animate="fade-up">
+          <div class="update-header">
+            <div class="update-meta">
+              <time datetime={item.date.toISOString()} class="update-date">
+                {formatDate(item.date)}
+              </time>
+              {showType && (
+                <Badge size="sm" variant={typeConfig[item.type].variant}>
+                  {typeConfig[item.type].label}
+                </Badge>
+              )}
+            </div>
+
+            {item.url ? (
+              <a href={item.url} class="update-title-link">
+                <h4 class="update-title">
+                  {item.icon && <span class="update-icon">{item.icon}</span>}
+                  {item.title}
+                </h4>
+              </a>
+            ) : (
+              <h4 class="update-title">
+                {item.icon && <span class="update-icon">{item.icon}</span>}
+                {item.title}
+              </h4>
+            )}
+          </div>
+
+          {/* Type-specific metadata */}
+          {(item.venue || item.event) && (
+            <div class="update-venue">
+              {item.venue || item.event}
+              {item.location && <span class="update-location"> · {item.location}</span>}
+            </div>
+          )}
+
+          {item.authors && (
+            <div class="update-authors">
+              {item.authors.join(', ')}
+            </div>
+          )}
+
+          {item.description && (
+            <p class="update-description">
+              {compact && item.description.length > 120
+                ? item.description.slice(0, 120) + '...'
+                : item.description
+              }
+            </p>
+          )}
+
+          {item.tags && item.tags.length > 0 && (
+            <div class="update-tags">
+              {item.tags.slice(0, 3).map(tag => (
+                <Badge size="sm">{tag}</Badge>
+              ))}
+            </div>
+          )}
+        </article>
+      ))}
+    </div>
+  )}
+</div>
+
+<style>
+  /* ============================================
+     Container & Layout
+     ============================================ */
+  .updates-list {
+    width: 100%;
+  }
+
+  .updates-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  /* Compact mode: tighter spacing */
+  .updates-list.compact .updates-group {
+    gap: var(--space-3);
+  }
+
+  /* ============================================
+     Month Grouping
+     ============================================ */
+  .month-section {
+    margin-bottom: var(--space-8);
+  }
+
+  .month-section:last-child {
+    margin-bottom: 0;
+  }
+
+  .month-label {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-muted);
+    margin: 0 0 var(--space-4);
+    font-family: var(--font-body);
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: var(--space-2);
+  }
+
+  /* ============================================
+     Update Item Card
+     ============================================ */
+  .update-item {
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    transition: background-color var(--transition-fast);
+    position: relative;
+  }
+
+  /* Subtle hover effect */
+  .update-item:hover {
+    background-color: var(--color-bg-alt);
+  }
+
+  /* Highlighted/featured items */
+  .update-item.highlight {
+    border-left: 3px solid var(--color-accent);
+    padding-left: calc(var(--space-4) - 3px);
+  }
+
+  /* Compact mode: smaller padding */
+  .updates-list.compact .update-item {
+    padding: var(--space-3);
+  }
+
+  /* ============================================
+     Update Header (Date + Type + Title)
+     ============================================ */
+  .update-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+  }
+
+  .update-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .update-date {
+    font-size: var(--font-size-xs);
+    font-family: var(--font-mono);
+    color: var(--color-text-muted);
+    letter-spacing: 0.01em;
+  }
+
+  /* ============================================
+     Title
+     ============================================ */
+  .update-title {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text);
+    margin: 0;
+    line-height: var(--line-height-snug);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .update-title-link {
+    text-decoration: none;
+    color: inherit;
+    background: none;
+    transition: color var(--transition-fast);
+  }
+
+  .update-title-link:hover .update-title {
+    color: var(--color-accent);
+  }
+
+  .update-icon {
+    font-size: 1.1em;
+    line-height: 1;
+  }
+
+  /* Compact mode: slightly smaller title */
+  .updates-list.compact .update-title {
+    font-size: var(--font-size-sm);
+  }
+
+  /* ============================================
+     Metadata (Venue, Authors, etc.)
+     ============================================ */
+  .update-venue {
+    font-size: var(--font-size-sm);
+    color: var(--color-accent);
+    font-weight: var(--font-weight-medium);
+    margin-bottom: var(--space-1);
+  }
+
+  .update-location {
+    color: var(--color-text-muted);
+    font-weight: var(--font-weight-normal);
+  }
+
+  .update-authors {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    font-style: italic;
+    margin-bottom: var(--space-2);
+  }
+
+  /* ============================================
+     Description
+     ============================================ */
+  .update-description {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-normal);
+    margin: 0;
+  }
+
+  .updates-list.compact .update-description {
+    font-size: var(--font-size-xs);
+  }
+
+  /* ============================================
+     Tags
+     ============================================ */
+  .update-tags {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+    margin-top: var(--space-2);
+  }
+
+  /* ============================================
+     Responsive Adjustments
+     ============================================ */
+  @media (max-width: 768px) {
+    .update-item {
+      padding: var(--space-3);
+    }
+
+    .update-title {
+      font-size: var(--font-size-sm);
+    }
+
+    .updates-list.compact .update-title {
+      font-size: var(--font-size-xs);
+    }
+  }
+
+  /* ============================================
+     Animation Helpers
+     ============================================ */
+  [data-animate="stagger"] > * {
+    animation-delay: calc(var(--stagger-delay, 0.05s) * var(--stagger-index, 0));
+  }
+</style>
