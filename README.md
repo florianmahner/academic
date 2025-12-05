@@ -11,6 +11,7 @@
 [![Astro](https://img.shields.io/badge/Astro-5.0-FF5D01?logo=astro&logoColor=white)](https://astro.build)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Lighthouse](https://img.shields.io/badge/Lighthouse-96%25+-00CC66?logo=lighthouse&logoColor=white)](../../actions/workflows/lighthouse.yml)
 
 </div>
 

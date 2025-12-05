@@ -65,3 +65,4 @@ hive-mind-prompt-*.txt
 
 # Claude instructions (local only)
 CLAUDE.md
+.claude/
