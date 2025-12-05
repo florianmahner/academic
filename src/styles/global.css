@@ -823,17 +823,7 @@ img:not([loading="lazy"]) {
    Code Block Theme Switching (Shiki dual themes)
    ========================================================================== */
 
-/* Dark theme: swap to dark colors from inline CSS variables */
-[data-theme="dark"] .astro-code,
-[data-theme="dark"] .astro-code span {
-  color: var(--shiki-dark) !important;
-}
-
-[data-theme="dark"] .astro-code {
-  background-color: var(--shiki-dark-bg) !important;
-}
-
-/* Code block container styling */
+/* Code block container styling - use site's color variables */
 .astro-code {
   padding: var(--space-4);
   border-radius: var(--radius-md);
@@ -842,6 +832,13 @@ img:not([loading="lazy"]) {
   font-size: var(--font-size-sm);
   line-height: var(--line-height-relaxed);
   margin: var(--space-4) 0;
+  background-color: var(--color-bg-code) !important;
+}
+
+/* Dark theme: swap to dark colors from inline CSS variables */
+[data-theme="dark"] .astro-code,
+[data-theme="dark"] .astro-code span {
+  color: var(--shiki-dark) !important;
 }
 
 /* Inline code styling */
@@ -852,6 +849,22 @@ img:not([loading="lazy"]) {
   font-family: var(--font-mono);
   background-color: var(--color-bg-alt);
   color: var(--color-text);
+}
+
+/* ==========================================================================
+   KaTeX Math Styling
+   ========================================================================== */
+
+/* Scale KaTeX to match body text size */
+.katex {
+  font-size: 1em;
+}
+
+/* Display math (block equations) */
+.katex-display {
+  margin: var(--space-4) 0;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 /* ==========================================================================

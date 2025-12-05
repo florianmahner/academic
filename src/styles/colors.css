@@ -12,7 +12,7 @@
   /* Background Colors */
   --color-bg: #fffff8;
   --color-bg-alt: #f8f8f2;
-  --color-bg-code: #f4f4ee;
+  --color-bg-code: #fffff8;
 
   /* Text Colors */
   --color-text: #111111;
@@ -44,7 +44,7 @@
 
   --color-bg: #151515;
   --color-bg-alt: #1e1e1e;
-  --color-bg-code: #252525;
+  --color-bg-code: #151515;
 
   --color-text: #e8e8e8;
   --color-text-secondary: #b0b0b0;
@@ -68,7 +68,7 @@
 
     --color-bg: #151515;
     --color-bg-alt: #1e1e1e;
-    --color-bg-code: #252525;
+    --color-bg-code: #151515;
 
     --color-text: #e8e8e8;
     --color-text-secondary: #b0b0b0;
