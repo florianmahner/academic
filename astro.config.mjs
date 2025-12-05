@@ -1,6 +1,8 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 import { config } from './src/config.ts';
 
 // https://astro.build/config
@@ -14,6 +16,10 @@ export default defineConfig({
       lastmod: new Date(),
     }),
   ],
+  markdown: {
+    remarkPlugins: [remarkMath],
+    rehypePlugins: [rehypeKatex],
+  },
   build: {
     assets: '_assets'
   },
