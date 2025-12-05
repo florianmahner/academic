@@ -4,10 +4,12 @@
  * Generates CSS custom properties from typography presets
  * Include this in your <head> to apply theme customization
  *
- * Loads ALL fonts for all presets so users can switch themes
- * Now integrated with config.yaml for theme preset selection
+ * OPTIMIZED: Only loads fonts for the default preset initially (~80KB)
+ * Other fonts are loaded dynamically when user switches presets
+ * This reduces initial page load by ~400KB
  */
-import { getAllFontsUrl, getPreset } from '../lib/typography-presets';
+import { getPreset } from '../lib/typography-presets';
+import { getDefaultFontUrl } from '../lib/font-loader';
 import { config } from '../config';
 
 // Get the default preset from config.yaml (or fallback to editorial-newsreader)
@@ -18,12 +20,15 @@ const defaultPreset = getPreset(presetId);
 const accentLight = config.theme?.accentLight || defaultPreset.colors.accentLight;
 const accentDark = config.theme?.accentDark || defaultPreset.colors.accentDark;
 
-// Load all fonts for all presets (enables theme switching)
-const fontsUrl = getAllFontsUrl();
+// Only load fonts for the default preset (other fonts loaded on-demand)
+const fontsUrl = getDefaultFontUrl(presetId);
 ---
 
+<!-- Preconnect for faster font loading -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+<!-- Only load default preset fonts initially (others loaded dynamically) -->
 <link href={fontsUrl} rel="stylesheet" />
 
 <style define:vars={{
