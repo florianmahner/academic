@@ -350,3 +350,9 @@ NEVER create files unless they're absolutely necessary for achieving your goal.
 ALWAYS prefer editing an existing file to creating a new one.
 NEVER proactively create documentation files (*.md) or README files. Only create documentation files if explicitly requested by the User.
 Never save working files, text/mds and tests to the root folder.
+
+# Git Commit Rules
+- NEVER add Claude as co-author or mention "Generated with Claude Code" in commits
+- Keep commit messages SHORT and concise (one line, max ~50 chars)
+- No emoji in commit messages
+- Format: "verb: short description" (e.g., "fix: settings panel tags", "add: eslint config")
