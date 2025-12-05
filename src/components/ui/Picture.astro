@@ -10,31 +10,16 @@ interface Props {
 
 const { src, alt, width, height, class: className, loading = 'lazy' } = Astro.props;
 
-// Convert .gif to .webp for modern browsers
-const webpSrc = src.replace('.gif', '.webp');
-const hasWebp = !src.includes('http');
+// Use WebP directly (convert .gif references to .webp)
+const imgSrc = src.replace('.gif', '.webp');
 ---
 
-{hasWebp ? (
-  <picture class={className}>
-    <source srcset={webpSrc} type="image/webp" />
-    <img
-      src={src}
-      alt={alt}
-      width={width}
-      height={height}
-      loading={loading}
-      decoding="async"
-    />
-  </picture>
-) : (
-  <img
-    src={src}
-    alt={alt}
-    width={width}
-    height={height}
-    loading={loading}
-    decoding="async"
-    class={className}
-  />
-)}
+<img
+  src={imgSrc}
+  alt={alt}
+  width={width}
+  height={height}
+  loading={loading}
+  decoding="async"
+  class={className}
+/>
