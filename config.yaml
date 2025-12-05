@@ -121,6 +121,85 @@ features:
   settings_panel: true         # Show settings gear icon for customization
 
 # =============================================================================
+# LAYOUT SYSTEM CONFIGURATION
+# =============================================================================
+
+layouts:
+  # Global default layout
+  default: list
+
+  # Default configs for each layout type
+  list:
+    showThumbnail: true
+    thumbnailSize: small
+    groupBy: year
+    fields: [description, tags, links]
+    compact: false
+
+  cards:
+    style: text
+    columns: auto
+    aspectRatio: "16:9"
+    showDescription: true
+    showTags: true
+    gap: medium
+
+  timeline:
+    style: left
+    groupBy: year
+    showThumbnails: false
+    expandable: false
+    showMilestones: true
+
+  node:
+    connectionBy: tags
+    nodeSize: medium
+    showLabels: true
+    interactive: true
+    physics: true
+    maxNodes: 50
+
+  masonry:
+    columns: auto
+    gap: medium
+    showDescription: true
+
+  accordion:
+    groupBy: year
+    allowMultiple: true
+    defaultOpen: first
+
+  minimal:
+    showDate: false
+    showStatus: false
+
+# Collection-specific layout overrides
+collections:
+  blog:
+    layout: list
+    config:
+      groupBy: year
+      showThumbnail: true
+
+  projects:
+    layout: cards
+    config:
+      style: text
+      columns: 3
+
+  talks:
+    layout: timeline
+    config:
+      style: left
+      groupBy: year
+
+  teaching:
+    layout: list
+    config:
+      groupBy: none
+      showThumbnail: false
+
+# =============================================================================
 # ABOUT PAGE CONTENT
 # =============================================================================
 

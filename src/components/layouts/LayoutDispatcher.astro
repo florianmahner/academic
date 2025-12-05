@@ -1,0 +1,121 @@
+---
+/**
+ * LayoutDispatcher - Main entry point for rendering collection layouts
+ *
+ * Routes content collections to their configured layout component based on:
+ * 1. layoutOverride prop (highest priority)
+ * 2. Collection-specific config
+ * 3. Fallback to 'list' layout
+ */
+
+import { getLayoutForCollection } from '../../lib/layout-config';
+import ListLayout from './ListLayout.astro';
+import CardsLayout from './CardsLayout.astro';
+import TimelineLayout from './TimelineLayout.astro';
+import NodeLayout from './NodeLayout.astro';
+import MasonryLayout from './MasonryLayout.astro';
+import AccordionLayout from './AccordionLayout.astro';
+import MinimalLayout from './MinimalLayout.astro';
+
+interface Props {
+  collection: string;          // e.g., 'projects', 'blog', 'talks'
+  entries: any[];              // Content collection entries
+  title?: string;              // Optional page title
+  description?: string;        // Optional page description
+  layoutOverride?: string;     // Override layout from page level
+  configOverride?: object;     // Override config from page level
+}
+
+const {
+  collection,
+  entries,
+  title,
+  description,
+  layoutOverride,
+  configOverride
+} = Astro.props;
+
+// Determine which layout to use
+let layout: string;
+let config: any;
+
+try {
+  if (layoutOverride) {
+    // Explicit override from page
+    layout = layoutOverride;
+    config = configOverride || {};
+  } else {
+    // Get from layout config
+    const layoutConfig = getLayoutForCollection(collection);
+    layout = layoutConfig.layout;
+    config = { ...layoutConfig.config, ...configOverride };
+  }
+} catch (error) {
+  console.error(`[LayoutDispatcher] Error determining layout for collection '${collection}':`, error);
+  layout = 'list';
+  config = {};
+}
+
+// Validate layout
+const validLayouts = ['list', 'cards', 'timeline', 'node', 'masonry', 'accordion', 'minimal'];
+if (!validLayouts.includes(layout)) {
+  console.warn(`[LayoutDispatcher] Unknown layout '${layout}' for collection '${collection}'. Falling back to 'list'.`);
+  layout = 'list';
+}
+---
+
+<div class="layout-wrapper">
+  {(title || description) && (
+    <header class="layout-header">
+      {title && <h1 class="layout-title">{title}</h1>}
+      {description && <p class="layout-description">{description}</p>}
+    </header>
+  )}
+
+  <div class="layout-content">
+    {layout === 'list' && <ListLayout entries={entries} config={config} collection={collection} />}
+    {layout === 'cards' && <CardsLayout entries={entries} config={config} collection={collection} />}
+    {layout === 'timeline' && <TimelineLayout entries={entries} config={config} collection={collection} />}
+    {layout === 'node' && <NodeLayout entries={entries} config={config} collection={collection} />}
+    {layout === 'masonry' && <MasonryLayout entries={entries} config={config} collection={collection} />}
+    {layout === 'accordion' && <AccordionLayout entries={entries} config={config} collection={collection} />}
+    {layout === 'minimal' && <MinimalLayout entries={entries} config={config} collection={collection} />}
+  </div>
+</div>
+
+<style>
+  .layout-wrapper {
+    width: 100%;
+  }
+
+  .layout-header {
+    margin-bottom: 2rem;
+  }
+
+  .layout-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary, #1a1a1a);
+  }
+
+  .layout-description {
+    font-size: 1.125rem;
+    color: var(--text-secondary, #666);
+    line-height: 1.6;
+  }
+
+  .layout-content {
+    width: 100%;
+  }
+
+  @media (max-width: 768px) {
+    .layout-title {
+      font-size: 1.5rem;
+    }
+
+    .layout-description {
+      font-size: 1rem;
+    }
+  }
+</style>

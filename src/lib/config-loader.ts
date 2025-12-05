@@ -87,6 +87,81 @@ const FooterSchema = z.object({
   links: z.array(FooterLinkSchema).default([]),
 });
 
+// Layout configuration schemas
+const ListLayoutConfigSchema = z.object({
+  showThumbnail: z.boolean().default(true),
+  thumbnailSize: z.enum(["small", "medium", "large"]).default("small"),
+  groupBy: z.enum(["year", "category", "none"]).default("year"),
+  fields: z.array(z.string()).default(["description", "tags", "links"]),
+  compact: z.boolean().default(false),
+});
+
+const CardsLayoutConfigSchema = z.object({
+  style: z.enum(["text", "image", "minimal"]).default("text"),
+  columns: z.union([z.number(), z.literal("auto")]).default("auto"),
+  aspectRatio: z.string().default("16:9"),
+  showDescription: z.boolean().default(true),
+  showTags: z.boolean().default(true),
+  gap: z.enum(["small", "medium", "large"]).default("medium"),
+});
+
+const TimelineLayoutConfigSchema = z.object({
+  style: z.enum(["left", "right", "center", "alternating"]).default("left"),
+  groupBy: z.enum(["year", "month", "none"]).default("year"),
+  showThumbnails: z.boolean().default(false),
+  expandable: z.boolean().default(false),
+  showMilestones: z.boolean().default(true),
+});
+
+const NodeLayoutConfigSchema = z.object({
+  connectionBy: z.enum(["tags", "category", "date", "manual"]).default("tags"),
+  nodeSize: z.enum(["small", "medium", "large"]).default("medium"),
+  showLabels: z.boolean().default(true),
+  interactive: z.boolean().default(true),
+  physics: z.boolean().default(true),
+  maxNodes: z.number().default(50),
+});
+
+const MasonryLayoutConfigSchema = z.object({
+  columns: z.union([z.number(), z.literal("auto")]).default("auto"),
+  gap: z.enum(["small", "medium", "large"]).default("medium"),
+  showDescription: z.boolean().default(true),
+});
+
+const AccordionLayoutConfigSchema = z.object({
+  groupBy: z.enum(["year", "category", "none"]).default("year"),
+  allowMultiple: z.boolean().default(true),
+  defaultOpen: z.enum(["first", "all", "none"]).default("first"),
+});
+
+const MinimalLayoutConfigSchema = z.object({
+  showDate: z.boolean().default(false),
+  showStatus: z.boolean().default(false),
+});
+
+const LayoutsSchema = z.object({
+  default: z.enum(["list", "cards", "timeline", "node", "masonry", "accordion", "minimal"]).default("list"),
+  list: ListLayoutConfigSchema.default({}),
+  cards: CardsLayoutConfigSchema.default({}),
+  timeline: TimelineLayoutConfigSchema.default({}),
+  node: NodeLayoutConfigSchema.default({}),
+  masonry: MasonryLayoutConfigSchema.default({}),
+  accordion: AccordionLayoutConfigSchema.default({}),
+  minimal: MinimalLayoutConfigSchema.default({}),
+});
+
+const CollectionLayoutSchema = z.object({
+  layout: z.enum(["list", "cards", "timeline", "node", "masonry", "accordion", "minimal"]),
+  config: z.record(z.any()).optional(),
+});
+
+const CollectionsSchema = z.object({
+  blog: CollectionLayoutSchema.optional(),
+  projects: CollectionLayoutSchema.optional(),
+  talks: CollectionLayoutSchema.optional(),
+  teaching: CollectionLayoutSchema.optional(),
+});
+
 // Main config schema
 const ConfigSchema = z.object({
   name: NameSchema,
@@ -99,6 +174,8 @@ const ConfigSchema = z.object({
   navigation: NavigationSchema,
   theme: ThemeSchema,
   features: FeaturesSchema,
+  layouts: LayoutsSchema.default({}),
+  collections: CollectionsSchema.default({}),
   about: AboutSchema,
   footer: FooterSchema,
 });
@@ -116,6 +193,14 @@ export type ThemePreset =
   | "classic-playfair"
   | "brutalist-space"
   | "humanist-inter";
+export type LayoutType = "list" | "cards" | "timeline" | "node" | "masonry" | "accordion" | "minimal";
+export type ListLayoutConfig = z.infer<typeof ListLayoutConfigSchema>;
+export type CardsLayoutConfig = z.infer<typeof CardsLayoutConfigSchema>;
+export type TimelineLayoutConfig = z.infer<typeof TimelineLayoutConfigSchema>;
+export type NodeLayoutConfig = z.infer<typeof NodeLayoutConfigSchema>;
+export type MasonryLayoutConfig = z.infer<typeof MasonryLayoutConfigSchema>;
+export type AccordionLayoutConfig = z.infer<typeof AccordionLayoutConfigSchema>;
+export type MinimalLayoutConfig = z.infer<typeof MinimalLayoutConfigSchema>;
 
 // =============================================================================
 // CONFIG LOADER
@@ -209,6 +294,21 @@ function transformConfig(yamlConfig: ConfigType) {
       animations: yamlConfig.features.animations,
       settingsPanel: yamlConfig.features.settings_panel,
     },
+
+    // Layout system
+    layouts: {
+      default: yamlConfig.layouts.default,
+      list: yamlConfig.layouts.list,
+      cards: yamlConfig.layouts.cards,
+      timeline: yamlConfig.layouts.timeline,
+      node: yamlConfig.layouts.node,
+      masonry: yamlConfig.layouts.masonry,
+      accordion: yamlConfig.layouts.accordion,
+      minimal: yamlConfig.layouts.minimal,
+    },
+
+    // Collection-specific layouts
+    collections: yamlConfig.collections,
 
     // About page content
     about: {

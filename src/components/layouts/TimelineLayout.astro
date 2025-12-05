@@ -1,0 +1,788 @@
+---
+/**
+ * TimelineLayout Component
+ * Elegant vertical timeline with multiple display styles
+ *
+ * Features:
+ * - Three layout styles: alternating, left-aligned, compact
+ * - Crimson accent timeline with gradient fade
+ * - Year grouping with floating pills
+ * - Status indicators (completed/ongoing)
+ * - Expandable cards with smooth animations
+ * - Milestone/featured items highlighted
+ * - Responsive: collapses to left-aligned on mobile
+ * - Scroll-triggered fade-in animations
+ * - Dark mode support
+ *
+ * Accepts Astro content collection entries and transforms them internally
+ */
+
+import StatusIndicator from '../ui/StatusIndicator.astro';
+
+export interface TimelineEntry {
+  id: string;
+  title: string;
+  subtitle?: string;
+  description?: string;
+  date: string;
+  year: number;
+  status?: 'active' | 'completed' | 'featured' | 'archived';
+  thumbnail?: string;
+  link?: string;
+  tags?: string[];
+  isMilestone?: boolean;
+  details?: string;
+}
+
+export interface Props {
+  entries: any[];           // Astro content collection entries
+  config?: {
+    style?: 'alternating' | 'left' | 'compact';
+    groupBy?: 'year' | 'month' | 'none';
+    showThumbnails?: boolean;
+    expandable?: boolean;
+    showMilestones?: boolean;
+  };
+  collection?: string;      // Collection name for generating URLs
+  class?: string;
+}
+
+const {
+  entries: rawEntries = [],
+  config = {},
+  collection = '',
+  class: className,
+} = Astro.props;
+
+const {
+  style = 'alternating',
+  groupBy = 'year',
+  showThumbnails = false,
+  expandable = false,
+  showMilestones = true,
+} = config;
+
+// Transform Astro content collection entries to TimelineEntry format
+const entries: TimelineEntry[] = rawEntries.map((entry, index) => {
+  const date = entry.data.date instanceof Date ? entry.data.date : new Date(entry.data.date || Date.now());
+  return {
+    id: entry.slug || `entry-${index}`,
+    title: entry.data.title,
+    subtitle: entry.data.event || entry.data.institution || entry.data.venue,
+    description: entry.data.description,
+    date: date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+    year: entry.data.year || date.getFullYear(),
+    status: entry.data.status || (entry.data.featured ? 'featured' : undefined),
+    thumbnail: entry.data.image || entry.data.preview || entry.data.thumbnail,
+    link: collection ? `/${collection}/${entry.slug}` : undefined,
+    tags: entry.data.tags || entry.data.technologies,
+    isMilestone: entry.data.featured || entry.data.isMilestone,
+    details: entry.data.details,
+  };
+});
+
+// Group entries by year
+const groupedEntries = entries.reduce((acc, entry) => {
+  const key = groupBy === 'year' ? entry.year :
+              groupBy === 'month' ? `${entry.year}-${new Date(entry.date).getMonth() + 1}` :
+              'all';
+  if (!acc[key]) acc[key] = [];
+  acc[key].push(entry);
+  return acc;
+}, {} as Record<string, TimelineEntry[]>);
+
+// Sort groups in descending order
+const sortedGroups = Object.entries(groupedEntries).sort(([a], [b]) => {
+  if (groupBy === 'none') return 0;
+  return b.localeCompare(a);
+});
+---
+
+<div class:list={['timeline-layout', `timeline-${style}`, className]} data-expandable={expandable}>
+  {sortedGroups.map(([group, groupEntries]) => (
+    <div class="timeline-group" data-group={group}>
+      {groupBy !== 'none' && (
+        <div class="timeline-year-marker" data-animate>
+          <span class="year-pill">{group}</span>
+        </div>
+      )}
+
+      <div class="timeline-entries">
+        {groupEntries.map((entry, index) => {
+          const position = style === 'alternating' ? (index % 2 === 0 ? 'left' : 'right') : 'left';
+          const isMilestone = showMilestones && entry.isMilestone;
+
+          return (
+            <div
+              class:list={[
+                'timeline-entry',
+                `timeline-entry-${position}`,
+                { 'timeline-entry-milestone': isMilestone },
+                { 'timeline-entry-expandable': expandable && entry.details }
+              ]}
+              data-animate
+              data-entry-id={entry.id}
+            >
+              {/* Timeline Dot */}
+              <div class="timeline-dot-wrapper">
+                <div class:list={['timeline-dot', { 'timeline-dot-pulse': entry.status === 'active' }]}>
+                  {isMilestone && (
+                    <svg class="milestone-star" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M8 2L9.5 6.5L14 7L10.5 10.5L11.5 15L8 12.5L4.5 15L5.5 10.5L2 7L6.5 6.5L8 2Z" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linejoin="round"/>
+                    </svg>
+                  )}
+                </div>
+              </div>
+
+              {/* Entry Card */}
+              <div class="timeline-card">
+                <div class="timeline-card-inner">
+                  {/* Thumbnail */}
+                  {showThumbnails && entry.thumbnail && (
+                    <div class="timeline-thumbnail">
+                      <img src={entry.thumbnail} alt={entry.title} loading="lazy" />
+                    </div>
+                  )}
+
+                  {/* Content */}
+                  <div class="timeline-content">
+                    <div class="timeline-header">
+                      <div class="timeline-title-row">
+                        {entry.link ? (
+                          <a href={entry.link} class="timeline-title">
+                            {entry.title}
+                          </a>
+                        ) : (
+                          <h3 class="timeline-title">{entry.title}</h3>
+                        )}
+                        {entry.status && (
+                          <div class="timeline-status">
+                            <StatusIndicator status={entry.status} />
+                          </div>
+                        )}
+                      </div>
+
+                      {entry.subtitle && (
+                        <div class="timeline-subtitle">{entry.subtitle}</div>
+                      )}
+
+                      <div class="timeline-date">{entry.date}</div>
+                    </div>
+
+                    {entry.description && (
+                      <p class="timeline-description">{entry.description}</p>
+                    )}
+
+                    {entry.tags && entry.tags.length > 0 && (
+                      <div class="timeline-tags">
+                        {entry.tags.map(tag => (
+                          <span class="timeline-tag">{tag}</span>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Expandable Details */}
+                    {expandable && entry.details && (
+                      <>
+                        <button
+                          class="timeline-expand-btn"
+                          aria-expanded="false"
+                          aria-controls={`details-${entry.id}`}
+                          data-expand-trigger
+                        >
+                          <span class="expand-text">Show details</span>
+                          <svg class="expand-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 6L8 10L12 6"/>
+                          </svg>
+                        </button>
+                        <div
+                          class="timeline-details"
+                          id={`details-${entry.id}`}
+                          hidden
+                        >
+                          <div class="timeline-details-content" set:html={entry.details} />
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  ))}
+</div>
+
+<style>
+  /* ============================================
+     Timeline Container
+     ============================================ */
+  .timeline-layout {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  /* ============================================
+     Timeline Year Groups
+     ============================================ */
+  .timeline-group {
+    position: relative;
+    margin-bottom: var(--space-12);
+  }
+
+  .timeline-group:last-child {
+    margin-bottom: 0;
+  }
+
+  .timeline-year-marker {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-bottom: var(--space-8);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .timeline-year-marker[data-animate="visible"] {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .year-pill {
+    display: inline-block;
+    padding: var(--space-2) var(--space-4);
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    font-family: var(--font-mono);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text);
+    z-index: 2;
+  }
+
+  /* ============================================
+     Timeline Entries Container
+     ============================================ */
+  .timeline-entries {
+    position: relative;
+  }
+
+  /* Vertical timeline line with gradient fade */
+  .timeline-entries::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      var(--color-accent, #c41e3a) 5%,
+      var(--color-accent, #c41e3a) 95%,
+      transparent 100%
+    );
+    z-index: 0;
+  }
+
+  /* Position line based on style */
+  .timeline-alternating .timeline-entries::before {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .timeline-left .timeline-entries::before,
+  .timeline-compact .timeline-entries::before {
+    left: 20px;
+  }
+
+  /* ============================================
+     Timeline Entry
+     ============================================ */
+  .timeline-entry {
+    position: relative;
+    display: flex;
+    gap: var(--space-6);
+    margin-bottom: var(--space-8);
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+
+  .timeline-entry[data-animate="visible"] {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .timeline-entry:last-child {
+    margin-bottom: 0;
+  }
+
+  /* ============================================
+     Alternating Layout
+     ============================================ */
+  .timeline-alternating .timeline-entry {
+    justify-content: flex-start;
+  }
+
+  .timeline-alternating .timeline-entry-left {
+    flex-direction: row;
+    padding-right: calc(50% + var(--space-8));
+  }
+
+  .timeline-alternating .timeline-entry-right {
+    flex-direction: row-reverse;
+    padding-left: calc(50% + var(--space-8));
+    justify-content: flex-end;
+  }
+
+  .timeline-alternating .timeline-entry-left .timeline-dot-wrapper {
+    order: 2;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .timeline-alternating .timeline-entry-right .timeline-dot-wrapper {
+    order: 2;
+    position: absolute;
+    right: 50%;
+    transform: translateX(50%);
+  }
+
+  .timeline-alternating .timeline-entry-left .timeline-card {
+    text-align: right;
+  }
+
+  .timeline-alternating .timeline-entry-right .timeline-card {
+    text-align: left;
+  }
+
+  /* ============================================
+     Left-Aligned Layout
+     ============================================ */
+  .timeline-left .timeline-entry {
+    padding-left: var(--space-12);
+  }
+
+  .timeline-left .timeline-dot-wrapper {
+    position: absolute;
+    left: 20px;
+  }
+
+  /* ============================================
+     Compact Layout
+     ============================================ */
+  .timeline-compact {
+    max-width: 700px;
+  }
+
+  .timeline-compact .timeline-entry {
+    padding-left: var(--space-10);
+    margin-bottom: var(--space-4);
+  }
+
+  .timeline-compact .timeline-dot-wrapper {
+    position: absolute;
+    left: 20px;
+  }
+
+  .timeline-compact .timeline-card {
+    padding: var(--space-3);
+  }
+
+  /* ============================================
+     Timeline Dot & Marker
+     ============================================ */
+  .timeline-dot-wrapper {
+    flex-shrink: 0;
+    z-index: 2;
+    padding-top: 4px;
+  }
+
+  .timeline-dot {
+    position: relative;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--color-accent, #c41e3a);
+    border: 3px solid var(--color-bg);
+    box-shadow: 0 0 0 2px var(--color-accent, #c41e3a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+  }
+
+  .timeline-entry:hover .timeline-dot {
+    transform: scale(1.2);
+    box-shadow: 0 0 0 3px var(--color-accent, #c41e3a);
+  }
+
+  /* Pulsing dot for active entries */
+  .timeline-dot-pulse {
+    animation: pulse-dot 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .timeline-dot-pulse::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: var(--color-accent, #c41e3a);
+    opacity: 0.5;
+    animation: ping-dot 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+  }
+
+  @keyframes ping-dot {
+    75%, 100% {
+      transform: translate(-50%, -50%) scale(2.5);
+      opacity: 0;
+    }
+  }
+
+  /* Milestone star icon */
+  .milestone-star {
+    color: var(--color-bg);
+    width: 10px;
+    height: 10px;
+  }
+
+  .timeline-entry-milestone .timeline-dot {
+    background: var(--color-accent, #c41e3a);
+    box-shadow: 0 0 0 2px var(--color-accent, #c41e3a), 0 0 12px rgba(196, 30, 58, 0.4);
+  }
+
+  /* ============================================
+     Timeline Card
+     ============================================ */
+  .timeline-card {
+    flex: 1;
+    min-width: 0;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-left: 3px solid var(--color-accent, #c41e3a);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+    transition: all 0.3s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+
+  .timeline-card:hover {
+    border-color: var(--color-accent, #c41e3a);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+  }
+
+  [data-theme="dark"] .timeline-card {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  }
+
+  [data-theme="dark"] .timeline-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  }
+
+  .timeline-card-inner {
+    display: flex;
+    gap: var(--space-4);
+  }
+
+  /* ============================================
+     Thumbnail
+     ============================================ */
+  .timeline-thumbnail {
+    flex-shrink: 0;
+    width: 80px;
+    height: 80px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    background: var(--color-bg-alt);
+  }
+
+  .timeline-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .timeline-card:hover .timeline-thumbnail img {
+    transform: scale(1.1);
+  }
+
+  /* ============================================
+     Content
+     ============================================ */
+  .timeline-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .timeline-header {
+    margin-bottom: var(--space-3);
+  }
+
+  .timeline-title-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-bottom: var(--space-2);
+  }
+
+  .timeline-title {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    font-family: var(--font-body);
+    color: var(--color-text);
+    margin: 0;
+    line-height: var(--line-height-tight);
+    transition: color 0.2s ease;
+  }
+
+  a.timeline-title {
+    text-decoration: none;
+    background: none;
+  }
+
+  a.timeline-title:hover {
+    color: var(--color-accent, #c41e3a);
+  }
+
+  .timeline-status {
+    flex-shrink: 0;
+  }
+
+  .timeline-subtitle {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-1);
+    line-height: var(--line-height-normal);
+  }
+
+  .timeline-date {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    line-height: 1;
+  }
+
+  .timeline-description {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-normal);
+    margin: 0 0 var(--space-3);
+  }
+
+  /* ============================================
+     Tags
+     ============================================ */
+  .timeline-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+  }
+
+  .timeline-tag {
+    display: inline-block;
+    padding: var(--space-1) var(--space-2);
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    line-height: 1;
+  }
+
+  /* ============================================
+     Expandable Details
+     ============================================ */
+  .timeline-expand-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+    padding: var(--space-2) var(--space-3);
+    background: none;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .timeline-expand-btn:hover {
+    color: var(--color-accent, #c41e3a);
+    border-color: var(--color-accent, #c41e3a);
+    background: var(--color-bg-alt);
+  }
+
+  .expand-icon {
+    transition: transform 0.3s ease;
+  }
+
+  .timeline-expand-btn[aria-expanded="true"] .expand-icon {
+    transform: rotate(180deg);
+  }
+
+  .timeline-details {
+    margin-top: var(--space-3);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--color-border);
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.4s ease, opacity 0.4s ease, margin-top 0.4s ease;
+  }
+
+  .timeline-details:not([hidden]) {
+    max-height: 2000px;
+    opacity: 1;
+  }
+
+  .timeline-details-content {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-normal);
+  }
+
+  /* ============================================
+     Responsive - Mobile
+     ============================================ */
+  @media (max-width: 768px) {
+    /* Force left-aligned on mobile */
+    .timeline-alternating .timeline-entries::before {
+      left: 20px;
+      transform: none;
+    }
+
+    .timeline-alternating .timeline-entry {
+      flex-direction: row;
+      padding-left: var(--space-12);
+      padding-right: 0;
+      justify-content: flex-start;
+    }
+
+    .timeline-alternating .timeline-entry-left,
+    .timeline-alternating .timeline-entry-right {
+      flex-direction: row;
+      padding-left: var(--space-12);
+      padding-right: 0;
+    }
+
+    .timeline-alternating .timeline-entry-left .timeline-card,
+    .timeline-alternating .timeline-entry-right .timeline-card {
+      text-align: left;
+    }
+
+    .timeline-alternating .timeline-dot-wrapper {
+      position: absolute;
+      left: 20px;
+      right: auto;
+      transform: none;
+    }
+
+    .timeline-card {
+      padding: var(--space-4);
+    }
+
+    .timeline-card-inner {
+      flex-direction: column;
+    }
+
+    .timeline-thumbnail {
+      width: 100%;
+      height: 120px;
+    }
+
+    .timeline-year-marker {
+      margin-bottom: var(--space-6);
+    }
+  }
+
+  /* ============================================
+     Accessibility
+     ============================================ */
+  @media (prefers-reduced-motion: reduce) {
+    .timeline-entry,
+    .timeline-year-marker {
+      transition: none;
+      opacity: 1;
+      transform: none;
+    }
+
+    .timeline-dot-pulse,
+    .timeline-dot-pulse::after {
+      animation: none;
+    }
+
+    .timeline-card {
+      transition: box-shadow 0.2s ease;
+    }
+
+    .timeline-card:hover {
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  /**
+   * Timeline Interactions
+   * - Scroll-triggered animations
+   * - Expandable card toggling
+   */
+
+  // Intersection Observer for scroll animations
+  const observerOptions = {
+    root: null,
+    rootMargin: '0px 0px -100px 0px',
+    threshold: 0.1,
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.setAttribute('data-animate', 'visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, observerOptions);
+
+  // Observe all timeline elements
+  document.querySelectorAll('[data-animate]').forEach((el) => {
+    observer.observe(el);
+  });
+
+  // Expandable card toggling
+  document.querySelectorAll('[data-expand-trigger]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const isExpanded = btn.getAttribute('aria-expanded') === 'true';
+      const targetId = btn.getAttribute('aria-controls');
+      const target = document.getElementById(targetId);
+      const expandText = btn.querySelector('.expand-text');
+
+      if (target && expandText) {
+        btn.setAttribute('aria-expanded', (!isExpanded).toString());
+        target.hidden = isExpanded;
+        expandText.textContent = isExpanded ? 'Show details' : 'Hide details';
+      }
+    });
+  });
+</script>

@@ -1,0 +1,275 @@
+---
+/**
+ * MasonryLayout - Pinterest-style variable-height grid using CSS columns
+ *
+ * A masonry layout that uses CSS column-count for automatic flowing of cards
+ * with variable heights. No JavaScript required - pure CSS implementation.
+ */
+
+interface Props {
+  entries: any[];
+  config?: {
+    columns?: number | 'auto';
+    gap?: 'small' | 'medium' | 'large';
+    showDescription?: boolean;
+  };
+  collection: string;
+}
+
+const { entries, config = {}, collection } = Astro.props;
+
+const {
+  columns = 'auto',
+  gap = 'medium',
+  showDescription = true,
+} = config;
+
+// Gap sizes
+const gapSizes = {
+  small: 'var(--space-4)',
+  medium: 'var(--space-6)',
+  large: 'var(--space-8)',
+};
+
+// Column configuration
+const columnCount = columns === 'auto' ? 'auto' : columns;
+const columnWidth = columns === 'auto' ? '300px' : 'auto';
+---
+
+<div class="masonry-layout" data-columns={columns}>
+  {entries.map((entry) => {
+    const { title, description, image, tags, status, date } = entry.data;
+    const slug = entry.slug;
+    const link = `/${collection}/${slug}`;
+
+    return (
+      <article class="masonry-card">
+        {status && (
+          <div class="masonry-card__status" data-status={status}>
+            <span class="masonry-card__status-label">{status}</span>
+          </div>
+        )}
+
+        {image && (
+          <a href={link} class="masonry-card__image-link">
+            <div class="masonry-card__image-wrapper">
+              <img src={image} alt={title} loading="lazy" />
+            </div>
+          </a>
+        )}
+
+        <div class="masonry-card__content">
+          <h3 class="masonry-card__title">
+            <a href={link}>{title}</a>
+          </h3>
+
+          {date && (
+            <time class="masonry-card__date" datetime={date}>
+              {new Date(date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+              })}
+            </time>
+          )}
+
+          {showDescription && description && (
+            <p class="masonry-card__description">{description}</p>
+          )}
+
+          {tags && tags.length > 0 && (
+            <div class="masonry-card__tags">
+              {tags.map((tag: string, index: number) => (
+                <Fragment>
+                  <span class="masonry-card__tag">{tag}</span>
+                  {index < tags.length - 1 && <span class="masonry-card__tag-separator">·</span>}
+                </Fragment>
+              ))}
+            </div>
+          )}
+        </div>
+      </article>
+    );
+  })}
+</div>
+
+<style define:vars={{
+  gapSize: gapSizes[gap],
+  columnCount: columnCount,
+  columnWidth: columnWidth,
+}}>
+  .masonry-layout {
+    column-count: var(--columnCount);
+    column-gap: var(--gapSize);
+    column-width: var(--columnWidth);
+  }
+
+  /* Column count overrides for responsive */
+  @media (max-width: 768px) {
+    .masonry-layout {
+      column-count: 1;
+    }
+  }
+
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .masonry-layout[data-columns="auto"] {
+      column-count: 2;
+    }
+  }
+
+  @media (min-width: 1025px) {
+    .masonry-layout[data-columns="auto"] {
+      column-count: 3;
+    }
+  }
+
+  /* Masonry Card */
+  .masonry-card {
+    position: relative;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    break-inside: avoid;
+    page-break-inside: avoid;
+    margin-bottom: var(--gapSize);
+    transition: all var(--transition-fast);
+  }
+
+  .masonry-card:hover {
+    border-color: var(--color-accent);
+    box-shadow: var(--shadow-md);
+  }
+
+  /* Status Badge */
+  .masonry-card__status {
+    position: absolute;
+    top: var(--space-3);
+    right: var(--space-3);
+    padding: var(--space-1) var(--space-3);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wider);
+    z-index: 10;
+  }
+
+  .masonry-card__status-label {
+    color: var(--color-text-muted);
+    font-weight: var(--font-weight-medium);
+  }
+
+  /* Image */
+  .masonry-card__image-link {
+    display: block;
+    background: none;
+  }
+
+  .masonry-card__image-wrapper {
+    width: 100%;
+    overflow: hidden;
+    background: var(--color-bg-alt);
+  }
+
+  .masonry-card__image-wrapper img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform var(--transition-normal);
+  }
+
+  .masonry-card:hover .masonry-card__image-wrapper img {
+    transform: scale(1.05);
+  }
+
+  /* Content */
+  .masonry-card__content {
+    padding: var(--space-4);
+  }
+
+  .masonry-card__title {
+    margin: 0 0 var(--space-2) 0;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-tight);
+    color: var(--color-text);
+  }
+
+  .masonry-card__title a {
+    color: var(--color-text);
+    background: none;
+    transition: color var(--transition-fast);
+  }
+
+  .masonry-card__title a:hover {
+    color: var(--color-accent);
+  }
+
+  .masonry-card__date {
+    display: block;
+    margin-bottom: var(--space-3);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    font-style: italic;
+  }
+
+  .masonry-card__description {
+    margin: 0 0 var(--space-3) 0;
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-normal);
+    color: var(--color-text-secondary);
+  }
+
+  /* Tags */
+  .masonry-card__tags {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+  }
+
+  .masonry-card__tag {
+    font-style: italic;
+  }
+
+  .masonry-card__tag-separator {
+    opacity: 0.5;
+  }
+
+  /* Dark mode support */
+  [data-theme="dark"] .masonry-card {
+    background: var(--color-bg);
+    border-color: var(--color-border);
+  }
+
+  [data-theme="dark"] .masonry-card:hover {
+    border-color: var(--color-accent);
+    box-shadow: var(--shadow-md);
+  }
+
+  [data-theme="dark"] .masonry-card__status {
+    background: var(--color-bg-alt);
+  }
+
+  /* Print styles */
+  @media print {
+    .masonry-layout {
+      column-count: 1;
+    }
+
+    .masonry-card {
+      break-inside: avoid;
+      margin-bottom: var(--space-6);
+      box-shadow: none;
+    }
+
+    .masonry-card:hover {
+      transform: none;
+      border-color: var(--color-border);
+    }
+  }
+</style>

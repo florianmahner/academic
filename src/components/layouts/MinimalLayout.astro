@@ -1,0 +1,204 @@
+---
+/**
+ * MinimalLayout - Ultra-minimal linked list
+ *
+ * The simplest possible layout - just a bulleted list of linked titles.
+ * Perfect for sidebar widgets or simple navigation lists.
+ */
+
+interface Props {
+  entries: any[];
+  config?: {
+    showDate?: boolean;
+    showStatus?: boolean;
+    bullet?: 'disc' | 'circle' | 'square' | 'dash' | 'none';
+  };
+  collection: string;
+}
+
+const { entries, config = {}, collection } = Astro.props;
+
+const {
+  showDate = false,
+  showStatus = false,
+  bullet = 'disc',
+} = config;
+---
+
+<ul class="minimal-layout" data-bullet={bullet}>
+  {entries.map((entry) => {
+    const { title, status, date } = entry.data;
+    const slug = entry.slug;
+    const link = `/${collection}/${slug}`;
+
+    return (
+      <li class="minimal-item">
+        <a href={link} class="minimal-item__link">
+          {title}
+        </a>
+        {showStatus && status && (
+          <span class="minimal-item__status" data-status={status}>
+            {status}
+          </span>
+        )}
+        {showDate && date && (
+          <time class="minimal-item__date" datetime={date}>
+            {new Date(date).toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'short'
+            })}
+          </time>
+        )}
+      </li>
+    );
+  })}
+</ul>
+
+<style>
+  .minimal-layout {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* Bullet styles */
+  .minimal-layout[data-bullet="disc"] {
+    padding-left: var(--space-5);
+  }
+
+  .minimal-layout[data-bullet="disc"] .minimal-item {
+    list-style-type: disc;
+  }
+
+  .minimal-layout[data-bullet="circle"] {
+    padding-left: var(--space-5);
+  }
+
+  .minimal-layout[data-bullet="circle"] .minimal-item {
+    list-style-type: circle;
+  }
+
+  .minimal-layout[data-bullet="square"] {
+    padding-left: var(--space-5);
+  }
+
+  .minimal-layout[data-bullet="square"] .minimal-item {
+    list-style-type: square;
+  }
+
+  .minimal-layout[data-bullet="dash"] {
+    padding-left: 0;
+  }
+
+  .minimal-layout[data-bullet="dash"] .minimal-item::before {
+    content: '—';
+    margin-right: var(--space-2);
+    color: var(--color-text-muted);
+  }
+
+  .minimal-layout[data-bullet="none"] {
+    padding-left: 0;
+  }
+
+  /* List Item */
+  .minimal-item {
+    margin-bottom: var(--space-3);
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    line-height: var(--line-height-normal);
+  }
+
+  .minimal-item:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Link */
+  .minimal-item__link {
+    font-size: var(--font-size-base);
+    color: var(--color-text);
+    background: none;
+    transition: color var(--transition-fast);
+    flex: 1;
+  }
+
+  .minimal-item__link:hover {
+    color: var(--color-accent);
+  }
+
+  /* Status Badge */
+  .minimal-item__status {
+    padding: 0 var(--space-2);
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wider);
+    color: var(--color-text-muted);
+    font-weight: var(--font-weight-medium);
+    white-space: nowrap;
+  }
+
+  /* Date */
+  .minimal-item__date {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    font-style: italic;
+    white-space: nowrap;
+  }
+
+  /* Dark mode support */
+  [data-theme="dark"] .minimal-item__link {
+    color: var(--color-text);
+  }
+
+  [data-theme="dark"] .minimal-item__link:hover {
+    color: var(--color-accent);
+  }
+
+  [data-theme="dark"] .minimal-layout[data-bullet="dash"] .minimal-item::before {
+    color: var(--color-text-muted);
+  }
+
+  /* Mobile responsive */
+  @media (max-width: 768px) {
+    .minimal-item {
+      flex-wrap: wrap;
+    }
+
+    .minimal-item__link {
+      flex-basis: 100%;
+    }
+
+    .minimal-item__status,
+    .minimal-item__date {
+      margin-left: 0;
+    }
+  }
+
+  /* Print styles */
+  @media print {
+    .minimal-layout {
+      padding-left: 0;
+    }
+
+    .minimal-item {
+      break-inside: avoid;
+      margin-bottom: var(--space-2);
+    }
+
+    .minimal-item__link {
+      color: black;
+      text-decoration: underline;
+    }
+
+    .minimal-item__status {
+      display: none;
+    }
+  }
+
+  /* Accessibility: focus states */
+  .minimal-item__link:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+</style>

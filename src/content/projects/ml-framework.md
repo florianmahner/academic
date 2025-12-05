@@ -9,6 +9,10 @@ github: "#"  # Replace with your actual GitHub repo URL
 url: "#"  # Replace with your actual website URL
 documentation: "#"  # Replace with your actual docs URL
 # image: "/projects/deeplearn-banner.png"  # TODO: Add project banner image
+layout: cards
+layoutConfig:
+  style: image
+  columns: 2
 ---
 
 # DeepLearn: Modern Machine Learning Framework

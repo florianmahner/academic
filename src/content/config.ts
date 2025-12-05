@@ -5,6 +5,9 @@
 
 import { defineCollection, z } from 'astro:content';
 
+// Layout type enum
+const LayoutTypeEnum = z.enum(['list', 'cards', 'timeline', 'node', 'masonry', 'accordion', 'minimal']);
+
 // Blog posts collection
 const blog = defineCollection({
   type: 'content',
@@ -18,6 +21,9 @@ const blog = defineCollection({
     draft: z.boolean().default(false),
     image: z.string().optional(),
     imageAlt: z.string().optional(),
+    // Layout configuration
+    layout: LayoutTypeEnum.optional(),
+    layoutConfig: z.record(z.any()).optional(),
   }),
 });
 
@@ -45,6 +51,9 @@ const projects = defineCollection({
     // Collaboration fields
     partners: z.array(z.string()).optional(),
     funding: z.string().optional(),
+    // Layout configuration
+    layout: LayoutTypeEnum.optional(),
+    layoutConfig: z.record(z.any()).optional(),
   }),
 });
 
@@ -65,6 +74,9 @@ const talks = defineCollection({
     abstract: z.string().optional(),
     description: z.string().optional(),
     tags: z.array(z.string()).default([]),
+    // Layout configuration
+    layout: LayoutTypeEnum.optional(),
+    layoutConfig: z.record(z.any()).optional(),
   }),
 });
 
@@ -88,6 +100,9 @@ const teaching = defineCollection({
     evaluations: z.string().optional(),
     topics: z.array(z.string()).optional(),
     tags: z.array(z.string()).default([]),
+    // Layout configuration
+    layout: LayoutTypeEnum.optional(),
+    layoutConfig: z.record(z.any()).optional(),
   }),
 });
 

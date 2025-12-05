@@ -7,10 +7,31 @@
  * This file maintains backward compatibility for all existing imports.
  */
 
-import { config as yamlConfig, type SiteConfig } from "./lib/config-loader";
+import {
+  config as yamlConfig,
+  type SiteConfig,
+  type LayoutType,
+  type ListLayoutConfig,
+  type CardsLayoutConfig,
+  type TimelineLayoutConfig,
+  type NodeLayoutConfig,
+  type MasonryLayoutConfig,
+  type AccordionLayoutConfig,
+  type MinimalLayoutConfig,
+} from "./lib/config-loader";
 
 // Re-export the config loaded from YAML
 export const config = yamlConfig;
 
-// Re-export type
-export type { SiteConfig };
+// Re-export types
+export type {
+  SiteConfig,
+  LayoutType,
+  ListLayoutConfig,
+  CardsLayoutConfig,
+  TimelineLayoutConfig,
+  NodeLayoutConfig,
+  MasonryLayoutConfig,
+  AccordionLayoutConfig,
+  MinimalLayoutConfig,
+};

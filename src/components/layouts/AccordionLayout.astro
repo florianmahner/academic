@@ -1,0 +1,382 @@
+---
+/**
+ * AccordionLayout - Expandable list layout using HTML details/summary
+ *
+ * Shows only titles by default, click to expand full details.
+ * Uses native HTML details/summary for no-JS progressive enhancement.
+ */
+
+interface Props {
+  entries: any[];
+  config?: {
+    groupBy?: 'year' | 'category' | 'none';
+    allowMultiple?: boolean;
+    defaultOpen?: 'first' | 'none' | 'all';
+  };
+  collection: string;
+}
+
+const { entries, config = {}, collection } = Astro.props;
+
+const {
+  groupBy = 'none',
+  allowMultiple = true,
+  defaultOpen = 'none',
+} = config;
+
+// Group entries if needed
+let groupedEntries: Record<string, any[]> = {};
+
+if (groupBy === 'year') {
+  entries.forEach((entry) => {
+    const year = entry.data.date ? new Date(entry.data.date).getFullYear().toString() : 'Undated';
+    if (!groupedEntries[year]) groupedEntries[year] = [];
+    groupedEntries[year].push(entry);
+  });
+  // Sort years descending
+  groupedEntries = Object.fromEntries(
+    Object.entries(groupedEntries).sort(([a], [b]) => parseInt(b) - parseInt(a))
+  );
+} else if (groupBy === 'category') {
+  entries.forEach((entry) => {
+    const category = entry.data.category || 'Uncategorized';
+    if (!groupedEntries[category]) groupedEntries[category] = [];
+    groupedEntries[category].push(entry);
+  });
+} else {
+  groupedEntries['all'] = entries;
+}
+
+// Determine which items should be open by default
+const shouldBeOpen = (index: number) => {
+  if (defaultOpen === 'all') return true;
+  if (defaultOpen === 'first' && index === 0) return true;
+  return false;
+};
+---
+
+<div class="accordion-layout" data-allow-multiple={allowMultiple}>
+  {Object.entries(groupedEntries).map(([group, groupEntries]) => (
+    <div class="accordion-group">
+      {groupBy !== 'none' && (
+        <h3 class="accordion-group__header">{group}</h3>
+      )}
+
+      <div class="accordion-items">
+        {groupEntries.map((entry, index) => {
+          const { title, description, tags, status, date } = entry.data;
+          const slug = entry.slug;
+          const link = `/${collection}/${slug}`;
+
+          return (
+            <details class="accordion-item" open={shouldBeOpen(index)}>
+              <summary class="accordion-item__summary">
+                <span class="accordion-item__title">{title}</span>
+                {status && (
+                  <span class="accordion-item__status" data-status={status}>
+                    {status}
+                  </span>
+                )}
+                <span class="accordion-item__icon" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+              </summary>
+
+              <div class="accordion-item__content">
+                {date && (
+                  <time class="accordion-item__date" datetime={date}>
+                    {new Date(date).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
+                  </time>
+                )}
+
+                {description && (
+                  <p class="accordion-item__description">{description}</p>
+                )}
+
+                {tags && tags.length > 0 && (
+                  <div class="accordion-item__tags">
+                    {tags.map((tag: string, idx: number) => (
+                      <Fragment>
+                        <span class="accordion-item__tag">{tag}</span>
+                        {idx < tags.length - 1 && <span class="accordion-item__tag-separator">·</span>}
+                      </Fragment>
+                    ))}
+                  </div>
+                )}
+
+                <div class="accordion-item__links">
+                  <a href={link} class="accordion-item__link">View details →</a>
+                </div>
+              </div>
+            </details>
+          );
+        })}
+      </div>
+    </div>
+  ))}
+</div>
+
+<style>
+  .accordion-layout {
+    width: 100%;
+  }
+
+  /* Group Header */
+  .accordion-group {
+    margin-bottom: var(--space-8);
+  }
+
+  .accordion-group__header {
+    margin: 0 0 var(--space-4) 0;
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text);
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: var(--space-2);
+  }
+
+  /* Accordion Items */
+  .accordion-items {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .accordion-item {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg);
+    transition: all var(--transition-fast);
+  }
+
+  .accordion-item:hover {
+    border-color: var(--color-accent);
+  }
+
+  .accordion-item[open] {
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* Summary (clickable header) */
+  .accordion-item__summary {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+    transition: background-color var(--transition-fast);
+  }
+
+  .accordion-item__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .accordion-item__summary:hover {
+    background-color: var(--color-bg-alt);
+  }
+
+  .accordion-item__title {
+    flex: 1;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text);
+    line-height: var(--line-height-tight);
+  }
+
+  /* Status Badge */
+  .accordion-item__status {
+    padding: var(--space-1) var(--space-3);
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wider);
+    color: var(--color-text-muted);
+    font-weight: var(--font-weight-medium);
+  }
+
+  /* Icon */
+  .accordion-item__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-secondary);
+    transition: transform var(--transition-fast);
+  }
+
+  .accordion-item[open] .accordion-item__icon {
+    transform: rotate(180deg);
+  }
+
+  /* Content (expanded area) */
+  .accordion-item__content {
+    padding: 0 var(--space-4) var(--space-4) var(--space-4);
+    border-top: 1px solid var(--color-border);
+    animation: accordionSlideDown var(--transition-normal) ease-out;
+  }
+
+  @keyframes accordionSlideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .accordion-item__date {
+    display: block;
+    margin-bottom: var(--space-3);
+    padding-top: var(--space-3);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    font-style: italic;
+  }
+
+  .accordion-item__description {
+    margin: 0 0 var(--space-4) 0;
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-normal);
+    color: var(--color-text-secondary);
+  }
+
+  /* Tags */
+  .accordion-item__tags {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+  }
+
+  .accordion-item__tag {
+    font-style: italic;
+  }
+
+  .accordion-item__tag-separator {
+    opacity: 0.5;
+  }
+
+  /* Links */
+  .accordion-item__links {
+    display: flex;
+    gap: var(--space-3);
+  }
+
+  .accordion-item__link {
+    font-size: var(--font-size-sm);
+    color: var(--color-accent);
+    background: none;
+    font-weight: var(--font-weight-medium);
+    transition: opacity var(--transition-fast);
+  }
+
+  .accordion-item__link:hover {
+    opacity: 0.7;
+  }
+
+  /* Dark mode support */
+  [data-theme="dark"] .accordion-item {
+    background: var(--color-bg);
+    border-color: var(--color-border);
+  }
+
+  [data-theme="dark"] .accordion-item:hover {
+    border-color: var(--color-accent);
+  }
+
+  [data-theme="dark"] .accordion-item__summary:hover {
+    background-color: var(--color-bg-alt);
+  }
+
+  [data-theme="dark"] .accordion-item__status {
+    background: var(--color-bg-alt);
+  }
+
+  /* Mobile responsive */
+  @media (max-width: 768px) {
+    .accordion-item__summary {
+      padding: var(--space-3);
+    }
+
+    .accordion-item__content {
+      padding: 0 var(--space-3) var(--space-3) var(--space-3);
+    }
+
+    .accordion-item__title {
+      font-size: var(--font-size-sm);
+    }
+  }
+
+  /* Print styles */
+  @media print {
+    .accordion-item {
+      border: 1px solid #ccc;
+      page-break-inside: avoid;
+    }
+
+    .accordion-item[open] .accordion-item__content {
+      display: block;
+    }
+
+    .accordion-item__icon {
+      display: none;
+    }
+  }
+
+  /* Accessibility: focus states */
+  .accordion-item__summary:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  /* Reduce motion */
+  @media (prefers-reduced-motion: reduce) {
+    .accordion-item__content {
+      animation: none;
+    }
+
+    .accordion-item__icon {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  // Optional: Handle single-open mode (allowMultiple: false)
+  document.addEventListener('DOMContentLoaded', () => {
+    const layout = document.querySelector('.accordion-layout');
+    if (!layout) return;
+
+    const allowMultiple = layout.getAttribute('data-allow-multiple') === 'true';
+
+    if (!allowMultiple) {
+      const details = layout.querySelectorAll('details');
+
+      details.forEach((detail) => {
+        detail.addEventListener('toggle', () => {
+          if (detail.open) {
+            details.forEach((other) => {
+              if (other !== detail && other.open) {
+                other.open = false;
+              }
+            });
+          }
+        });
+      });
+    }
+  });
+</script>

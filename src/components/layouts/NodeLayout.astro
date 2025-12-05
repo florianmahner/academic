@@ -1,0 +1,750 @@
+---
+/**
+ * NodeLayout - Interactive force-directed graph visualization
+ * Shows entries as connected nodes using D3.js
+ */
+
+interface NodeEntry {
+  slug: string;
+  data: {
+    title: string;
+    description?: string;
+    tags?: string[];
+    technologies?: string[];
+    status?: 'active' | 'completed' | 'archived';
+    featured?: boolean;
+    category?: string;
+  };
+}
+
+interface NodeLayoutConfig {
+  connectionBy?: 'tags' | 'technologies' | 'manual' | 'hybrid';
+  nodeSize?: 'small' | 'medium' | 'large';
+  showLabels?: boolean;
+  interactive?: boolean;
+  physics?: boolean;
+  maxNodes?: number;
+  forceStrength?: number;
+  linkDistance?: number;
+}
+
+interface Props {
+  entries: NodeEntry[];
+  config?: NodeLayoutConfig;
+  collection?: string;
+}
+
+const {
+  entries,
+  config = {},
+  collection = ''
+} = Astro.props;
+
+// Base path for links
+const basePath = collection ? `/${collection}` : '/';
+
+// Default config values
+const {
+  connectionBy = 'tags',
+  nodeSize = 'medium',
+  showLabels = true,
+  interactive = true,
+  physics = true,
+  maxNodes = 50,
+  forceStrength = -300,
+  linkDistance = 100
+} = config;
+
+// Limit nodes for performance
+const limitedEntries = entries.slice(0, maxNodes);
+const hasMore = entries.length > maxNodes;
+const moreCount = entries.length - maxNodes;
+
+// Map node sizes to pixel values
+const nodeSizeMap = {
+  small: 60,
+  medium: 90,
+  large: 120
+};
+
+const nodeRadius = nodeSizeMap[nodeSize];
+
+// Prepare nodes data
+const nodes = limitedEntries.map((entry, index) => {
+  // Get initials from title
+  const initials = entry.data.title
+    .split(' ')
+    .filter(word => /^[A-Za-z]/.test(word))
+    .slice(0, 2)
+    .map(word => word[0].toUpperCase())
+    .join('');
+
+  return {
+    id: entry.slug,
+    title: entry.data.title,
+    description: entry.data.description || '',
+    tags: entry.data.tags || [],
+    technologies: entry.data.technologies || [],
+    status: entry.data.status || 'completed',
+    featured: entry.data.featured || false,
+    initials: initials || entry.data.title.substring(0, 2).toUpperCase(),
+    category: entry.data.category,
+    index
+  };
+});
+
+// Calculate connections between nodes
+function calculateConnections(nodes: typeof nodes, method: string) {
+  const links: { source: string; target: string; strength: number }[] = [];
+
+  for (let i = 0; i < nodes.length; i++) {
+    for (let j = i + 1; j < nodes.length; j++) {
+      const nodeA = nodes[i];
+      const nodeB = nodes[j];
+      let strength = 0;
+
+      if (method === 'tags' || method === 'hybrid') {
+        const commonTags = nodeA.tags.filter(tag => nodeB.tags.includes(tag));
+        strength += commonTags.length * 0.5;
+      }
+
+      if (method === 'technologies' || method === 'hybrid') {
+        const commonTech = nodeA.technologies.filter(tech =>
+          nodeB.technologies.includes(tech)
+        );
+        strength += commonTech.length * 0.7;
+      }
+
+      // Create link if there's any connection
+      if (strength > 0) {
+        links.push({
+          source: nodeA.id,
+          target: nodeB.id,
+          strength: Math.min(strength, 3) // Cap at 3 for visual clarity
+        });
+      }
+    }
+  }
+
+  return links;
+}
+
+const links = calculateConnections(nodes, connectionBy);
+
+// Check if mobile
+const isMobile = false; // Server-side, will be determined client-side
+---
+
+<div class="node-layout-container">
+  <noscript>
+    <div class="node-layout-fallback">
+      <p class="fallback-message">
+        Interactive graph requires JavaScript. Showing simplified list:
+      </p>
+      <ul class="fallback-list">
+        {limitedEntries.map(entry => (
+          <li>
+            <a href={`${basePath}${entry.slug}`}>
+              <strong>{entry.data.title}</strong>
+              {entry.data.description && (
+                <span> - {entry.data.description}</span>
+              )}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </noscript>
+
+  <div class="node-layout" data-node-size={nodeSize}>
+    <div class="node-controls">
+      {interactive && (
+        <>
+          <button class="node-control-btn" id="reset-zoom" title="Reset View">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M10 3v2m0 10v2m7-7h-2M5 10H3m11.657-5.657l-1.414 1.414M6.757 14.243l-1.414 1.414m9.9 0l-1.414-1.414M6.757 5.757L5.343 4.343"/>
+            </svg>
+          </button>
+          <button class="node-control-btn" id="toggle-physics" title="Toggle Physics" data-active={physics}>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 14a6 6 0 110-12 6 6 0 010 12z"/>
+            </svg>
+          </button>
+        </>
+      )}
+    </div>
+
+    <svg id="node-graph" class="node-graph"></svg>
+
+    <div class="node-tooltip" id="node-tooltip">
+      <h4 class="tooltip-title"></h4>
+      <p class="tooltip-description"></p>
+      <div class="tooltip-tags"></div>
+      <span class="tooltip-hint">Click to view details</span>
+    </div>
+
+    {hasMore && (
+      <div class="node-more-info">
+        Showing {maxNodes} of {entries.length} entries ({moreCount} more not displayed)
+      </div>
+    )}
+  </div>
+
+  <div class="mobile-fallback">
+    <p class="mobile-message">
+      Graph visualization works best on larger screens. Showing simplified list:
+    </p>
+    <ul class="mobile-list">
+      {limitedEntries.map(entry => (
+        <li class="mobile-list-item" data-status={entry.data.status}>
+          <a href={`${basePath}${entry.slug}`} class="mobile-link">
+            <div class="mobile-item-header">
+              <strong class="mobile-title">{entry.data.title}</strong>
+              {entry.data.featured && <span class="mobile-badge">Featured</span>}
+            </div>
+            {entry.data.description && (
+              <p class="mobile-description">{entry.data.description}</p>
+            )}
+            {entry.data.tags && entry.data.tags.length > 0 && (
+              <div class="mobile-tags">
+                {entry.data.tags.map(tag => (
+                  <span class="mobile-tag">{tag}</span>
+                ))}
+              </div>
+            )}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</div>
+
+<style>
+  .node-layout-container {
+    width: 100%;
+    min-height: 600px;
+    position: relative;
+  }
+
+  .node-layout {
+    width: 100%;
+    height: 800px;
+    position: relative;
+    background: var(--bg-secondary, #f9fafb);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .node-graph {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  /* Controls */
+  .node-controls {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    z-index: 10;
+  }
+
+  .node-control-btn {
+    background: var(--bg-primary, white);
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 6px;
+    padding: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--text-secondary);
+  }
+
+  .node-control-btn:hover {
+    background: var(--accent-color, #c41e3a);
+    color: white;
+    transform: scale(1.05);
+  }
+
+  .node-control-btn[data-active="true"] {
+    background: var(--accent-color, #c41e3a);
+    color: white;
+  }
+
+  /* Tooltip */
+  .node-tooltip {
+    position: absolute;
+    background: var(--bg-primary, white);
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 8px;
+    padding: 1rem;
+    max-width: 300px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 100;
+  }
+
+  .node-tooltip.visible {
+    opacity: 1;
+  }
+
+  .tooltip-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 0.5rem 0;
+  }
+
+  .tooltip-description {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin: 0 0 0.75rem 0;
+    line-height: 1.5;
+  }
+
+  .tooltip-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .tooltip-tag {
+    background: var(--bg-secondary, #f9fafb);
+    padding: 0.125rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+  }
+
+  .tooltip-hint {
+    font-size: 0.75rem;
+    color: var(--accent-color, #c41e3a);
+    font-style: italic;
+  }
+
+  /* More info */
+  .node-more-info {
+    position: absolute;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-primary, white);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    border: 1px solid var(--border-color, #e5e7eb);
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+  }
+
+  /* Mobile fallback */
+  .mobile-fallback {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    .node-layout {
+      display: none;
+    }
+
+    .mobile-fallback {
+      display: block;
+      padding: 1rem;
+    }
+
+    .mobile-message {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+      padding: 0.75rem;
+      background: var(--bg-secondary, #f9fafb);
+      border-radius: 6px;
+    }
+
+    .mobile-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .mobile-list-item {
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border-color, #e5e7eb);
+    }
+
+    .mobile-list-item[data-status="active"] {
+      border-left: 3px solid #4a7c59;
+    }
+
+    .mobile-list-item[data-status="completed"] {
+      border-left: 3px solid #999;
+    }
+
+    .mobile-link {
+      display: block;
+      padding: 1rem;
+      text-decoration: none;
+      background: var(--bg-primary, white);
+      transition: background 0.2s ease;
+    }
+
+    .mobile-link:hover {
+      background: var(--bg-secondary, #f9fafb);
+    }
+
+    .mobile-item-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+
+    .mobile-title {
+      font-size: 1.125rem;
+      color: var(--text-primary);
+    }
+
+    .mobile-badge {
+      background: var(--accent-color, #c41e3a);
+      color: white;
+      padding: 0.125rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .mobile-description {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.75rem;
+      line-height: 1.5;
+    }
+
+    .mobile-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25rem;
+    }
+
+    .mobile-tag {
+      background: var(--bg-secondary, #f9fafb);
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+  }
+
+  /* NoScript fallback */
+  .node-layout-fallback {
+    padding: 2rem;
+    background: var(--bg-secondary, #f9fafb);
+    border-radius: 8px;
+  }
+
+  .fallback-message {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+  }
+
+  .fallback-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .fallback-list li {
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-color, #e5e7eb);
+  }
+
+  .fallback-list li:last-child {
+    border-bottom: none;
+  }
+
+  .fallback-list a {
+    color: var(--text-primary);
+    text-decoration: none;
+  }
+
+  .fallback-list a:hover {
+    color: var(--accent-color, #c41e3a);
+  }
+
+  .fallback-list strong {
+    font-weight: 600;
+  }
+
+  .fallback-list span {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+  }
+</style>
+
+<script define:vars={{ nodes, links, basePath, nodeRadius, interactive, physics, forceStrength, linkDistance, showLabels }}>
+  // Import D3 dynamically
+  import('d3').then(d3Module => {
+    const d3 = d3Module;
+
+    // Get container and dimensions
+    const container = document.getElementById('node-graph');
+    if (!container) return;
+
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+
+    // Create SVG
+    const svg = d3.select('#node-graph')
+      .attr('width', width)
+      .attr('height', height);
+
+    // Create groups for layers
+    const g = svg.append('g');
+    const linkGroup = g.append('g').attr('class', 'links');
+    const nodeGroup = g.append('g').attr('class', 'nodes');
+
+    // Color scale for status
+    const statusColors = {
+      active: '#4a7c59',
+      completed: '#999',
+      archived: '#666'
+    };
+
+    // Create simulation
+    let simulation;
+    if (physics) {
+      simulation = d3.forceSimulation(nodes)
+        .force('link', d3.forceLink(links)
+          .id(d => d.id)
+          .distance(linkDistance))
+        .force('charge', d3.forceManyBody().strength(forceStrength))
+        .force('center', d3.forceCenter(width / 2, height / 2))
+        .force('collision', d3.forceCollide().radius(nodeRadius / 2 + 10));
+    } else {
+      // Static layout - circular arrangement
+      nodes.forEach((node, i) => {
+        const angle = (i / nodes.length) * 2 * Math.PI;
+        const radius = Math.min(width, height) * 0.35;
+        node.x = width / 2 + radius * Math.cos(angle);
+        node.y = height / 2 + radius * Math.sin(angle);
+        node.fx = node.x;
+        node.fy = node.y;
+      });
+    }
+
+    // Create links
+    const link = linkGroup.selectAll('line')
+      .data(links)
+      .join('line')
+      .attr('class', 'link')
+      .attr('stroke', '#e5e7eb')
+      .attr('stroke-width', d => d.strength)
+      .attr('stroke-opacity', 0.6);
+
+    // Create nodes
+    const node = nodeGroup.selectAll('g')
+      .data(nodes)
+      .join('g')
+      .attr('class', 'node')
+      .attr('cursor', 'pointer')
+      .call(interactive ? d3.drag()
+        .on('start', dragstarted)
+        .on('drag', dragged)
+        .on('end', dragended) : () => {});
+
+    // Node circles
+    node.append('circle')
+      .attr('r', nodeRadius / 2)
+      .attr('fill', 'white')
+      .attr('stroke', d => statusColors[d.status] || statusColors.completed)
+      .attr('stroke-width', 3)
+      .attr('class', d => d.featured ? 'node-featured' : '');
+
+    // Node initials
+    node.append('text')
+      .text(d => d.initials)
+      .attr('text-anchor', 'middle')
+      .attr('dominant-baseline', 'central')
+      .attr('font-size', `${nodeRadius / 3}px`)
+      .attr('font-weight', '600')
+      .attr('fill', d => statusColors[d.status] || statusColors.completed)
+      .attr('pointer-events', 'none');
+
+    // Node labels
+    if (showLabels) {
+      node.append('text')
+        .text(d => d.title.length > 20 ? d.title.substring(0, 18) + '...' : d.title)
+        .attr('text-anchor', 'middle')
+        .attr('y', nodeRadius / 2 + 15)
+        .attr('font-size', '12px')
+        .attr('fill', 'var(--text-secondary)')
+        .attr('pointer-events', 'none');
+    }
+
+    // Featured node pulse animation
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes node-pulse {
+        0%, 100% { stroke-width: 3px; }
+        50% { stroke-width: 5px; }
+      }
+      .node-featured circle {
+        animation: node-pulse 2s ease-in-out infinite;
+      }
+    `;
+    document.head.appendChild(style);
+
+    // Tooltip
+    const tooltip = document.getElementById('node-tooltip');
+
+    node.on('mouseenter', function(event, d) {
+      // Highlight connected nodes
+      const connectedIds = new Set();
+      links.forEach(link => {
+        if (link.source.id === d.id) connectedIds.add(link.target.id);
+        if (link.target.id === d.id) connectedIds.add(link.source.id);
+      });
+
+      node.selectAll('circle')
+        .attr('opacity', n => n.id === d.id || connectedIds.has(n.id) ? 1 : 0.3);
+
+      link.attr('opacity', l =>
+        l.source.id === d.id || l.target.id === d.id ? 0.8 : 0.1);
+
+      // Show tooltip
+      tooltip.querySelector('.tooltip-title').textContent = d.title;
+      tooltip.querySelector('.tooltip-description').textContent = d.description;
+
+      const tagsContainer = tooltip.querySelector('.tooltip-tags');
+      tagsContainer.innerHTML = '';
+      [...d.tags, ...d.technologies].slice(0, 5).forEach(tag => {
+        const span = document.createElement('span');
+        span.className = 'tooltip-tag';
+        span.textContent = tag;
+        tagsContainer.appendChild(span);
+      });
+
+      tooltip.classList.add('visible');
+    });
+
+    node.on('mousemove', function(event) {
+      const x = event.clientX;
+      const y = event.clientY;
+      tooltip.style.left = `${x + 15}px`;
+      tooltip.style.top = `${y + 15}px`;
+    });
+
+    node.on('mouseleave', function() {
+      node.selectAll('circle').attr('opacity', 1);
+      link.attr('opacity', 0.6);
+      tooltip.classList.remove('visible');
+    });
+
+    // Click to navigate
+    node.on('click', function(event, d) {
+      window.location.href = `${basePath}${d.id}`;
+    });
+
+    // Update positions
+    if (physics) {
+      simulation.on('tick', () => {
+        link
+          .attr('x1', d => d.source.x)
+          .attr('y1', d => d.source.y)
+          .attr('x2', d => d.target.x)
+          .attr('y2', d => d.target.y);
+
+        node.attr('transform', d => `translate(${d.x},${d.y})`);
+      });
+    } else {
+      link
+        .attr('x1', d => d.source.x)
+        .attr('y1', d => d.source.y)
+        .attr('x2', d => d.target.x)
+        .attr('y2', d => d.target.y);
+
+      node.attr('transform', d => `translate(${d.x},${d.y})`);
+    }
+
+    // Zoom behavior
+    if (interactive) {
+      const zoom = d3.zoom()
+        .scaleExtent([0.5, 3])
+        .on('zoom', (event) => {
+          g.attr('transform', event.transform);
+        });
+
+      svg.call(zoom);
+
+      // Reset zoom button
+      document.getElementById('reset-zoom')?.addEventListener('click', () => {
+        svg.transition()
+          .duration(750)
+          .call(zoom.transform, d3.zoomIdentity);
+      });
+
+      // Toggle physics button
+      const toggleBtn = document.getElementById('toggle-physics');
+      toggleBtn?.addEventListener('click', () => {
+        const isActive = toggleBtn.dataset.active === 'true';
+        toggleBtn.dataset.active = !isActive;
+
+        if (!isActive && simulation) {
+          simulation.alpha(1).restart();
+        } else if (simulation) {
+          simulation.stop();
+        }
+      });
+    }
+
+    // Drag functions
+    function dragstarted(event, d) {
+      if (!event.active && simulation) simulation.alphaTarget(0.3).restart();
+      d.fx = d.x;
+      d.fy = d.y;
+    }
+
+    function dragged(event, d) {
+      d.fx = event.x;
+      d.fy = event.y;
+    }
+
+    function dragended(event, d) {
+      if (!event.active && simulation) simulation.alphaTarget(0);
+      if (!physics) {
+        d.fx = event.x;
+        d.fy = event.y;
+      } else {
+        d.fx = null;
+        d.fy = null;
+      }
+    }
+
+    // Handle window resize
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        const newWidth = container.clientWidth;
+        const newHeight = container.clientHeight;
+
+        svg.attr('width', newWidth).attr('height', newHeight);
+
+        if (simulation) {
+          simulation.force('center', d3.forceCenter(newWidth / 2, newHeight / 2));
+          simulation.alpha(0.3).restart();
+        }
+      }, 250);
+    });
+  }).catch(error => {
+    console.error('Failed to load D3:', error);
+    // Show fallback
+    document.querySelector('.mobile-fallback').style.display = 'block';
+  });
+</script>
