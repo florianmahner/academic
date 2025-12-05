@@ -246,6 +246,13 @@ const footerLinks = [...config.footer.links, ...socialLinks];
       <!-- Footer -->
       <footer class="site-footer">
         <div class="container footer-content">
+          <div class="footer-secondary-nav">
+            <a href={`${base}/cv`}>CV</a>
+            <span class="footer-separator">·</span>
+            <a href={`${base}/contact`}>Contact</a>
+            <span class="footer-separator">·</span>
+            <a href={`${base}/misc`}>Misc</a>
+          </div>
           {config.footer.copyright && (
             <span class="footer-copy">&copy; {new Date().getFullYear()} {fullName}</span>
           )}
@@ -647,15 +654,40 @@ const footerLinks = [...config.footer.links, ...socialLinks];
          ============================================ */
       .site-footer {
         margin-top: var(--space-16);
-        padding: var(--space-6) 0;
+        padding: var(--space-8) 0;
         border-top: 1px solid var(--color-border);
       }
 
       .footer-content {
         display: flex;
+        flex-direction: column;
         align-items: center;
-        justify-content: space-between;
-        gap: var(--space-4);
+        gap: var(--space-3);
+        text-align: center;
+      }
+
+      .footer-secondary-nav {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: var(--space-2);
+        font-size: var(--font-size-sm);
+        margin-bottom: var(--space-2);
+      }
+
+      .footer-secondary-nav a {
+        color: var(--color-text-muted);
+        text-decoration: none;
+        transition: color 0.2s ease;
+      }
+
+      .footer-secondary-nav a:hover {
+        color: var(--color-accent);
+      }
+
+      .footer-separator {
+        color: var(--color-border);
+        user-select: none;
       }
 
       .footer-copy {
@@ -666,6 +698,8 @@ const footerLinks = [...config.footer.links, ...socialLinks];
       .footer-links {
         display: flex;
         gap: var(--space-4);
+        flex-wrap: wrap;
+        justify-content: center;
       }
 
       .footer-links a {
@@ -681,9 +715,8 @@ const footerLinks = [...config.footer.links, ...socialLinks];
       }
 
       @media (max-width: 500px) {
-        .footer-content {
-          flex-direction: column;
-          gap: var(--space-2);
+        .footer-secondary-nav {
+          flex-wrap: wrap;
         }
       }
     </style>
