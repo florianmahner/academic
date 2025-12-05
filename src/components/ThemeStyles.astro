@@ -5,11 +5,18 @@
  * Include this in your <head> to apply theme customization
  *
  * Loads ALL fonts for all presets so users can switch themes
+ * Now integrated with config.yaml for theme preset selection
  */
-import { getAllFontsUrl, getPreset, DEFAULT_PRESET_ID } from '../lib/typography-presets';
+import { getAllFontsUrl, getPreset } from '../lib/typography-presets';
+import { config } from '../config';
 
-// Get the default preset for initial CSS values
-const defaultPreset = getPreset(DEFAULT_PRESET_ID);
+// Get the default preset from config.yaml (or fallback to editorial-newsreader)
+const presetId = config.theme?.defaultPreset || 'editorial-newsreader';
+const defaultPreset = getPreset(presetId);
+
+// Override accent colors if specified in config
+const accentLight = config.theme?.accentLight || defaultPreset.colors.accentLight;
+const accentDark = config.theme?.accentDark || defaultPreset.colors.accentDark;
 
 // Load all fonts for all presets (enables theme switching)
 const fontsUrl = getAllFontsUrl();
@@ -27,6 +34,8 @@ const fontsUrl = getAllFontsUrl();
   headingStyle: defaultPreset.styles.headingStyle,
   headingWeight: defaultPreset.styles.headingWeight,
   bodyWeight: defaultPreset.styles.bodyWeight,
+  accentLight: accentLight,
+  accentDark: accentDark,
 }}>
   :root {
     /* Fonts from config (can be overridden by theme selector) */
@@ -39,6 +48,10 @@ const fontsUrl = getAllFontsUrl();
     --heading-style: var(--headingStyle);
     --heading-weight: var(--headingWeight);
     --body-weight: var(--bodyWeight);
+
+    /* Accent colors from config.yaml (can be overridden by theme selector) */
+    --color-accent-light: var(--accentLight);
+    --color-accent-dark: var(--accentDark);
   }
 
   /* Apply heading style from theme */

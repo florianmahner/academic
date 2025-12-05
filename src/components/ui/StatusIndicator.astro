@@ -1,0 +1,146 @@
+---
+export interface Props {
+  status: "active" | "completed" | "featured" | "archived";
+}
+
+const { status } = Astro.props;
+
+const statusConfig = {
+  active: {
+    label: "Active",
+    color: "#10b981",
+  },
+  completed: {
+    label: "Completed",
+    color: "var(--color-text)",
+  },
+  featured: {
+    label: "Featured",
+    color: "var(--color-accent)",
+  },
+  archived: {
+    label: "Archived",
+    color: "var(--color-text-muted)",
+  },
+};
+
+const config = statusConfig[status];
+---
+
+<div class="status-indicator" data-status={status}>
+  {status === "active" && (
+    <span class="indicator-icon pulse" style={`background-color: ${config.color}`}></span>
+  )}
+
+  {status === "completed" && (
+    <svg class="indicator-icon checkmark" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="8" cy="8" r="7" stroke={config.color} stroke-width="1.5" fill="none"/>
+      <path d="M5 8L7 10L11 6" stroke={config.color} stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  )}
+
+  {status === "featured" && (
+    <svg class="indicator-icon star" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8 2L9.5 6.5L14 7L10.5 10.5L11.5 15L8 12.5L4.5 15L5.5 10.5L2 7L6.5 6.5L8 2Z" fill={config.color} stroke={config.color} stroke-width="1" stroke-linejoin="round"/>
+    </svg>
+  )}
+
+  {status === "archived" && (
+    <span class="indicator-icon dot" style={`background-color: ${config.color}`}></span>
+  )}
+
+  <span class="status-label">{config.label}</span>
+</div>
+
+<style>
+  .status-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .indicator-icon {
+    display: inline-block;
+    flex-shrink: 0;
+  }
+
+  /* Dot indicators */
+  .indicator-icon.pulse,
+  .indicator-icon.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  /* Pulsing animation for active status */
+  .indicator-icon.pulse {
+    position: relative;
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .indicator-icon.pulse::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: inherit;
+    opacity: 0.5;
+    animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+    }
+  }
+
+  @keyframes ping {
+    75%, 100% {
+      transform: translate(-50%, -50%) scale(2);
+      opacity: 0;
+    }
+  }
+
+  /* SVG icons */
+  .indicator-icon.checkmark,
+  .indicator-icon.star {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Status label */
+  .status-label {
+    color: var(--color-text);
+    line-height: 1;
+  }
+
+  /* Dark mode adjustments */
+  [data-theme="dark"] .status-label {
+    color: var(--color-text);
+  }
+
+  [data-theme="dark"] .indicator-icon.pulse::before {
+    opacity: 0.6;
+  }
+
+  /* Accessibility: reduce motion */
+  @media (prefers-reduced-motion: reduce) {
+    .indicator-icon.pulse,
+    .indicator-icon.pulse::before {
+      animation: none;
+    }
+
+    .indicator-icon.pulse {
+      opacity: 1;
+    }
+  }
+</style>

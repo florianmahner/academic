@@ -1,0 +1,506 @@
+<!--
+==============================================================================
+DYNAMIC ROUTE EXAMPLES FOR CONTENT COLLECTIONS
+==============================================================================
+This file contains production-ready route examples for different content types
+Copy these to src/pages/[collection]/[slug].astro and adapt as needed
+-->
+
+<!-- =============================================================================
+EXAMPLE 1: Blog Post Route with Author and Related Posts
+src/pages/blog/[slug].astro
+============================================================================= -->
+
+---
+import { getCollection, getEntry, getEntries, render } from 'astro:content';
+import Container from '@/components/Container.astro';
+import BlogLayout from '@/layouts/BlogLayout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => {
+    return !data.draft; // Exclude drafts
+  });
+
+  return posts.map(post => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+interface Props {
+  post: Awaited<ReturnType<typeof getCollection<'blog'>>>[number];
+}
+
+const { post } = Astro.props;
+const { Content, headings } = await render(post);
+
+// Resolve author reference
+const author = await getEntry(post.data.author);
+
+// Resolve related posts if they exist
+const relatedPosts = post.data.relatedPosts
+  ? await getEntries(post.data.relatedPosts)
+  : [];
+
+// Get other posts by the same author
+const authorPosts = (await getCollection('blog', ({ data }) => {
+  return data.author.id === author!.id && data.id !== post.id && !data.draft;
+})).slice(0, 5);
+---
+
+<BlogLayout {post} {author} {headings}>
+  <Content />
+
+  {relatedPosts.length > 0 && (
+    <section class="related-posts">
+      <h3>Related Articles</h3>
+      <ul>
+        {relatedPosts.map(related => (
+          <li>
+            <a href={`/blog/${related.id}`}>{related.data.title}</a>
+            <time>{related.data.pubDate.toLocaleDateString()}</time>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  {authorPosts.length > 0 && (
+    <section class="more-by-author">
+      <h3>More by {author?.data.name}</h3>
+      <ul>
+        {authorPosts.map(p => (
+          <li>
+            <a href={`/blog/${p.id}`}>{p.data.title}</a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+</BlogLayout>
+
+
+<!-- =============================================================================
+EXAMPLE 2: Project Route with Gallery and Links
+src/pages/projects/[slug].astro
+============================================================================= -->
+
+---
+import { getCollection, render } from 'astro:content';
+import Container from '@/components/Container.astro';
+import ProjectLayout from '@/layouts/ProjectLayout.astro';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects', ({ data }) => {
+    return data.status !== 'archived';
+  });
+
+  return projects.map(project => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}
+
+interface Props {
+  project: Awaited<ReturnType<typeof getCollection<'projects'>>>[number];
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+---
+
+<ProjectLayout {project}>
+  <Content />
+
+  {project.data.gallery && project.data.gallery.length > 0 && (
+    <section class="gallery">
+      <h3>Project Gallery</h3>
+      <div class="gallery-grid">
+        {project.data.gallery.map(image => (
+          <figure>
+            <img src={image} alt={project.data.title} loading="lazy" />
+          </figure>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <section class="project-meta">
+    <div class="tech-stack">
+      <h4>Technologies</h4>
+      <ul>
+        {project.data.technologies.map(tech => (
+          <li class="tech-badge">{tech}</li>
+        ))}
+      </ul>
+    </div>
+
+    <div class="project-links">
+      {project.data.live_url && (
+        <a href={project.data.live_url} class="btn btn-primary" target="_blank" rel="noopener noreferrer">
+          View Live Project →
+        </a>
+      )}
+      {project.data.github_url && (
+        <a href={project.data.github_url} class="btn btn-secondary" target="_blank" rel="noopener noreferrer">
+          View on GitHub →
+        </a>
+      )}
+    </div>
+  </section>
+</ProjectLayout>
+
+
+<!-- =============================================================================
+EXAMPLE 3: Nested Documentation Routes
+src/pages/docs/[...slug].astro
+(For nested paths like /docs/guides/getting-started)
+============================================================================= -->
+
+---
+import { getCollection, getEntry, render } from 'astro:content';
+import Container from '@/components/Container.astro';
+import DocsLayout from '@/layouts/DocsLayout.astro';
+
+export async function getStaticPaths() {
+  const docs = await getCollection('docs');
+
+  return docs.map(doc => ({
+    params: { slug: doc.id },
+    props: { doc },
+  }));
+}
+
+interface Props {
+  doc: Awaited<ReturnType<typeof getCollection<'docs'>>>[number];
+}
+
+const { slug } = Astro.params;
+const doc = await getEntry('docs', slug!);
+
+if (!doc) {
+  return Astro.redirect('/404');
+}
+
+const { Content, headings } = await render(doc);
+
+// Get related docs (same category)
+const relatedDocs = doc.data.category
+  ? (await getCollection('docs', ({ data, id }) => {
+      return data.category === doc.data.category && id !== doc.id;
+    })).slice(0, 5)
+  : [];
+---
+
+<DocsLayout {doc} {headings}>
+  <Content />
+
+  {relatedDocs.length > 0 && (
+    <aside class="related-docs">
+      <h3>Related Documentation</h3>
+      <ul>
+        {relatedDocs.map(related => (
+          <li>
+            <a href={`/docs/${related.id}`}>{related.data.title}</a>
+          </li>
+        ))}
+      </ul>
+    </aside>
+  )}
+</DocsLayout>
+
+
+<!-- =============================================================================
+EXAMPLE 4: Product Detail Route
+src/pages/products/[slug].astro
+============================================================================= -->
+
+---
+import { getCollection, render } from 'astro:content';
+import Container from '@/components/Container.astro';
+import ProductLayout from '@/layouts/ProductLayout.astro';
+
+export async function getStaticPaths() {
+  const products = await getCollection('products', ({ data }) => {
+    return data.in_stock === true;
+  });
+
+  return products.map(product => ({
+    params: { slug: product.id },
+    props: { product },
+  }));
+}
+
+interface Props {
+  product: Awaited<ReturnType<typeof getCollection<'products'>>>[number];
+}
+
+const { product } = Astro.props;
+const { Content } = await render(product);
+
+const finalPrice = product.data.discount_price ?? product.data.price;
+const savings = product.data.discount_price
+  ? ((product.data.price - product.data.discount_price) / product.data.price * 100).toFixed(0)
+  : null;
+---
+
+<ProductLayout {product}>
+  <div class="product-hero">
+    <div class="product-images">
+      <img
+        src={product.data.image}
+        alt={product.data.name}
+        class="main-image"
+      />
+      {product.data.images && (
+        <div class="thumbnail-gallery">
+          {product.data.images.map(img => (
+            <button class="thumbnail" data-src={img}>
+              <img src={img} alt={product.data.name} />
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+
+    <div class="product-info">
+      <h1>{product.data.name}</h1>
+      <p class="sku">SKU: {product.data.sku}</p>
+
+      <div class="pricing">
+        {product.data.discount_price ? (
+          <>
+            <span class="original-price">${product.data.price.toFixed(2)}</span>
+            <span class="sale-price">${finalPrice.toFixed(2)}</span>
+            <span class="savings">Save {savings}%</span>
+          </>
+        ) : (
+          <span class="price">${product.data.price.toFixed(2)}</span>
+        )}
+      </div>
+
+      <div class="stock-status">
+        {product.data.in_stock ? (
+          <p class="in-stock">In Stock ({product.data.inventory} available)</p>
+        ) : (
+          <p class="out-of-stock">Out of Stock</p>
+        )}
+      </div>
+
+      {product.data.variants && product.data.variants.length > 0 && (
+        <div class="variants">
+          <h3>Available Variants</h3>
+          {product.data.variants.map(variant => (
+            <button class="variant-option" data-sku={variant.sku_suffix}>
+              {variant.name}: {variant.value}
+            </button>
+          ))}
+        </div>
+      )}
+
+      <button class="btn btn-primary" {disabled: !product.data.in_stock}>
+        {product.data.in_stock ? 'Add to Cart' : 'Notify Me'}
+      </button>
+    </div>
+  </div>
+
+  <div class="product-details">
+    <h2>Description</h2>
+    <Content />
+
+    {product.data.specifications && (
+      <section class="specifications">
+        <h3>Specifications</h3>
+        <dl>
+          {Object.entries(product.data.specifications).map(([key, value]) => (
+            <>
+              <dt>{key}</dt>
+              <dd>{value}</dd>
+            </>
+          ))}
+        </dl>
+      </section>
+    )}
+  </div>
+</ProductLayout>
+
+
+<!-- =============================================================================
+EXAMPLE 5: Case Study Route with Before/After Metrics
+src/pages/case-studies/[slug].astro
+============================================================================= -->
+
+---
+import { getCollection, render } from 'astro:content';
+import Container from '@/components/Container.astro';
+import CaseStudyLayout from '@/layouts/CaseStudyLayout.astro';
+
+export async function getStaticPaths() {
+  const caseStudies = await getCollection('case-studies');
+
+  return caseStudies.map(study => ({
+    params: { slug: study.id },
+    props: { study },
+  }));
+}
+
+interface Props {
+  study: Awaited<ReturnType<typeof getCollection<'case-studies'>>>[number];
+}
+
+const { study } = Astro.props;
+const { Content } = await render(study);
+---
+
+<CaseStudyLayout {study}>
+  <section class="case-study-overview">
+    <div class="challenge">
+      <h2>The Challenge</h2>
+      <p>{study.data.challenge}</p>
+      {study.data.images?.challenge && (
+        <img src={study.data.images.challenge} alt="Challenge visualization" />
+      )}
+    </div>
+
+    <div class="solution">
+      <h2>Our Solution</h2>
+      <p>{study.data.solution}</p>
+      {study.data.images?.solution && (
+        <img src={study.data.images.solution} alt="Solution visualization" />
+      )}
+    </div>
+
+    <div class="results">
+      <h2>Results</h2>
+      <p>{study.data.results}</p>
+    </div>
+  </section>
+
+  {study.data.metrics && study.data.metrics.length > 0 && (
+    <section class="metrics">
+      <h3>Key Metrics</h3>
+      <div class="metrics-grid">
+        {study.data.metrics.map(metric => (
+          <div class="metric">
+            <div class="metric-value">{metric.value}</div>
+            <div class="metric-label">{metric.label}</div>
+            {metric.before && (
+              <div class="metric-before">
+                Before: {metric.before}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <section class="case-study-details">
+    <h3>Project Details</h3>
+    <dl>
+      <dt>Client</dt>
+      <dd>{study.data.client}</dd>
+
+      <dt>Industry</dt>
+      <dd>{study.data.industry}</dd>
+
+      <dt>Team Size</dt>
+      <dd>{study.data.team_size} people</dd>
+
+      <dt>Duration</dt>
+      <dd>{study.data.duration_months} months</dd>
+
+      <dt>Technologies</dt>
+      <dd>
+        <ul>
+          {study.data.technologies.map(tech => (
+            <li>{tech}</li>
+          ))}
+        </ul>
+      </dd>
+    </dl>
+  </section>
+
+  <div class="case-study-content">
+    <Content />
+  </div>
+</CaseStudyLayout>
+
+
+<!-- =============================================================================
+EXAMPLE 6: FAQ Item Route
+src/pages/faqs/[slug].astro
+============================================================================= -->
+
+---
+import { getCollection, render } from 'astro:content';
+import Container from '@/components/Container.astro';
+import FAQLayout from '@/layouts/FAQLayout.astro';
+
+export async function getStaticPaths() {
+  const faqs = await getCollection('faqs');
+
+  return faqs.map(faq => ({
+    params: { slug: faq.id },
+    props: { faq },
+  }));
+}
+
+interface Props {
+  faq: Awaited<ReturnType<typeof getCollection<'faqs'>>>[number];
+}
+
+const { faq } = Astro.props;
+const { Content } = await render(faq);
+
+// Get related FAQs
+const relatedFAQs = faq.data.related_topics
+  ? (await getCollection('faqs', ({ data, id }) => {
+      const topics = data.related_topics ?? [];
+      const hasOverlap = faq.data.related_topics!.some(t =>
+        topics.includes(t)
+      );
+      return hasOverlap && id !== faq.id;
+    })).slice(0, 5)
+  : [];
+
+// Get other FAQs in same category
+const categoryFAQs = (await getCollection('faqs', ({ data, id }) => {
+  return data.category === faq.data.category && id !== faq.id;
+})).slice(0, 5);
+---
+
+<FAQLayout {faq}>
+  <article class="faq-item">
+    <h1>{faq.data.question}</h1>
+    <div class="faq-content">
+      <Content />
+    </div>
+  </article>
+
+  {relatedFAQs.length > 0 && (
+    <aside class="related-faqs">
+      <h3>Related Topics</h3>
+      <ul>
+        {relatedFAQs.map(related => (
+          <li>
+            <a href={`/faqs/${related.id}`}>{related.data.question}</a>
+          </li>
+        ))}
+      </ul>
+    </aside>
+  )}
+
+  {categoryFAQs.length > 0 && (
+    <section class="category-faqs">
+      <h3>More in {faq.data.category}</h3>
+      <ul>
+        {categoryFAQs.map(item => (
+          <li>
+            <a href={`/faqs/${item.id}`}>{item.data.question}</a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+</FAQLayout>

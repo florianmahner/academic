@@ -1,0 +1,115 @@
+---
+/**
+ * TeachingCard Component
+ * Display course/teaching information
+ */
+
+import Button from '../ui/Button.astro';
+
+interface Props {
+  title: string;
+  role: string;
+  institution: string;
+  semester: string;
+  year?: string | number;
+  description?: string;
+  materials?: string;
+  class?: string;
+}
+
+const {
+  title,
+  role,
+  institution,
+  semester,
+  year,
+  description,
+  materials,
+  class: className,
+} = Astro.props;
+
+const displaySemester = year ? `${semester} ${year}` : semester;
+---
+
+<div class:list={['teaching-card', className]} data-animate="fade-up">
+  <div class="teaching-header">
+    <h3 class="teaching-title">{title}</h3>
+    <span class="teaching-semester">{displaySemester}</span>
+  </div>
+  <div class="teaching-meta">
+    <span class="teaching-role">{role}</span>
+    <span class="teaching-institution">{institution}</span>
+  </div>
+  {description && <p class="teaching-description">{description}</p>}
+  {materials && (
+    <div class="teaching-actions">
+      <Button href={materials} variant="secondary" size="sm" target="_blank" rel="noopener noreferrer">
+        View Materials
+      </Button>
+    </div>
+  )}
+</div>
+
+<style>
+  .teaching-card {
+    padding: var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    transition: border-color var(--transition-fast);
+  }
+
+  .teaching-card:hover {
+    border-color: var(--color-text-muted);
+  }
+
+  .teaching-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+  }
+
+  .teaching-title {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    margin: 0;
+  }
+
+  .teaching-semester {
+    font-size: var(--font-size-xs);
+    font-family: var(--font-mono);
+    color: var(--color-text-muted);
+    white-space: nowrap;
+  }
+
+  .teaching-meta {
+    display: flex;
+    gap: var(--space-2);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-3);
+  }
+
+  .teaching-role {
+    color: var(--color-accent);
+    font-weight: var(--font-weight-medium);
+  }
+
+  .teaching-role::after {
+    content: '·';
+    margin-left: var(--space-2);
+    color: var(--color-text-muted);
+  }
+
+  .teaching-description {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin: 0 0 var(--space-3);
+    line-height: var(--line-height-normal);
+  }
+
+  .teaching-actions {
+    margin-top: var(--space-3);
+  }
+</style>

@@ -1,0 +1,235 @@
+---
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { config } from '../../config';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  return posts.map(post => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+
+// Format date helper
+const formatDate = (date: Date) => {
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+};
+
+const title = `${post.data.title} | Blog | ${config.site.title}`;
+const description = post.data.description || post.data.title;
+---
+
+<BaseLayout title={title} description={description}>
+  <article class="blog-post">
+    <div class="container container--narrow">
+      <header class="post-header" data-animate="fade-up">
+        <nav class="breadcrumb">
+          <a href="/blog">← Back to blog</a>
+        </nav>
+        <h1 class="post-title">{post.data.title}</h1>
+        <div class="post-meta">
+          <time datetime={post.data.date.toISOString()}>
+            {formatDate(post.data.date)}
+          </time>
+          {post.data.updated && (
+            <span class="updated">
+              Updated: {formatDate(post.data.updated)}
+            </span>
+          )}
+        </div>
+        {post.data.tags && post.data.tags.length > 0 && (
+          <div class="post-tags">
+            {post.data.tags.map(tag => (
+              <span class="tag">{tag}</span>
+            ))}
+          </div>
+        )}
+      </header>
+
+      <div class="post-content" data-animate="fade-up">
+        <Content />
+      </div>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .blog-post {
+    /* Vertical padding handled by article in global.css */
+  }
+
+  .container--narrow {
+    max-width: 720px;
+  }
+
+  .post-header {
+    margin-bottom: var(--space-8);
+  }
+
+  .breadcrumb {
+    margin-bottom: var(--space-4);
+  }
+
+  .breadcrumb a {
+    color: var(--color-text-muted);
+    text-decoration: none;
+    font-size: var(--font-size-sm);
+    transition: color var(--transition-fast);
+  }
+
+  .breadcrumb a:hover {
+    color: var(--color-accent);
+  }
+
+  .post-title {
+    margin: 0 0 var(--space-3);
+    font-size: var(--font-size-2xl);
+    line-height: var(--line-height-tight);
+  }
+
+  .post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--space-3);
+  }
+
+  .updated {
+    font-style: italic;
+  }
+
+  .post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .tag {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    background-color: var(--color-bg-alt);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+  }
+
+  .post-content {
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-relaxed);
+  }
+
+  /* Typography for markdown content */
+  .post-content :global(h1),
+  .post-content :global(h2),
+  .post-content :global(h3),
+  .post-content :global(h4),
+  .post-content :global(h5),
+  .post-content :global(h6) {
+    margin-top: var(--space-8);
+    margin-bottom: var(--space-4);
+    line-height: var(--line-height-tight);
+  }
+
+  .post-content :global(h1) { font-size: var(--font-size-2xl); }
+  .post-content :global(h2) { font-size: var(--font-size-xl); }
+  .post-content :global(h3) { font-size: var(--font-size-lg); }
+  .post-content :global(h4) { font-size: var(--font-size-base); }
+
+  .post-content :global(p) {
+    margin-bottom: var(--space-4);
+  }
+
+  .post-content :global(a) {
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .post-content :global(a:hover) {
+    text-decoration: underline;
+  }
+
+  .post-content :global(ul),
+  .post-content :global(ol) {
+    margin-bottom: var(--space-4);
+    padding-left: var(--space-6);
+  }
+
+  .post-content :global(li) {
+    margin-bottom: var(--space-2);
+  }
+
+  .post-content :global(blockquote) {
+    margin: var(--space-6) 0;
+    padding-left: var(--space-4);
+    border-left: 3px solid var(--color-accent);
+    color: var(--color-text-secondary);
+    font-style: italic;
+  }
+
+  .post-content :global(code) {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    background-color: var(--color-bg-alt);
+    padding: 0.2em 0.4em;
+    border-radius: var(--radius-sm);
+  }
+
+  .post-content :global(pre) {
+    margin: var(--space-6) 0;
+    padding: var(--space-4);
+    background-color: var(--color-bg-alt);
+    border-radius: var(--radius-md);
+    overflow-x: auto;
+  }
+
+  .post-content :global(pre code) {
+    background-color: transparent;
+    padding: 0;
+  }
+
+  .post-content :global(img) {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius-md);
+    margin: var(--space-6) 0;
+  }
+
+  .post-content :global(hr) {
+    margin: var(--space-8) 0;
+    border: none;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .post-content :global(table) {
+    width: 100%;
+    margin: var(--space-6) 0;
+    border-collapse: collapse;
+  }
+
+  .post-content :global(th),
+  .post-content :global(td) {
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--color-border);
+    text-align: left;
+  }
+
+  .post-content :global(th) {
+    background-color: var(--color-bg-alt);
+    font-weight: var(--font-weight-medium);
+  }
+</style>

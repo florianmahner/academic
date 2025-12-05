@@ -1,0 +1,75 @@
+---
+/**
+ * ProjectGrid Component
+ * Renders a grid of project cards
+ */
+
+import ProjectCard from './ProjectCard.astro';
+
+interface Project {
+  title: string;
+  description?: string;
+  image?: string;
+  tags?: string[];
+  url?: string;
+  featured?: boolean;
+}
+
+interface Props {
+  projects: Project[];
+  columns?: 2 | 3 | 4;
+  class?: string;
+}
+
+const {
+  projects,
+  columns = 3,
+  class: className,
+} = Astro.props;
+---
+
+<div class:list={['project-grid', `grid-cols-${columns}`, className]} data-animate="stagger">
+  {projects.map(project => (
+    <ProjectCard
+      title={project.title}
+      description={project.description}
+      image={project.image}
+      tags={project.tags}
+      url={project.url}
+      featured={project.featured}
+    />
+  ))}
+</div>
+
+<style>
+  .project-grid {
+    display: grid;
+    gap: var(--space-4);
+    width: 100%;
+  }
+
+  .grid-cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .grid-cols-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .grid-cols-4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  @media (max-width: 900px) {
+    .grid-cols-3,
+    .grid-cols-4 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .project-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

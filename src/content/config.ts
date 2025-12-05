@@ -13,13 +13,102 @@ const blog = defineCollection({
     description: z.string().optional(),
     date: z.coerce.date(),
     updated: z.coerce.date().optional(),
-    draft: z.boolean().default(false),
+    author: z.string().optional(),
     tags: z.array(z.string()).default([]),
+    draft: z.boolean().default(false),
     image: z.string().optional(),
     imageAlt: z.string().optional(),
   }),
 });
 
+// Projects collection - portfolio/research projects
+const projects = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    date: z.coerce.date().optional(),
+    technologies: z.array(z.string()).optional(),
+    tags: z.array(z.string()).default([]),
+    // Allow any string for URLs (can be relative)
+    github: z.string().optional(),
+    url: z.string().optional(),
+    website: z.string().optional(),
+    demo: z.string().optional(),
+    documentation: z.string().optional(),
+    pypi: z.string().optional(),
+    image: z.string().optional(),
+    featured: z.boolean().default(false),
+    status: z.enum(['active', 'completed', 'archived', 'wip']).default('active'),
+    startDate: z.coerce.date().optional(),
+    endDate: z.coerce.date().optional(),
+    // Collaboration fields
+    partners: z.array(z.string()).optional(),
+    funding: z.string().optional(),
+  }),
+});
+
+// Talks collection - presentations/conferences
+const talks = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    event: z.string(),
+    date: z.coerce.date(),
+    location: z.string().optional(),
+    venue: z.string().optional(),
+    type: z.enum(['keynote', 'invited', 'talk', 'workshop', 'poster', 'panel', 'tutorial', 'contributed', 'conference', 'seminar']).default('talk'),
+    slides: z.string().optional(),
+    video: z.string().optional(),
+    poster: z.string().optional(),
+    materials: z.string().optional(),
+    abstract: z.string().optional(),
+    description: z.string().optional(),
+    tags: z.array(z.string()).default([]),
+  }),
+});
+
+// Teaching collection - courses taught
+const teaching = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    code: z.string().optional(), // Course code like "CS 4780"
+    role: z.enum(['Instructor', 'Teaching Assistant', 'Guest Lecturer', 'Co-Instructor', 'TA', 'Lecturer']),
+    institution: z.string(),
+    semester: z.string(),
+    year: z.number().optional(),
+    date: z.coerce.date().optional(),
+    description: z.string().optional(),
+    level: z.string().optional(), // Undergraduate, Graduate, etc.
+    materials: z.string().optional(),
+    syllabus: z.string().optional(),
+    website: z.string().optional(),
+    students: z.number().optional(),
+    evaluations: z.string().optional(),
+    topics: z.array(z.string()).optional(),
+    tags: z.array(z.string()).default([]),
+  }),
+});
+
+// Pages collection - custom pages (about, cv, etc.)
+const pages = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    description: z.string().optional(),
+    layout: z.enum(['default', 'wide', 'minimal', 'full']).default('default'),
+    nav: z.boolean().default(true),
+    nav_order: z.number().default(999),
+    draft: z.boolean().default(false),
+    updated: z.coerce.date().optional(),
+  }),
+});
+
 export const collections = {
   blog,
+  projects,
+  talks,
+  teaching,
+  pages,
 };

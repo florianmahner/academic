@@ -1,0 +1,130 @@
+---
+/**
+ * BlogCard Component
+ * Display blog post preview in list
+ */
+
+import { formatDate } from '../../lib/blog';
+import Badge from '../ui/Badge.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  date: Date;
+  tags?: string[];
+  slug: string;
+  image?: string;
+  class?: string;
+}
+
+const {
+  title,
+  description,
+  date,
+  tags = [],
+  slug,
+  image,
+  class: className,
+} = Astro.props;
+
+const href = `/blog/${slug}`;
+---
+
+<article class:list={['blog-card', className]} data-animate="fade-up">
+  <a href={href} class="blog-link">
+    {image && (
+      <div class="blog-image">
+        <img src={image} alt={title} loading="lazy" decoding="async" />
+      </div>
+    )}
+    <div class="blog-content">
+      <div class="blog-meta">
+        <time datetime={date.toISOString()}>{formatDate(date)}</time>
+      </div>
+      <h3 class="blog-title">{title}</h3>
+      {description && <p class="blog-description">{description}</p>}
+      {tags.length > 0 && (
+        <div class="blog-tags">
+          {tags.slice(0, 3).map(tag => (
+            <Badge size="sm">{tag}</Badge>
+          ))}
+        </div>
+      )}
+    </div>
+  </a>
+</article>
+
+<style>
+  .blog-card {
+    border-radius: var(--radius-md);
+    transition: background-color var(--transition-fast);
+  }
+
+  .blog-card:hover {
+    background-color: var(--color-bg-alt);
+  }
+
+  .blog-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    background: none;
+    padding: var(--space-4);
+  }
+
+  .blog-image {
+    margin-bottom: var(--space-3);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+  }
+
+  .blog-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-normal);
+  }
+
+  .blog-card:hover .blog-image img {
+    transform: scale(1.05);
+  }
+
+  .blog-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .blog-meta {
+    font-size: var(--font-size-xs);
+    font-family: var(--font-mono);
+    color: var(--color-text-muted);
+  }
+
+  .blog-title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-medium);
+    margin: 0;
+    line-height: var(--line-height-snug);
+    transition: color var(--transition-fast);
+  }
+
+  .blog-card:hover .blog-title {
+    color: var(--color-accent);
+  }
+
+  .blog-description {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin: 0;
+    line-height: var(--line-height-normal);
+  }
+
+  .blog-tags {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+    margin-top: var(--space-1);
+  }
+</style>

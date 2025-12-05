@@ -1,0 +1,376 @@
+---
+/**
+ * Publication Layout
+ * Layout for academic papers with authors, venue, abstract, and links
+ */
+
+import BaseLayout from './BaseLayout.astro';
+import { config } from '../config';
+
+interface Author {
+  name: string;
+  url?: string;
+  highlight?: boolean;
+}
+
+interface Props {
+  title: string;
+  authors: Author[];
+  venue: string;
+  year: number | string;
+  abstract?: string;
+  pdf?: string;
+  code?: string;
+  demo?: string;
+  slides?: string;
+  bibtex?: string;
+  doi?: string;
+  image?: string;
+  description?: string;
+}
+
+const {
+  title,
+  authors,
+  venue,
+  year,
+  abstract,
+  pdf,
+  code,
+  demo,
+  slides,
+  bibtex,
+  doi,
+  image,
+  description
+} = Astro.props;
+
+const pageTitle = `${title} | ${config.site.title}`;
+const pageDescription = description || abstract || `${title} published in ${venue} ${year}`;
+---
+
+<BaseLayout title={pageTitle} description={pageDescription} image={image}>
+  <article class="publication-article">
+    <div class="container">
+      <!-- Publication Header -->
+      <header class="pub-header" data-animate="fadeIn">
+        <div class="pub-meta">
+          <span class="pub-venue">{venue}</span>
+          <span class="meta-separator">·</span>
+          <span class="pub-year">{year}</span>
+        </div>
+
+        <h1 class="pub-title">{title}</h1>
+
+        <div class="pub-authors">
+          {authors.map((author, i) => (
+            <>
+              {author.url ? (
+                <a
+                  href={author.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class:list={['author-link', { 'author-highlight': author.highlight }]}
+                >
+                  {author.name}
+                </a>
+              ) : (
+                <span class:list={['author-name', { 'author-highlight': author.highlight }]}>
+                  {author.name}
+                </span>
+              )}
+              {i < authors.length - 1 && <span class="author-separator">, </span>}
+            </>
+          ))}
+        </div>
+
+        <!-- Links Bar -->
+        <div class="pub-links">
+          {pdf && (
+            <a href={pdf} class="pub-link" target="_blank" rel="noopener noreferrer">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+              </svg>
+              PDF
+            </a>
+          )}
+          {code && (
+            <a href={code} class="pub-link" target="_blank" rel="noopener noreferrer">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="16 18 22 12 16 6"></polyline>
+                <polyline points="8 6 2 12 8 18"></polyline>
+              </svg>
+              Code
+            </a>
+          )}
+          {demo && (
+            <a href={demo} class="pub-link" target="_blank" rel="noopener noreferrer">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polygon points="10 8 16 12 10 16 10 8"></polygon>
+              </svg>
+              Demo
+            </a>
+          )}
+          {slides && (
+            <a href={slides} class="pub-link" target="_blank" rel="noopener noreferrer">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                <line x1="8" y1="21" x2="16" y2="21"></line>
+                <line x1="12" y1="17" x2="12" y2="21"></line>
+              </svg>
+              Slides
+            </a>
+          )}
+          {doi && (
+            <a href={`https://doi.org/${doi}`} class="pub-link" target="_blank" rel="noopener noreferrer">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+              </svg>
+              DOI
+            </a>
+          )}
+        </div>
+      </header>
+
+      <!-- Abstract -->
+      {abstract && (
+        <section class="pub-abstract" data-animate="slideUp">
+          <h2>Abstract</h2>
+          <p>{abstract}</p>
+        </section>
+      )}
+
+      <!-- Additional Content -->
+      <div class="pub-content" data-animate="slideUp">
+        <slot />
+      </div>
+
+      <!-- BibTeX Citation -->
+      {bibtex && (
+        <section class="pub-bibtex" data-animate="fadeIn">
+          <h2>Citation</h2>
+          <pre><code>{bibtex}</code></pre>
+        </section>
+      )}
+    </div>
+  </article>
+
+  <style>
+    /* ============================================
+       Publication Article Container
+       ============================================ */
+    .publication-article {
+      padding: var(--content-top-padding) 0;
+    }
+
+    /* ============================================
+       Publication Header
+       ============================================ */
+    .pub-header {
+      margin-bottom: var(--space-10);
+      max-width: 800px;
+    }
+
+    .pub-meta {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      margin-bottom: var(--space-4);
+      font-size: var(--font-size-base);
+      font-family: var(--font-body);
+    }
+
+    .pub-venue {
+      font-weight: var(--font-weight-medium);
+      color: var(--color-accent);
+    }
+
+    .meta-separator {
+      color: var(--color-text-muted);
+    }
+
+    .pub-year {
+      color: var(--color-text-secondary);
+    }
+
+    .pub-title {
+      font-size: var(--font-size-3xl);
+      font-family: var(--font-heading);
+      font-weight: var(--heading-weight);
+      font-style: var(--heading-style);
+      line-height: var(--line-height-tight);
+      color: var(--color-text);
+      margin: 0 0 var(--space-6);
+    }
+
+    /* ============================================
+       Authors
+       ============================================ */
+    .pub-authors {
+      font-size: var(--font-size-base);
+      font-family: var(--font-body);
+      line-height: var(--line-height-relaxed);
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-6);
+    }
+
+    .author-name,
+    .author-link {
+      color: var(--color-text-secondary);
+      text-decoration: none;
+      background: none;
+      transition: color var(--transition-fast);
+    }
+
+    .author-link:hover {
+      color: var(--color-accent);
+    }
+
+    .author-highlight {
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text);
+    }
+
+    .author-separator {
+      color: var(--color-text-muted);
+    }
+
+    /* ============================================
+       Publication Links
+       ============================================ */
+    .pub-links {
+      display: flex;
+      gap: var(--space-3);
+      flex-wrap: wrap;
+      padding: var(--space-6) 0;
+      border-top: 1px solid var(--color-border);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .pub-link {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-4);
+      font-size: var(--font-size-base);
+      font-family: var(--font-body);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-secondary);
+      background: var(--color-bg-alt);
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      transition: all var(--transition-fast);
+    }
+
+    .pub-link:hover {
+      color: var(--color-accent);
+      background: var(--color-bg);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .pub-link svg {
+      flex-shrink: 0;
+    }
+
+    /* ============================================
+       Abstract Section
+       ============================================ */
+    .pub-abstract {
+      margin-bottom: var(--space-10);
+      max-width: 800px;
+    }
+
+    .pub-abstract h2 {
+      font-size: var(--font-size-lg);
+      font-family: var(--font-body);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text);
+      margin-bottom: var(--space-4);
+    }
+
+    .pub-abstract p {
+      font-size: var(--font-size-base);
+      font-family: var(--font-body);
+      line-height: var(--line-height-relaxed);
+      color: var(--color-text-secondary);
+      margin: 0;
+    }
+
+    /* ============================================
+       Additional Content
+       ============================================ */
+    .pub-content {
+      margin-bottom: var(--space-10);
+      max-width: 800px;
+      font-family: var(--font-body);
+      font-size: var(--font-size-base);
+      line-height: var(--line-height-relaxed);
+      color: var(--color-text);
+    }
+
+    .pub-content :global(h2) {
+      font-size: var(--font-size-xl);
+      font-family: var(--font-heading);
+      font-weight: var(--font-weight-medium);
+      margin-top: var(--space-8);
+      margin-bottom: var(--space-4);
+    }
+
+    .pub-content :global(p) {
+      margin-bottom: var(--space-6);
+    }
+
+    /* ============================================
+       BibTeX Citation
+       ============================================ */
+    .pub-bibtex {
+      margin-bottom: var(--space-10);
+      max-width: 800px;
+    }
+
+    .pub-bibtex h2 {
+      font-size: var(--font-size-lg);
+      font-family: var(--font-body);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text);
+      margin-bottom: var(--space-4);
+    }
+
+    .pub-bibtex pre {
+      margin: 0;
+      padding: var(--space-4);
+      background: var(--color-bg-alt);
+      border-radius: var(--radius-md);
+      overflow-x: auto;
+      border: 1px solid var(--color-border);
+    }
+
+    .pub-bibtex code {
+      font-family: var(--font-mono);
+      font-size: var(--font-size-sm);
+      line-height: var(--line-height-relaxed);
+      color: var(--color-text);
+    }
+
+    /* ============================================
+       Responsive
+       ============================================ */
+    @media (max-width: 768px) {
+      .pub-title {
+        font-size: var(--font-size-2xl);
+      }
+
+      .pub-links {
+        gap: var(--space-2);
+      }
+
+      .pub-link {
+        font-size: var(--font-size-sm);
+        padding: var(--space-2) var(--space-3);
+      }
+    }
+  </style>
+</BaseLayout>

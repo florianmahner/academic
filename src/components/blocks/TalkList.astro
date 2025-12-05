@@ -1,0 +1,53 @@
+---
+/**
+ * TalkList Component
+ * Renders a list of talk cards
+ */
+
+import TalkCard from './TalkCard.astro';
+
+interface Talk {
+  title: string;
+  event: string;
+  date: string;
+  location?: string;
+  type?: 'conference' | 'workshop' | 'seminar' | 'invited';
+  slides?: string;
+  video?: string;
+  abstract?: string;
+}
+
+interface Props {
+  talks: Talk[];
+  class?: string;
+}
+
+const {
+  talks,
+  class: className,
+} = Astro.props;
+---
+
+<div class:list={['talk-list', className]} data-animate="stagger">
+  {talks.map(talk => (
+    <TalkCard
+      title={talk.title}
+      event={talk.event}
+      date={talk.date}
+      location={talk.location}
+      type={talk.type}
+      slides={talk.slides}
+      video={talk.video}
+      abstract={talk.abstract}
+    />
+  ))}
+</div>
+
+<style>
+  .talk-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    width: 100%;
+  }
+</style>

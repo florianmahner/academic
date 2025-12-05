@@ -1,0 +1,157 @@
+---
+/**
+ * TalkCard Component
+ * Display talk/presentation with event details and links
+ */
+
+import Badge from '../ui/Badge.astro';
+
+interface Props {
+  title: string;
+  event: string;
+  date: string;
+  location?: string;
+  type?: 'conference' | 'workshop' | 'seminar' | 'invited';
+  slides?: string;
+  video?: string;
+  abstract?: string;
+  class?: string;
+}
+
+const {
+  title,
+  event,
+  date,
+  location,
+  type,
+  slides,
+  video,
+  abstract,
+  class: className,
+} = Astro.props;
+---
+
+<article class:list={['talk-card', className]} data-animate="fade-up">
+  <div class="talk-header">
+    <div class="talk-meta">
+      <time class="talk-date">{date}</time>
+      {type && <Badge size="sm" variant="outline">{type}</Badge>}
+    </div>
+    <h3 class="talk-title">{title}</h3>
+    <div class="talk-event">
+      {event}
+      {location && <span class="talk-location"> · {location}</span>}
+    </div>
+  </div>
+
+  {abstract && (
+    <p class="talk-abstract">{abstract}</p>
+  )}
+
+  {(slides || video) && (
+    <div class="talk-links">
+      {slides && (
+        <a href={slides} class="talk-link" target="_blank" rel="noopener noreferrer">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+            <line x1="8" y1="21" x2="16" y2="21"></line>
+            <line x1="12" y1="17" x2="12" y2="21"></line>
+          </svg>
+          Slides
+        </a>
+      )}
+      {video && (
+        <a href={video} class="talk-link" target="_blank" rel="noopener noreferrer">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+          Video
+        </a>
+      )}
+    </div>
+  )}
+</article>
+
+<style>
+  .talk-card {
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    transition: background-color var(--transition-fast);
+  }
+
+  .talk-card:hover {
+    background-color: var(--color-bg-alt);
+  }
+
+  .talk-header {
+    margin-bottom: var(--space-3);
+  }
+
+  .talk-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+  }
+
+  .talk-date {
+    font-size: var(--font-size-xs);
+    font-family: var(--font-mono);
+    color: var(--color-text-muted);
+  }
+
+  .talk-title {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    margin: 0 0 var(--space-2);
+    line-height: var(--line-height-snug);
+  }
+
+  .talk-event {
+    font-size: var(--font-size-sm);
+    color: var(--color-accent);
+    font-weight: var(--font-weight-medium);
+  }
+
+  .talk-location {
+    color: var(--color-text-muted);
+    font-weight: var(--font-weight-normal);
+  }
+
+  .talk-abstract {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin: 0 0 var(--space-3);
+    line-height: var(--line-height-normal);
+  }
+
+  .talk-links {
+    display: flex;
+    gap: var(--space-3);
+  }
+
+  .talk-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-size-sm);
+    font-family: var(--font-ui);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+    background: none;
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    transition: all var(--transition-fast);
+  }
+
+  .talk-link:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+    background-color: rgba(196, 30, 58, 0.05);
+  }
+
+  [data-theme="dark"] .talk-link:hover {
+    background-color: rgba(255, 77, 106, 0.1);
+  }
+</style>

@@ -1,0 +1,49 @@
+---
+/**
+ * BlogList Component
+ * Renders a list of blog post cards
+ */
+
+import BlogCard from './BlogCard.astro';
+
+interface BlogPost {
+  title: string;
+  description?: string;
+  date: Date;
+  tags?: string[];
+  slug: string;
+  image?: string;
+}
+
+interface Props {
+  posts: BlogPost[];
+  class?: string;
+}
+
+const {
+  posts,
+  class: className,
+} = Astro.props;
+---
+
+<div class:list={['blog-list', className]} data-animate="stagger">
+  {posts.map(post => (
+    <BlogCard
+      title={post.title}
+      description={post.description}
+      date={post.date}
+      tags={post.tags}
+      slug={post.slug}
+      image={post.image}
+    />
+  ))}
+</div>
+
+<style>
+  .blog-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    width: 100%;
+  }
+</style>

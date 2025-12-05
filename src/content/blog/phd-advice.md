@@ -8,26 +8,30 @@ draft: false
 
 # Advice for Incoming PhD Students
 
-Having recently transitioned from being a PhD student to advising them, I wanted to share some thoughts that I wish someone had told me when I started.
+Starting a PhD is both exciting and overwhelming. Here are some key lessons from my journey that might help you navigate yours.
 
-## Find Your Research Identity
+## Core Principles
 
-Your PhD is about developing as an independent researcher, not just publishing papers. Early on, explore broadly. Take seminars outside your immediate area. Read papers from adjacent fields. The most interesting research often happens at the boundaries.
+- **Explore broadly** early in your PhD to find what truly interests you
+- **Build relationships** with peers who will become your collaborators
+- **Write regularly** even before results are perfect
+- **Take care** of yourself—it's a marathon, not a sprint
 
-## Build Genuine Relationships
+## The Reality Check
 
-Academia can feel competitive, but your peers are your future collaborators. Some of my best work came from conversations with other students. Attend workshops, give talks at other labs, and build your network organically.
+Everyone experiences imposter syndrome. Progress is rarely linear. The key is persistence and maintaining perspective.
 
-## Embrace the Valley of Despair
+## Practical Tips
 
-Everyone hits a point where they feel like an imposter and question whether they belong. This is normal. The key is to keep showing up, keep reading papers, and keep trying new ideas. Progress in research is rarely linear.
+```python
+def phd_success():
+    while not_graduated:
+        read_papers()
+        run_experiments()
+        write_drafts()
+        take_breaks()  # Critical!
+```
 
-## Write Early and Often
+## Final Thoughts
 
-Don't wait until you have "perfect" results to start writing. Writing clarifies thinking. I now write paper drafts while running experiments—the act of trying to explain what I'm doing often reveals gaps in my understanding.
-
-## Take Care of Yourself
-
-A PhD is a marathon, not a sprint. Exercise, maintain hobbies, and set boundaries. Your best ideas won't come from grinding at your desk for 12 hours—they'll come when you give your brain space to wander.
-
-Good luck on your journey!
+Your PhD is about becoming an independent researcher, not just publishing papers. Trust the process and be patient with yourself.

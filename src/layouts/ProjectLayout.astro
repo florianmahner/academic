@@ -1,0 +1,363 @@
+---
+/**
+ * Project Layout
+ * Layout for projects with technology badges, links, and images
+ */
+
+import BaseLayout from './BaseLayout.astro';
+import { config } from '../config';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+const { project } = Astro.props;
+const { Content } = await project.render();
+
+const {
+  title,
+  description,
+  technologies = [],
+  github,
+  demo,
+  website,
+  image,
+  status = 'active'
+} = project.data;
+
+const pageTitle = `${title} | ${config.site.title}`;
+
+const statusLabels: Record<string, string> = {
+  active: 'Active',
+  completed: 'Completed',
+  archived: 'Archived',
+  wip: 'Work in Progress'
+};
+---
+
+<BaseLayout title={pageTitle} description={description} image={image}>
+  <article class="project-article">
+    <div class="container">
+      <!-- Project Header -->
+      <header class="project-header" data-animate="fadeIn">
+        <div class="project-meta">
+          <span class:list={['status-badge', `status-${status}`]}>
+            {statusLabels[status]}
+          </span>
+        </div>
+
+        <h1 class="project-title">{title}</h1>
+
+        <p class="project-description">{description}</p>
+
+        <!-- Technology Badges -->
+        {technologies.length > 0 && (
+          <div class="tech-badges">
+            {technologies.map(tech => (
+              <span class="tech-badge">{tech}</span>
+            ))}
+          </div>
+        )}
+
+        <!-- Project Links -->
+        <div class="project-links">
+          {github && (
+            <a href={github} class="project-link" target="_blank" rel="noopener noreferrer">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+              </svg>
+              View on GitHub
+            </a>
+          )}
+          {demo && (
+            <a href={demo} class="project-link" target="_blank" rel="noopener noreferrer">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polygon points="10 8 16 12 10 16 10 8"></polygon>
+              </svg>
+              Live Demo
+            </a>
+          )}
+          {website && (
+            <a href={website} class="project-link" target="_blank" rel="noopener noreferrer">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+              </svg>
+              Website
+            </a>
+          )}
+        </div>
+      </header>
+
+      <!-- Project Image/Screenshot -->
+      {image && (
+        <div class="project-image" data-animate="slideUp">
+          <img src={image} alt={`${title} screenshot`} loading="lazy" />
+        </div>
+      )}
+
+      <!-- Project Content -->
+      <div class="project-content" data-animate="slideUp">
+        <Content />
+      </div>
+    </div>
+  </article>
+
+  <style>
+    /* ============================================
+       Project Article Container
+       ============================================ */
+    .project-article {
+      padding: var(--content-top-padding) 0;
+    }
+
+    /* ============================================
+       Project Header
+       ============================================ */
+    .project-header {
+      margin-bottom: var(--space-10);
+      max-width: 800px;
+    }
+
+    .project-meta {
+      margin-bottom: var(--space-4);
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: var(--space-1) var(--space-3);
+      font-size: var(--font-size-xs);
+      font-family: var(--font-ui);
+      font-weight: var(--font-weight-medium);
+      text-transform: uppercase;
+      letter-spacing: var(--letter-spacing-wide);
+      border-radius: var(--radius-full);
+    }
+
+    .status-active {
+      background: rgba(34, 197, 94, 0.1);
+      color: rgb(34, 197, 94);
+    }
+
+    [data-theme="dark"] .status-active {
+      background: rgba(34, 197, 94, 0.2);
+      color: rgb(74, 222, 128);
+    }
+
+    .status-wip {
+      background: rgba(234, 179, 8, 0.1);
+      color: rgb(234, 179, 8);
+    }
+
+    [data-theme="dark"] .status-wip {
+      background: rgba(234, 179, 8, 0.2);
+      color: rgb(250, 204, 21);
+    }
+
+    .status-archived {
+      background: rgba(148, 163, 184, 0.1);
+      color: rgb(100, 116, 139);
+    }
+
+    [data-theme="dark"] .status-archived {
+      background: rgba(148, 163, 184, 0.2);
+      color: rgb(148, 163, 184);
+    }
+
+    .project-title {
+      font-size: var(--font-size-3xl);
+      font-family: var(--font-heading);
+      font-weight: var(--heading-weight);
+      font-style: var(--heading-style);
+      line-height: var(--line-height-tight);
+      color: var(--color-text);
+      margin: 0 0 var(--space-4);
+    }
+
+    .project-description {
+      font-size: var(--font-size-lg);
+      font-family: var(--font-body);
+      line-height: var(--line-height-relaxed);
+      color: var(--color-text-secondary);
+      margin: 0 0 var(--space-6);
+    }
+
+    /* ============================================
+       Technology Badges
+       ============================================ */
+    .tech-badges {
+      display: flex;
+      gap: var(--space-2);
+      flex-wrap: wrap;
+      margin-bottom: var(--space-6);
+    }
+
+    .tech-badge {
+      display: inline-block;
+      padding: var(--space-2) var(--space-3);
+      font-size: var(--font-size-sm);
+      font-family: var(--font-mono);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-accent);
+      background: var(--color-bg-alt);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      transition: all var(--transition-fast);
+    }
+
+    .tech-badge:hover {
+      background: var(--color-bg);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    }
+
+    /* ============================================
+       Project Links
+       ============================================ */
+    .project-links {
+      display: flex;
+      gap: var(--space-3);
+      flex-wrap: wrap;
+    }
+
+    .project-link {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-3) var(--space-5);
+      font-size: var(--font-size-base);
+      font-family: var(--font-body);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-bg);
+      background: var(--color-accent);
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      transition: all var(--transition-fast);
+    }
+
+    .project-link:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .project-link svg {
+      flex-shrink: 0;
+    }
+
+    /* ============================================
+       Project Image
+       ============================================ */
+    .project-image {
+      margin-bottom: var(--space-10);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      border: 1px solid var(--color-border);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    }
+
+    [data-theme="dark"] .project-image {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .project-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform var(--transition-slow);
+    }
+
+    .project-image:hover img {
+      transform: scale(1.02);
+    }
+
+    /* ============================================
+       Project Content
+       ============================================ */
+    .project-content {
+      max-width: 800px;
+      font-family: var(--font-body);
+      font-size: var(--font-size-base);
+      line-height: var(--line-height-relaxed);
+      color: var(--color-text);
+    }
+
+    .project-content :global(h2) {
+      font-size: var(--font-size-2xl);
+      font-family: var(--font-heading);
+      font-weight: var(--font-weight-medium);
+      margin-top: var(--space-10);
+      margin-bottom: var(--space-4);
+      color: var(--color-text);
+    }
+
+    .project-content :global(h3) {
+      font-size: var(--font-size-xl);
+      font-family: var(--font-heading);
+      font-weight: var(--font-weight-medium);
+      margin-top: var(--space-8);
+      margin-bottom: var(--space-3);
+      color: var(--color-text);
+    }
+
+    .project-content :global(p) {
+      margin-bottom: var(--space-6);
+    }
+
+    .project-content :global(ul),
+    .project-content :global(ol) {
+      margin: var(--space-6) 0;
+      padding-left: var(--space-6);
+    }
+
+    .project-content :global(li) {
+      margin-bottom: var(--space-2);
+    }
+
+    .project-content :global(code) {
+      font-family: var(--font-mono);
+      font-size: 0.9em;
+      padding: 0.2em 0.4em;
+      background: var(--color-bg-alt);
+      border-radius: var(--radius-sm);
+    }
+
+    .project-content :global(pre) {
+      margin: var(--space-6) 0;
+      padding: var(--space-4);
+      background: var(--color-bg-alt);
+      border-radius: var(--radius-md);
+      overflow-x: auto;
+      border: 1px solid var(--color-border);
+    }
+
+    .project-content :global(pre code) {
+      padding: 0;
+      background: none;
+    }
+
+    /* ============================================
+       Responsive
+       ============================================ */
+    @media (max-width: 768px) {
+      .project-title {
+        font-size: var(--font-size-2xl);
+      }
+
+      .project-description {
+        font-size: var(--font-size-base);
+      }
+
+      .project-links {
+        flex-direction: column;
+      }
+
+      .project-link {
+        justify-content: center;
+        width: 100%;
+      }
+    }
+  </style>
+</BaseLayout>

@@ -1,0 +1,228 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { config } from '../../config';
+
+const title = `Talks | ${config.site.title}`;
+
+// Get all talks
+const talks = await getCollection('talks');
+
+// Sort by date (newest first)
+const sortedTalks = talks.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+// Group talks by year
+const talksByYear = sortedTalks.reduce((acc, talk) => {
+  const year = talk.data.date.getFullYear();
+  if (!acc[year]) acc[year] = [];
+  acc[year].push(talk);
+  return acc;
+}, {} as Record<number, typeof talks>);
+
+const years = Object.keys(talksByYear).sort((a, b) => Number(b) - Number(a));
+
+// Format date helper
+const formatDate = (date: Date) => {
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+};
+
+// Type badge helper
+const getTypeBadge = (type: string) => {
+  const badges = {
+    keynote: '🎤 Keynote',
+    talk: '🗣️ Talk',
+    workshop: '🛠️ Workshop',
+    poster: '📊 Poster',
+    panel: '👥 Panel'
+  };
+  return badges[type as keyof typeof badges] || type;
+};
+---
+
+<BaseLayout title={title} description={`Presentations and talks by ${config.name.first} ${config.name.last}`}>
+  <article class="talks-page">
+    <div class="container">
+      <header class="page-header" data-animate="fade-up">
+        <h1>Talks & Presentations</h1>
+        <p class="page-description">
+          Conference presentations, invited talks, and workshops.
+        </p>
+      </header>
+
+      {years.map(year => (
+        <section class="year-section" data-animate="fade-up">
+          <h2 class="year-label">{year}</h2>
+          <div class="talks-list" data-animate="stagger">
+            {talksByYear[Number(year)].map(talk => (
+              <article class="talk-card">
+                <div class="talk-date">
+                  {formatDate(talk.data.date)}
+                </div>
+                <div class="talk-content">
+                  <div class="talk-type-badge">
+                    {getTypeBadge(talk.data.type)}
+                  </div>
+                  <h3 class="talk-title">
+                    <a href={`/talks/${talk.slug}`}>{talk.data.title}</a>
+                  </h3>
+                  <div class="talk-event">{talk.data.event}</div>
+                  {talk.data.location && (
+                    <div class="talk-location">📍 {talk.data.location}</div>
+                  )}
+                  {(talk.data.slides || talk.data.video) && (
+                    <div class="talk-links">
+                      {talk.data.slides && (
+                        <a href={talk.data.slides} class="talk-link" target="_blank" rel="noopener noreferrer">
+                          Slides
+                        </a>
+                      )}
+                      {talk.data.video && (
+                        <a href={talk.data.video} class="talk-link" target="_blank" rel="noopener noreferrer">
+                          Video
+                        </a>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .talks-page {
+    /* Vertical padding handled by article in global.css */
+  }
+
+  .page-header {
+    margin-bottom: var(--space-8);
+  }
+
+  .page-header h1 {
+    margin-top: 0;
+    margin-bottom: var(--space-2);
+  }
+
+  .page-description {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-base);
+    margin: 0;
+  }
+
+  .year-section {
+    margin-bottom: var(--space-12);
+  }
+
+  .year-label {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-muted);
+    margin-top: 0;
+    margin-bottom: var(--space-4);
+    font-family: var(--font-body);
+  }
+
+  .talks-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .talk-card {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: var(--space-5);
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+  }
+
+  .talk-card:hover {
+    background-color: var(--color-bg-alt);
+  }
+
+  .talk-date {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    font-family: var(--font-body);
+  }
+
+  .talk-content {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .talk-type-badge {
+    font-size: var(--font-size-xs);
+    color: var(--color-accent);
+    font-weight: var(--font-weight-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .talk-title {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    margin: 0;
+    line-height: var(--line-height-tight);
+  }
+
+  .talk-title a {
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  .talk-title a:hover {
+    color: var(--color-accent);
+  }
+
+  .talk-event {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-base);
+    font-style: italic;
+  }
+
+  .talk-location {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+  }
+
+  .talk-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-2);
+  }
+
+  .talk-link {
+    color: var(--color-accent);
+    text-decoration: none;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+  }
+
+  .talk-link:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 500px) {
+    .talk-card {
+      grid-template-columns: 1fr;
+      gap: var(--space-2);
+    }
+
+    .talk-date {
+      font-size: var(--font-size-xs);
+    }
+  }
+</style>

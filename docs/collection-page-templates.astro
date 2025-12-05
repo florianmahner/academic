@@ -1,0 +1,510 @@
+<!--
+==============================================================================
+COLLECTION PAGE TEMPLATE EXAMPLES
+==============================================================================
+These are full-page templates that query collections and render multiple items.
+Use these for listing pages, archive pages, filtered views, etc.
+-->
+
+<!-- =============================================================================
+EXAMPLE 1: Blog Archive with Filtering and Sorting
+src/pages/blog/index.astro
+============================================================================= -->
+
+---
+import { getCollection, getEntries } from 'astro:content';
+import Container from '@/components/Container.astro';
+import BlogCard from '@/components/BlogCard.astro';
+import { type CollectionEntry } from 'astro:content';
+
+// Get all published blog posts
+const allPosts = (await getCollection('blog', ({ data }) => {
+  return !data.draft;
+})).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+// Get featured posts
+const featuredPosts = allPosts.filter(post => post.data.featured).slice(0, 3);
+
+// Get posts grouped by category
+const postsByCategory = allPosts.reduce((acc, post) => {
+  const category = post.data.category;
+  if (!acc[category]) acc[category] = [];
+  acc[category].push(post);
+  return acc;
+}, {} as Record<string, typeof allPosts>);
+
+// Get unique tags
+const allTags = new Set<string>();
+allPosts.forEach(post => {
+  post.data.tags.forEach(tag => allTags.add(tag.id));
+});
+
+// Resolve author info for featured posts
+const featuredPostsWithAuthors = await Promise.all(
+  featuredPosts.map(async (post) => {
+    const author = await getEntries([post.data.author]).then(a => a[0]);
+    return { ...post, author };
+  })
+);
+---
+
+<Container>
+  <h1>Blog</h1>
+  <p class="subtitle">Articles about web development, design, and technology</p>
+
+  <!-- Featured Articles -->
+  {featuredPosts.length > 0 && (
+    <section class="featured-section">
+      <h2>Featured Articles</h2>
+      <div class="blog-grid">
+        {featuredPostsWithAuthors.map(post => (
+          <BlogCard post={post} author={post.author} featured />
+        ))}
+      </div>
+    </section>
+  )}
+
+  <!-- All Posts by Category -->
+  {Object.entries(postsByCategory).map(([category, posts]) => (
+    <section class="category-section">
+      <h2>{category.charAt(0).toUpperCase() + category.slice(1)}</h2>
+      <ul class="post-list">
+        {posts.map(post => (
+          <li class="post-list-item">
+            <a href={`/blog/${post.id}`} class="post-title">
+              {post.data.title}
+            </a>
+            <time class="post-date">
+              {post.data.pubDate.toLocaleDateString()}
+            </time>
+            <p class="post-description">{post.data.description}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+  ))}
+
+  <!-- All Posts -->
+  <section class="all-posts-section">
+    <h2>All Articles ({allPosts.length})</h2>
+    <div class="posts-with-filter">
+      <aside class="sidebar">
+        <h3>Filter by Tag</h3>
+        <ul class="tag-filter">
+          {Array.from(allTags).sort().map(tag => (
+            <li>
+              <a href={`/blog/tag/${tag}`}>
+                #{tag}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </aside>
+
+      <div class="posts-list">
+        {allPosts.map(post => (
+          <article class="post-item">
+            <h3>
+              <a href={`/blog/${post.id}`}>{post.data.title}</a>
+            </h3>
+            <div class="post-meta">
+              <time>{post.data.pubDate.toLocaleDateString()}</time>
+              <span class="category">{post.data.category}</span>
+            </div>
+            <p>{post.data.description}</p>
+            <a href={`/blog/${post.id}`} class="read-more">Read More →</a>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+</Container>
+
+
+<!-- =============================================================================
+EXAMPLE 2: Projects Portfolio Grid
+src/pages/projects/index.astro
+============================================================================= -->
+
+---
+import { getCollection } from 'astro:content';
+import Container from '@/components/Container.astro';
+import ProjectCard from '@/components/ProjectCard.astro';
+
+// Get all active projects
+const projects = (await getCollection('projects', ({ data }) => {
+  return data.status !== 'archived';
+})).sort((a, b) => (a.data.order ?? 999) - (b.data.order ?? 999));
+
+// Separate featured and regular projects
+const featuredProjects = projects.filter(p => p.data.featured);
+const regularProjects = projects.filter(p => !p.data.featured);
+
+// Group by status
+const completedProjects = projects.filter(p => p.data.status === 'completed');
+const inProgressProjects = projects.filter(p => p.data.status === 'in-progress');
+
+// Get unique technologies
+const allTechs = new Set<string>();
+projects.forEach(project => {
+  project.data.technologies.forEach(tech => allTechs.add(tech));
+});
+---
+
+<Container>
+  <h1>Portfolio</h1>
+  <p class="subtitle">A selection of my recent projects and work</p>
+
+  <!-- Featured Projects -->
+  {featuredProjects.length > 0 && (
+    <section class="featured-projects">
+      <h2>Featured Projects</h2>
+      <div class="projects-grid">
+        {featuredProjects.map(project => (
+          <ProjectCard {project} featured />
+        ))}
+      </div>
+    </section>
+  )}
+
+  <!-- All Projects with Filtering -->
+  <section class="all-projects">
+    <h2>All Projects</h2>
+
+    <div class="projects-view">
+      <aside class="sidebar">
+        <h3>Filter</h3>
+
+        <div class="filter-group">
+          <h4>Status</h4>
+          <ul>
+            <li>
+              <a href="/projects">All ({projects.length})</a>
+            </li>
+            <li>
+              <a href="/projects?status=completed">
+                Completed ({completedProjects.length})
+              </a>
+            </li>
+            <li>
+              <a href="/projects?status=in-progress">
+                In Progress ({inProgressProjects.length})
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="filter-group">
+          <h4>Technologies</h4>
+          <ul class="tech-list">
+            {Array.from(allTechs).sort().map(tech => (
+              <li>
+                <a href={`/projects?tech=${tech}`}>{tech}</a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </aside>
+
+      <div class="projects-grid">
+        {projects.map(project => (
+          <ProjectCard {project} />
+        ))}
+      </div>
+    </div>
+  </section>
+</Container>
+
+
+<!-- =============================================================================
+EXAMPLE 3: Documentation with Sidebar Navigation
+src/pages/docs/index.astro
+============================================================================= -->
+
+---
+import { getCollection } from 'astro:content';
+import Container from '@/components/Container.astro';
+
+// Get all docs sorted by sidebar_order
+const docs = (await getCollection('docs')).sort((a, b) => {
+  const aOrder = a.data.sidebar_order ?? 999;
+  const bOrder = b.data.sidebar_order ?? 999;
+  return aOrder - bOrder;
+});
+
+// Group docs by category
+const docsByCategory = docs.reduce((acc, doc) => {
+  const category = doc.data.category || 'Uncategorized';
+  if (!acc[category]) acc[category] = [];
+  acc[category].push(doc);
+  return acc;
+}, {} as Record<string, typeof docs>);
+
+// Get searchable docs
+const searchableDocs = docs.filter(doc => doc.data.searchable);
+---
+
+<Container>
+  <div class="docs-layout">
+    <aside class="docs-sidebar">
+      <nav class="docs-nav">
+        <a href="/docs" class="nav-home">Documentation</a>
+
+        {Object.entries(docsByCategory).map(([category, categoryDocs]) => (
+          <div class="nav-category">
+            <h3>{category}</h3>
+            <ul>
+              {categoryDocs.map(doc => (
+                <li>
+                  <a href={`/docs/${doc.id}`}>
+                    {doc.data.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </nav>
+    </aside>
+
+    <main class="docs-content">
+      <h1>Documentation</h1>
+
+      <div class="docs-grid">
+        {Object.entries(docsByCategory).map(([category, categoryDocs]) => (
+          <section class="docs-category">
+            <h2>{category}</h2>
+            <div class="docs-list">
+              {categoryDocs.map(doc => (
+                <article class="doc-card">
+                  <h3>
+                    <a href={`/docs/${doc.id}`}>{doc.data.title}</a>
+                  </h3>
+                  {doc.data.description && (
+                    <p>{doc.data.description}</p>
+                  )}
+                  <a href={`/docs/${doc.id}`} class="read-more">
+                    Read →
+                  </a>
+                </article>
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
+    </main>
+  </div>
+</Container>
+
+
+<!-- =============================================================================
+EXAMPLE 4: Team Members Directory
+src/pages/team/index.astro
+============================================================================= -->
+
+---
+import { getCollection } from 'astro:content';
+import Container from '@/components/Container.astro';
+import TeamMemberCard from '@/components/TeamMemberCard.astro';
+
+// Get all team members
+const teamMembers = await getCollection('team');
+
+// Group by specialties
+const specialties = new Set<string>();
+teamMembers.forEach(member => {
+  member.data.specialties.forEach(s => specialties.add(s));
+});
+
+// Sort by experience (descending)
+const sortedMembers = [...teamMembers].sort(
+  (a, b) => b.data.experience_years - a.data.experience_years
+);
+---
+
+<Container>
+  <h1>Our Team</h1>
+  <p class="subtitle">Meet the talented people behind our work</p>
+
+  <section class="team-directory">
+    <div class="team-filters">
+      <h3>Filter by Specialty</h3>
+      <div class="filter-buttons">
+        <button class="filter-btn active" data-filter="all">
+          All ({teamMembers.length})
+        </button>
+        {Array.from(specialties).sort().map(specialty => {
+          const count = teamMembers.filter(m =>
+            m.data.specialties.includes(specialty)
+          ).length;
+          return (
+            <button class="filter-btn" data-filter={specialty}>
+              {specialty} ({count})
+            </button>
+          );
+        })}
+      </div>
+    </div>
+
+    <div class="team-grid">
+      {sortedMembers.map(member => (
+        <TeamMemberCard {member} />
+      ))}
+    </div>
+  </section>
+
+  <section class="team-stats">
+    <h2>Team Stats</h2>
+    <div class="stats-grid">
+      <div class="stat">
+        <div class="stat-value">{teamMembers.length}</div>
+        <div class="stat-label">Team Members</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">{specialties.size}</div>
+        <div class="stat-label">Specialties</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">
+          {Math.round(
+            teamMembers.reduce((sum, m) => sum + m.data.experience_years, 0) /
+            teamMembers.length
+          )}
+        </div>
+        <div class="stat-label">Avg Years Experience</div>
+      </div>
+    </div>
+  </section>
+</Container>
+
+
+<!-- =============================================================================
+EXAMPLE 5: Testimonials Showcase
+src/pages/testimonials/index.astro
+============================================================================= -->
+
+---
+import { getCollection } from 'astro:content';
+import Container from '@/components/Container.astro';
+import TestimonialCard from '@/components/TestimonialCard.astro';
+
+// Get all testimonials
+const testimonials = await getCollection('testimonials');
+
+// Separate featured testimonials
+const featuredTestimonials = testimonials
+  .filter(t => t.data.featured)
+  .slice(0, 3);
+
+const regularTestimonials = testimonials.filter(t => !t.data.featured);
+
+// Calculate average rating
+const avgRating =
+  (testimonials.reduce((sum, t) => sum + t.data.rating, 0) /
+    testimonials.length).toFixed(1);
+---
+
+<Container>
+  <section class="testimonials-hero">
+    <h1>What Clients Say</h1>
+    <p class="subtitle">Real feedback from people we've worked with</p>
+
+    <div class="rating-summary">
+      <div class="stars">
+        {Array.from({ length: Math.round(parseFloat(avgRating)) }).map(() => (
+          <span class="star">★</span>
+        ))}
+      </div>
+      <p class="average-rating">
+        <strong>{avgRating}</strong> out of 5 stars
+      </p>
+      <p class="testimonial-count">Based on {testimonials.length} reviews</p>
+    </div>
+  </section>
+
+  <!-- Featured Testimonials -->
+  {featuredTestimonials.length > 0 && (
+    <section class="featured-testimonials">
+      <h2>Featured Reviews</h2>
+      <div class="testimonial-carousel">
+        {featuredTestimonials.map(testimonial => (
+          <TestimonialCard {testimonial} featured />
+        ))}
+      </div>
+    </section>
+  )}
+
+  <!-- All Testimonials -->
+  <section class="all-testimonials">
+    <h2>All Testimonials</h2>
+    <div class="testimonials-grid">
+      {regularTestimonials.map(testimonial => (
+        <TestimonialCard {testimonial} />
+      ))}
+    </div>
+  </section>
+</Container>
+
+
+<!-- =============================================================================
+EXAMPLE 6: Upcoming Events Listing
+src/pages/events/index.astro
+============================================================================= -->
+
+---
+import { getCollection } from 'astro:content';
+import Container from '@/components/Container.astro';
+import EventCard from '@/components/EventCard.astro';
+
+// Get all events
+const allEvents = await getCollection('events');
+
+// Separate upcoming and past events
+const now = new Date();
+const upcomingEvents = allEvents
+  .filter(event => event.data.date > now)
+  .sort((a, b) => a.data.date.valueOf() - b.data.date.valueOf());
+
+const pastEvents = allEvents
+  .filter(event => event.data.date <= now)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+// Get unique tags
+const allTags = new Set<string>();
+allEvents.forEach(event => {
+  event.data.tags?.forEach(tag => allTags.add(tag));
+});
+---
+
+<Container>
+  <h1>Events</h1>
+  <p class="subtitle">Upcoming conferences, meetups, and workshops</p>
+
+  <!-- Upcoming Events -->
+  {upcomingEvents.length > 0 && (
+    <section class="upcoming-events">
+      <h2>Upcoming Events ({upcomingEvents.length})</h2>
+      <div class="events-list">
+        {upcomingEvents.map(event => (
+          <EventCard {event} status="upcoming" />
+        ))}
+      </div>
+    </section>
+  )}
+
+  {upcomingEvents.length === 0 && (
+    <p class="no-events">No upcoming events scheduled</p>
+  )}
+
+  <!-- Past Events -->
+  {pastEvents.length > 0 && (
+    <section class="past-events">
+      <h2>Past Events</h2>
+      <div class="events-list">
+        {pastEvents.map(event => (
+          <EventCard {event} status="past" />
+        ))}
+      </div>
+    </section>
+  )}
+</Container>

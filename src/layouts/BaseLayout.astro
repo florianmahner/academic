@@ -14,6 +14,7 @@ import AnimationInit from '../components/AnimationInit.astro';
 import StructuredData from '../components/StructuredData.astro';
 import SettingsPanel from '../components/SettingsPanel.astro';
 import { config } from '../config';
+import { getNavigationWithActive, applyBasePath } from '../lib/navigation';
 import '../styles/global.css';
 
 interface Props {
@@ -34,11 +35,17 @@ const navMode = config.navigationMode;
 // Get base path from Astro config (e.g., '/academic' for subdirectory deployments)
 const base = import.meta.env.BASE_URL;
 
-// Prepend base path to navigation items
-const navItems = config.navigation.map(item => ({
-  ...item,
-  href: base === '/' ? item.href : `${base}${item.href}`,
-}));
+// Strip base path from current pathname for active state detection
+// e.g., /academic/ becomes /, /academic/publications becomes /publications
+const pathWithoutBase = base === '/'
+  ? Astro.url.pathname
+  : Astro.url.pathname.replace(new RegExp(`^${base}`), '') || '/';
+
+// Get auto-generated navigation (with stripped path for active detection)
+const navigation = await getNavigationWithActive(pathWithoutBase);
+
+// Apply base path for rendering
+const navItems = applyBasePath(navigation, base);
 
 const fullName = [config.name.first, config.name.middle, config.name.last].filter(Boolean).join(' ');
 
@@ -86,13 +93,14 @@ const footerLinks = [...config.footer.links, ...socialLinks];
           (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
         html.setAttribute('data-theme', theme);
 
-        // Apply stored nav mode
+        // Apply stored nav mode (or use config default)
         const navMode = localStorage.getItem('nav-mode');
         if (navMode) {
           html.setAttribute('data-nav-mode', navMode);
         }
 
         // Apply stored typography preset (fonts, colors, styles)
+        // This will override config defaults if user has customized
         try {
           // Restore fonts
           const fontsStr = localStorage.getItem('typography-fonts');
@@ -142,7 +150,9 @@ const footerLinks = [...config.footer.links, ...socialLinks];
               <li>
                 <a
                   href={item.href}
-                  class:list={['floating-nav-link', { active: Astro.url.pathname === item.href || (item.href !== '/' && Astro.url.pathname.startsWith(item.href)) }]}
+                  class:list={['floating-nav-link', { active: item.active }]}
+                  target={item.external ? '_blank' : undefined}
+                  rel={item.external ? 'noopener noreferrer' : undefined}
                 >
                   {item.label}
                 </a>
@@ -160,7 +170,9 @@ const footerLinks = [...config.footer.links, ...socialLinks];
               <li>
                 <a
                   href={item.href}
-                  class:list={['sidebar-nav-link', { active: Astro.url.pathname === item.href || (item.href !== '/' && Astro.url.pathname.startsWith(item.href)) }]}
+                  class:list={['sidebar-nav-link', { active: item.active }]}
+                  target={item.external ? '_blank' : undefined}
+                  rel={item.external ? 'noopener noreferrer' : undefined}
                 >
                   {item.label}
                 </a>
@@ -178,7 +190,9 @@ const footerLinks = [...config.footer.links, ...socialLinks];
               <li>
                 <a
                   href={item.href}
-                  class:list={['inline-nav-link', { active: Astro.url.pathname === item.href || (item.href !== '/' && Astro.url.pathname.startsWith(item.href)) }]}
+                  class:list={['inline-nav-link', { active: item.active }]}
+                  target={item.external ? '_blank' : undefined}
+                  rel={item.external ? 'noopener noreferrer' : undefined}
                 >
                   {item.label}
                 </a>
@@ -210,7 +224,9 @@ const footerLinks = [...config.footer.links, ...socialLinks];
             <li>
               <a
                 href={item.href}
-                class:list={['mobile-nav-link', { active: Astro.url.pathname === item.href }]}
+                class:list={['mobile-nav-link', { active: item.active }]}
+                target={item.external ? '_blank' : undefined}
+                rel={item.external ? 'noopener noreferrer' : undefined}
               >
                 {item.label}
               </a>

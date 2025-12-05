@@ -1,31 +1,66 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { PaperCard, ProjectCard, BlogCard } from '../components/blocks';
 import { config } from '../config';
-import { loadPublications, getSelectedPublications } from '../lib/bibtex';
 import educationData from '../content/education.json';
 
 const title = config.site.title;
 
-// Load publications from BibTeX or JSON (prefers .bib)
-const publications = loadPublications(new URL('../content', import.meta.url).pathname);
-const selectedPapers = getSelectedPublications(publications);
-
-// Prepend base path to preview images
-const base = import.meta.env.BASE_URL;
-selectedPapers.forEach(paper => {
-  if (paper.preview && !paper.preview.startsWith('http')) {
-    paper.preview = base === '/' ? paper.preview : `${base}${paper.preview}`;
+// Load selected publications from content collection
+let selectedPublications: any[] = [];
+if (config.features.selectedPublications) {
+  try {
+    const allPublications = await getCollection('publications');
+    if (allPublications.length > 0) {
+      selectedPublications = allPublications
+        .filter(pub => pub.data.selected)
+        .sort((a, b) => b.data.year - a.data.year);
+    }
+  } catch (e) {
+    // Fallback to JSON if collection doesn't exist
+    console.log('Using publications from JSON file');
   }
-});
+}
+
+// Load featured projects from content collection
+let featuredProjects: any[] = [];
+if (config.features.selectedPublications) { // Using same feature flag as publications for now
+  try {
+    const allProjects = await getCollection('projects');
+    if (allProjects.length > 0) {
+      featuredProjects = allProjects
+        .filter(proj => proj.data.featured)
+        .slice(0, 3);
+    }
+  } catch (e) {
+    console.log('No projects available');
+  }
+}
+
+// Load recent blog posts from content collection
+let recentPosts: any[] = [];
+try {
+  const allPosts = await getCollection('blog');
+  if (allPosts.length > 0) {
+    recentPosts = allPosts
+      .filter(post => !post.data.draft)
+      .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+      .slice(0, 3);
+  }
+} catch (e) {
+  console.log('Blog collection not available');
+}
 
 // Education data
 const education = educationData.education;
 
-// Build name for display
-const fullName = [config.name.first, config.name.middle, config.name.last].filter(Boolean).join(' ');
-const displayName = config.name.middle
-  ? `${config.name.first} ${config.name.middle}`
-  : config.name.first;
+// Prepend base path to images
+const base = import.meta.env.BASE_URL;
+const prependBase = (path: string) => {
+  if (!path || path.startsWith('http')) return path;
+  return base === '/' ? path : `${base}${path}`;
+};
 ---
 
 <BaseLayout title={title}>
@@ -46,66 +81,6 @@ const displayName = config.name.middle
         <h2>Research Interests</h2>
         <p set:html={config.about.researchInterests} />
       </section>
-
-      <!-- Selected Publications -->
-      {config.features.selectedPublications && selectedPapers.length > 0 && (
-        <section class="section" data-animate="fade-up">
-          <h2>Selected Publications</h2>
-          <div class="selected-papers" data-animate="stagger">
-            {selectedPapers.map(paper => (
-              <article class:list={['paper-card', paper.preview && 'paper-card--with-preview-lg']}>
-                {paper.preview && (
-                  <div class="paper-preview paper-preview--lg">
-                    <img src={paper.preview} alt={paper.title} loading="lazy" class="preview-light" />
-                    <img src={paper.preview.replace('-light.gif', '-dark.gif')} alt={paper.title} loading="lazy" class="preview-dark" />
-                  </div>
-                )}
-                <div class="paper-content">
-                  <div class="paper-meta">
-                    <span class="paper-venue">{paper.journal || paper.booktitle}</span>
-                    <span class="paper-year">{paper.year}</span>
-                  </div>
-                  <h3 class="paper-title">
-                    {paper.pdf ? (
-                      <a href={paper.pdf} target="_blank" rel="noopener noreferrer">{paper.title}</a>
-                    ) : paper.html ? (
-                      <a href={paper.html} target="_blank" rel="noopener noreferrer">{paper.title}</a>
-                    ) : (
-                      paper.title
-                    )}
-                  </h3>
-                  <p class="paper-authors">{paper.authors.join(', ')}</p>
-                  <div class="paper-links">
-                    {paper.pdf && (
-                      <a href={paper.pdf} class="paper-link" target="_blank" rel="noopener noreferrer">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                          <polyline points="7 10 12 15 17 10"></polyline>
-                          <line x1="12" y1="15" x2="12" y2="3"></line>
-                        </svg>
-                        PDF
-                      </a>
-                    )}
-                    {paper.html && (
-                      <a href={paper.html} class="paper-link" target="_blank" rel="noopener noreferrer">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <circle cx="12" cy="12" r="10"></circle>
-                          <line x1="2" y1="12" x2="22" y2="12"></line>
-                          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-                        </svg>
-                        Web
-                      </a>
-                    )}
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
-          <p class="view-all">
-            <a href="/publications">View all publications &rarr;</a>
-          </p>
-        </section>
-      )}
 
       <!-- Academic Background -->
       {config.features.education && education.length > 0 && (
@@ -141,6 +116,81 @@ const displayName = config.name.middle
               </div>
             ))}
           </div>
+        </section>
+      )}
+
+      <!-- Selected Publications -->
+      {config.features.selectedPublications && selectedPublications.length > 0 && (
+        <section class="section" data-animate="fade-up">
+          <h2>Selected Publications</h2>
+          <div class="selected-papers" data-animate="stagger">
+            {selectedPublications.map(pub => (
+              <PaperCard
+                title={pub.data.title}
+                authors={pub.data.authors}
+                venue={pub.data.venue || pub.data.journal || pub.data.booktitle}
+                year={pub.data.year}
+                preview={prependBase(pub.data.preview)}
+                pdf={pub.data.pdf}
+                html={pub.data.html}
+                code={pub.data.code}
+                abbr={pub.data.abbr}
+              />
+            ))}
+          </div>
+          <p class="view-all">
+            <a href="/publications">View all publications &rarr;</a>
+          </p>
+        </section>
+      )}
+
+      <!-- Featured Projects -->
+      {featuredProjects.length > 0 && (
+        <section class="section" data-animate="fade-up">
+          <h2>Featured Projects</h2>
+          <div class="featured-projects" data-animate="stagger">
+            {featuredProjects.map(project => {
+              const data = project.data;
+              return (
+                <ProjectCard
+                  title={data.title}
+                  description={data.description}
+                  technologies={data.technologies}
+                  tags={data.tags}
+                  github={data.github || data.url}
+                  url={data.url}
+                  demo={data.demo}
+                  image={prependBase(data.image)}
+                  status={data.status}
+                />
+              );
+            })}
+          </div>
+          <p class="view-all">
+            <a href="/projects">View all projects &rarr;</a>
+          </p>
+        </section>
+      )}
+
+      <!-- Recent Blog Posts -->
+      {recentPosts.length > 0 && (
+        <section class="section" data-animate="fade-up">
+          <h2>Recent Posts</h2>
+          <div class="recent-posts" data-animate="stagger">
+            {recentPosts.map(post => (
+              <BlogCard
+                title={post.data.title}
+                description={post.data.description}
+                date={post.data.date}
+                slug={post.slug}
+                tags={post.data.tags}
+                image={prependBase(post.data.image)}
+              />
+            ))}
+          </div>
+          <p class="view-all">
+            <a href="/blog">View all posts &rarr;</a>
+          </p>
         </section>
       )}
     </div>
@@ -182,6 +232,43 @@ const displayName = config.name.middle
     display: flex;
     flex-direction: column;
     gap: var(--space-4);
+  }
+
+  /* Featured Projects */
+  .featured-projects {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--space-4);
+  }
+
+  @media (max-width: 768px) {
+    .featured-projects {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Recent Posts */
+  .recent-posts {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  /* View all link */
+  .view-all {
+    margin-top: var(--space-4);
+    text-align: right;
+  }
+
+  .view-all a {
+    color: var(--color-accent);
+    font-weight: var(--font-weight-medium);
+    text-decoration: none;
+    transition: opacity var(--transition-fast);
+  }
+
+  .view-all a:hover {
+    opacity: 0.8;
   }
 
   /* Education */

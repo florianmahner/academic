@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { loadPublications, groupByYear } from '../lib/bibtex';
+import PublicationList from '../components/blocks/PublicationList.astro';
+import { loadPublications } from '../lib/bibtex';
 import { config } from '../config';
 import path from 'node:path';
 
@@ -17,78 +18,19 @@ publications.forEach(pub => {
     pub.preview = base === '/' ? pub.preview : `${base}${pub.preview}`;
   }
 });
-
-// Group by year
-const pubsByYear = groupByYear(publications);
-const years = Object.keys(pubsByYear).sort((a, b) => Number(b) - Number(a));
 ---
 
 <BaseLayout title={title} description={`Academic publications by ${config.name.first} ${config.name.last}`}>
   <article class="publications-page">
     <div class="container">
-      {years.map(year => (
-        <section class="year-section" data-animate="fade-up">
-          <h2 class="year-label">{year}</h2>
-          <div class="publications-list" data-animate="stagger">
-            {pubsByYear[Number(year)].map(pub => (
-          <article class:list={['paper-card', pub.preview && 'paper-card--with-preview']}>
-            {pub.preview && (
-              <div class="paper-preview">
-                <img src={pub.preview} alt={pub.title} loading="lazy" class="preview-light" />
-                <img src={pub.preview.replace('-light.gif', '-dark.gif')} alt={pub.title} loading="lazy" class="preview-dark" />
-              </div>
-            )}
-            <div class="paper-content">
-              <div class="paper-meta">
-                <span class="paper-venue">{pub.journal || pub.booktitle}</span>
-              </div>
-              <h3 class="paper-title">
-                {pub.pdf ? (
-                  <a href={pub.pdf} target="_blank" rel="noopener noreferrer">{pub.title}</a>
-                ) : pub.html ? (
-                  <a href={pub.html} target="_blank" rel="noopener noreferrer">{pub.title}</a>
-                ) : (
-                  pub.title
-                )}
-              </h3>
-              <p class="paper-authors">
-                {pub.authors.map((author, i) => (
-                  <>
-                    <span class:list={{ 'highlight-author': author.includes('Mahner') }}>
-                      {author}
-                    </span>
-                    {i < pub.authors.length - 1 && ', '}
-                  </>
-                ))}
-              </p>
-              <div class="paper-links">
-                {pub.pdf && (
-                  <a href={pub.pdf} class="paper-link" target="_blank" rel="noopener noreferrer">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                      <polyline points="7 10 12 15 17 10"></polyline>
-                      <line x1="12" y1="15" x2="12" y2="3"></line>
-                    </svg>
-                    PDF
-                  </a>
-                )}
-                {pub.html && (
-                  <a href={pub.html} class="paper-link" target="_blank" rel="noopener noreferrer">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <circle cx="12" cy="12" r="10"></circle>
-                      <line x1="2" y1="12" x2="22" y2="12"></line>
-                      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-                    </svg>
-                    Web
-                  </a>
-                )}
-              </div>
-            </div>
-          </article>
-            ))}
-          </div>
-        </section>
-      ))}
+      <header class="page-header" data-animate="fade-up">
+        <h1>Publications</h1>
+        <p class="page-description">
+          Selected publications on machine learning, neuroscience, and AI.
+        </p>
+      </header>
+
+      <PublicationList publications={publications} />
     </div>
   </article>
 </BaseLayout>
@@ -98,27 +40,18 @@ const years = Object.keys(pubsByYear).sort((a, b) => Number(b) - Number(a));
     /* Vertical padding handled by article in global.css */
   }
 
-  .year-section {
-    margin-bottom: var(--space-12);
+  .page-header {
+    margin-bottom: var(--space-8);
   }
 
-  .year-section:first-child {
+  .page-header h1 {
     margin-top: 0;
+    margin-bottom: var(--space-2);
   }
 
-  .year-label {
-    font-size: var(--font-size-lg);
-    font-weight: var(--font-weight-medium);
+  .page-description {
     color: var(--color-text-muted);
-    margin-top: 0;
-    margin-bottom: var(--space-4);
-    font-family: var(--font-body);
-  }
-
-  /* Publications list - uses global .paper-* classes from global.css */
-  .publications-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
+    font-size: var(--font-size-base);
+    margin: 0;
   }
 </style>

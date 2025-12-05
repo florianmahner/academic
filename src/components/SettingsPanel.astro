@@ -372,9 +372,15 @@ const navModes = [
 </style>
 
 <script>
-  import { DEFAULT_PRESET_ID } from '../lib/typography-presets';
-
   function initSettingsPanel() {
+    // Get default preset from localStorage or data attribute (set by config)
+    const getDefaultPresetId = () => {
+      const stored = localStorage.getItem('typography-preset');
+      if (stored) return stored;
+      // Fallback to data attribute set by config
+      const html = document.documentElement;
+      return html.getAttribute('data-typography') || 'editorial-newsreader';
+    };
     const toggle = document.getElementById('settings-toggle');
     const dropdown = document.getElementById('settings-dropdown');
     const close = document.getElementById('settings-close');
@@ -396,7 +402,7 @@ const navModes = [
 
     // Get stored values
     const getStoredNavMode = () => localStorage.getItem('nav-mode') || 'sidebar';
-    const getStoredPreset = () => localStorage.getItem('typography-preset') || DEFAULT_PRESET_ID;
+    const getStoredPreset = () => localStorage.getItem('typography-preset') || getDefaultPresetId();
 
     // Apply nav mode
     const applyNavMode = (mode: string) => {

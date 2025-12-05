@@ -8,20 +8,22 @@ draft: false
 
 # Welcome!
 
-This is a sample blog post to demonstrate the blog functionality. You can write posts in Markdown with full support for:
+Welcome to my blog where I share thoughts on research, machine learning, and academic life. This is a space for exploring ideas, sharing findings, and connecting with the community.
 
-- **Bold** and *italic* text
-- Code blocks with syntax highlighting
-- Links and images
-- Lists and blockquotes
+## What You'll Find Here
 
-## Code Example
+- Research insights and updates
+- Technical tutorials and guides
+- Reflections on academia and PhD life
+- Code examples and best practices
+
+## Example Code
 
 ```python
-def hello_world():
-    print("Hello, World!")
+def explore_ideas():
+    return "Let's learn together!"
 ```
 
-## What's Next
+## Let's Connect
 
-Feel free to replace this post with your own content. Blog posts support frontmatter for metadata like title, date, tags, and more.
+Feel free to explore the posts, leave comments, and reach out if you want to discuss any topics further.

@@ -1,0 +1,187 @@
+---
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { config } from '../../config';
+
+export async function getStaticPaths() {
+  const teaching = await getCollection('teaching');
+  return teaching.map(entry => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+interface Props {
+  entry: CollectionEntry<'teaching'>;
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+
+const title = `${entry.data.title} | Teaching | ${config.site.title}`;
+const description = entry.data.description || `${entry.data.role} - ${entry.data.institution}`;
+---
+
+<BaseLayout title={title} description={description}>
+  <article class="teaching-detail">
+    <div class="container container--narrow">
+      <header class="detail-header" data-animate="fade-up">
+        <nav class="breadcrumb">
+          <a href="/teaching">← Back to teaching</a>
+        </nav>
+
+        <div class="role-badge">{entry.data.role}</div>
+
+        <h1 class="detail-title">{entry.data.title}</h1>
+
+        <div class="detail-meta">
+          <div class="meta-item">
+            <strong>Institution:</strong> {entry.data.institution}
+          </div>
+          <div class="meta-item">
+            <strong>Semester:</strong> {entry.data.semester}
+          </div>
+          {entry.data.students && (
+            <div class="meta-item">
+              <strong>Students:</strong> {entry.data.students}
+            </div>
+          )}
+        </div>
+
+        {(entry.data.materials || entry.data.syllabus) && (
+          <div class="detail-links">
+            {entry.data.materials && (
+              <a href={entry.data.materials} class="detail-link" target="_blank" rel="noopener noreferrer">
+                Course Materials →
+              </a>
+            )}
+            {entry.data.syllabus && (
+              <a href={entry.data.syllabus} class="detail-link" target="_blank" rel="noopener noreferrer">
+                Syllabus →
+              </a>
+            )}
+          </div>
+        )}
+      </header>
+
+      {entry.data.description && (
+        <div class="detail-content" data-animate="fade-up">
+          <section>
+            <h2>Course Description</h2>
+            <p>{entry.data.description}</p>
+          </section>
+        </div>
+      )}
+
+      {entry.data.evaluations && (
+        <div class="detail-content" data-animate="fade-up">
+          <section>
+            <h2>Teaching Evaluations</h2>
+            <p>{entry.data.evaluations}</p>
+          </section>
+        </div>
+      )}
+
+      <!-- Full Markdown Content -->
+      <div class="detail-content prose" data-animate="fade-up">
+        <Content />
+      </div>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .teaching-detail {
+    /* Vertical padding handled by article in global.css */
+  }
+
+  .container--narrow {
+    max-width: 720px;
+  }
+
+  .detail-header {
+    margin-bottom: var(--space-8);
+  }
+
+  .breadcrumb {
+    margin-bottom: var(--space-4);
+  }
+
+  .breadcrumb a {
+    color: var(--color-text-muted);
+    text-decoration: none;
+    font-size: var(--font-size-sm);
+    transition: color var(--transition-fast);
+  }
+
+  .breadcrumb a:hover {
+    color: var(--color-accent);
+  }
+
+  .role-badge {
+    font-size: var(--font-size-xs);
+    color: var(--color-accent);
+    font-weight: var(--font-weight-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--space-3);
+  }
+
+  .detail-title {
+    margin: 0 0 var(--space-4);
+    font-size: var(--font-size-2xl);
+    line-height: var(--line-height-tight);
+  }
+
+  .detail-meta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-base);
+    margin-bottom: var(--space-4);
+  }
+
+  .meta-item strong {
+    color: var(--color-text);
+  }
+
+  .detail-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-4);
+  }
+
+  .detail-link {
+    color: var(--color-accent);
+    text-decoration: none;
+    font-weight: var(--font-weight-medium);
+    transition: text-decoration var(--transition-fast);
+  }
+
+  .detail-link:hover {
+    text-decoration: underline;
+  }
+
+  .detail-content {
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .detail-content section {
+    margin-bottom: var(--space-8);
+  }
+
+  .detail-content h2 {
+    font-size: var(--font-size-xl);
+    margin-top: 0;
+    margin-bottom: var(--space-4);
+  }
+
+  .detail-content p {
+    margin-bottom: var(--space-4);
+    color: var(--color-text-secondary);
+  }
+</style>

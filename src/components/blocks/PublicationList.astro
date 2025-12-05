@@ -1,0 +1,107 @@
+---
+/**
+ * PublicationList Component
+ * Renders a list of publications grouped by year
+ */
+
+import PaperCard from './PaperCard.astro';
+import type { Publication } from '../../lib/bibtex';
+
+interface Props {
+  publications: Publication[];
+  groupByYear?: boolean;
+  highlightAuthor?: string;
+  showPreviews?: boolean;
+  class?: string;
+}
+
+const {
+  publications,
+  groupByYear = true,
+  highlightAuthor = 'Mahner',
+  showPreviews = true,
+  class: className,
+} = Astro.props;
+
+// Group publications by year
+const pubsByYear: Record<number, Publication[]> = {};
+publications.forEach(pub => {
+  const year = pub.year || new Date().getFullYear();
+  if (!pubsByYear[year]) {
+    pubsByYear[year] = [];
+  }
+  pubsByYear[year].push(pub);
+});
+
+const years = Object.keys(pubsByYear).sort((a, b) => Number(b) - Number(a));
+---
+
+<div class:list={['publication-list', className]}>
+  {groupByYear ? (
+    years.map(year => (
+      <section class="year-section" data-animate="fade-up">
+        <h2 class="year-label">{year}</h2>
+        <div class="publications" data-animate="stagger">
+          {pubsByYear[Number(year)].map(pub => (
+            <PaperCard
+              title={pub.title}
+              authors={pub.authors}
+              venue={pub.journal || pub.booktitle}
+              year={pub.year}
+              preview={showPreviews ? pub.preview : undefined}
+              pdf={pub.pdf}
+              html={pub.html}
+              code={pub.code}
+              highlightAuthor={highlightAuthor}
+            />
+          ))}
+        </div>
+      </section>
+    ))
+  ) : (
+    <div class="publications" data-animate="stagger">
+      {publications.map(pub => (
+        <PaperCard
+          title={pub.title}
+          authors={pub.authors}
+          venue={pub.journal || pub.booktitle}
+          year={pub.year}
+          preview={showPreviews ? pub.preview : undefined}
+          pdf={pub.pdf}
+          html={pub.html}
+          code={pub.code}
+          highlightAuthor={highlightAuthor}
+        />
+      ))}
+    </div>
+  )}
+</div>
+
+<style>
+  .publication-list {
+    width: 100%;
+  }
+
+  .year-section {
+    margin-bottom: var(--space-12);
+  }
+
+  .year-section:first-child {
+    margin-top: 0;
+  }
+
+  .year-label {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-muted);
+    margin-top: 0;
+    margin-bottom: var(--space-4);
+    font-family: var(--font-body);
+  }
+
+  .publications {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+</style>

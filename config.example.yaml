@@ -1,0 +1,398 @@
+# =============================================================================
+# ACADEMIC TEMPLATE CONFIGURATION - EXAMPLE
+# =============================================================================
+# This is an example configuration file showing all available options with
+# placeholder values. Use this as a template when setting up your site.
+#
+# QUICK START:
+# 1. Copy this file to config.yaml
+# 2. Replace all placeholder values with your actual information
+# 3. Remove or comment out any sections you don't want to display
+# 4. Uncomment optional features as needed
+#
+# NOTE: Any field left as an empty string ("") will be hidden from the site.
+#       Remove entire sections if you want to disable them completely.
+#
+# =============================================================================
+
+
+# =============================================================================
+# PERSONAL INFORMATION
+# =============================================================================
+# Core biographical details displayed across the site
+
+name:
+  first: Your
+  middle: M
+  last: Name
+
+# Professional title or tagline shown under your name
+# Examples: "Assistant Professor of Computer Science"
+#           "Doctoral Researcher in Machine Learning"
+#           "Research Scientist at ACME Labs"
+title: Assistant Professor of Computer Science
+
+# Institution/affiliation details
+# These are displayed in the header and throughout the site
+institution:
+  name: University Name
+  url: https://your-university.edu
+
+# Primary contact email
+# This is used for the contact link in the footer
+email: your.email@university.edu
+
+# Avatar/profile image
+# Path should be relative to the public/ folder
+# Recommended: PNG or JPG image, ~400x400px
+# If you don't have an avatar image, set this to ""
+avatar: /avatar.jpg
+
+
+# =============================================================================
+# SOCIAL LINKS & EXTERNAL PROFILES
+# =============================================================================
+# Connect your professional profiles. Leave empty string ("") to hide any link.
+# Links will appear in the header/sidebar and footer.
+
+social:
+  # GitHub username (appears as github.com/username)
+  github: yourname
+
+  # Google Scholar ID (the long alphanumeric ID from your Scholar profile URL)
+  # Find it at: scholar.google.com/citations?user=YOUR_ID
+  scholar: EXAMPLE_ID
+
+  # LinkedIn username
+  linkedin: yourname
+
+  # Twitter/X handle (without the @)
+  twitter: yourname_research
+
+  # ORCID identifier (with hyphens: 0000-0000-0000-0000)
+  # Get one free at: orcid.org
+  orcid: 0000-0001-2345-6789
+
+  # ResearchGate username (leave empty if not used)
+  # Example: set to "Your_Name_123" or leave as ""
+  researchgate: ""
+
+
+# =============================================================================
+# SITE METADATA
+# =============================================================================
+# These settings control how your site appears in search engines and browsers
+
+site:
+  # Full URL of your site (no trailing slash)
+  url: https://yourdomain.edu/academic
+
+  # Site title (shown in browser tab and search results)
+  title: Your Name - Research
+
+  # Site description (used by search engines and social media)
+  # Keep it under 160 characters for optimal display
+  description: Personal academic website - Research in machine learning, computational linguistics, and AI
+
+  # Language code (ISO 639-1)
+  language: en
+
+  # Base URL path for subdirectory deployments
+  # Use "/" for root domain, or "/academic/" for subdomain
+  # Examples:
+  #   - "/" for https://yourdomain.edu/
+  #   - "/academic/" for https://yourdomain.edu/academic/
+  base: /
+
+
+# =============================================================================
+# NAVIGATION CONFIGURATION
+# =============================================================================
+# Control how users navigate your site
+
+navigation:
+  # Display mode for the navigation menu
+  #
+  # Options:
+  #   - "floating": Safari-style floating pill at bottom of viewport
+  #     + Modern, minimal appearance
+  #     + Auto-hides when scrolling down, shows when scrolling up
+  #     + Best for mobile-first designs
+  #     + Clean, unobtrusive navigation
+  #
+  #   - "sidebar": Fixed left sidebar (always visible)
+  #     + Traditional academic website style
+  #     + Takes up space on left side
+  #     + Persistent navigation
+  #     + Good for content-rich sites
+  #
+  #   - "inline": Traditional top header navigation
+  #     + Classic website navigation
+  #     + Appears in page header
+  #     + Traditional feel
+  #     + Works well with hero sections
+  #
+  mode: sidebar
+
+  # Navigation menu items
+  # Order matters - items will appear in the order listed
+  # Leave as empty array [] to auto-generate from published pages
+  #
+  # Each item has:
+  #   - id: Unique identifier (for styling/tracking)
+  #   - label: Text displayed in the menu
+  #   - href: URL path (usually /page-name or /section/)
+  #
+  items:
+    - id: about
+      label: About
+      href: /
+
+    - id: publications
+      label: Publications
+      href: /publications
+
+    - id: open-source
+      label: Open Source
+      href: /open-source
+
+    - id: misc
+      label: Misc
+      href: /misc
+
+    # Optional sections - uncomment to enable:
+    #
+    # Blog section
+    # - id: blog
+    #   label: Blog
+    #   href: /blog
+    #
+    # Curriculum Vitae / Resume
+    # - id: cv
+    #   label: CV
+    #   href: /cv
+    #
+    # Teaching portfolio
+    # - id: teaching
+    #   label: Teaching
+    #   href: /teaching
+    #
+    # Talks and presentations
+    # - id: talks
+    #   label: Talks
+    #   href: /talks
+    #
+    # Projects portfolio
+    # - id: projects
+    #   label: Projects
+    #   href: /projects
+
+
+# =============================================================================
+# THEME & VISUAL DESIGN
+# =============================================================================
+# Customize the look and feel of your site
+
+theme:
+  # Typography and color scheme preset
+  #
+  # Available presets:
+  #
+  # 1. "crimson-classic"
+  #    - Classic serif aesthetic with deep red accents
+  #    - Uses: Georgia serif + crimson color
+  #    - Best for: Traditional academic, formal appearance
+  #    - Mood: Scholarly, established, professional
+  #
+  # 2. "editorial-newsreader"
+  #    - Editorial serif design with balanced spacing
+  #    - Uses: Playfair Display + Crimson text
+  #    - Best for: Magazine-style, editorial content
+  #    - Mood: Thoughtful, curated, editorial
+  #
+  # 3. "modern-geist"
+  #    - Contemporary sans-serif with neutral tones
+  #    - Uses: Geist (Inter-like) + soft gray accents
+  #    - Best for: Modern research, tech-forward
+  #    - Mood: Clean, contemporary, minimalist
+  #
+  # 4. "classic-playfair"
+  #    - Elegant serif with sophisticated spacing
+  #    - Uses: Playfair Display heading + serif body
+  #    - Best for: Design-focused academics
+  #    - Mood: Elegant, refined, distinctive
+  #
+  # 5. "brutalist-space"
+  #    - Stark sans-serif with high contrast
+  #    - Uses: Mono/sans fonts + strong contrast
+  #    - Best for: Computer science, technical focus
+  #    - Mood: Minimal, bold, technical
+  #
+  # 6. "humanist-inter"
+  #    - Friendly, readable humanist sans-serif
+  #    - Uses: Inter font + warm accents
+  #    - Best for: Approachable, inclusive tone
+  #    - Mood: Friendly, modern, readable
+  #
+  preset: editorial-newsreader
+
+  # Override preset accent colors (optional)
+  # Leave empty to use preset defaults
+  # Use hex color codes (e.g., "#4f46e5" for indigo, "#dc2626" for red)
+  #
+  # accent_light: Used in light mode (usually lighter/brighter)
+  # accent_dark: Used in dark mode (usually darker/more saturated)
+  #
+  # Examples:
+  #   accent_light: "#4f46e5"  # Indigo
+  #   accent_dark: "#818cf8"   # Light indigo
+  #
+  #   accent_light: "#dc2626"  # Red
+  #   accent_dark: "#ef4444"   # Light red
+  #
+  #   accent_light: "#059669"  # Emerald
+  #   accent_dark: "#10b981"   # Light emerald
+  #
+  # Leave as empty strings to use preset defaults:
+  accent_light: ""
+  accent_dark: ""
+
+
+# =============================================================================
+# FEATURE FLAGS & FUNCTIONALITY
+# =============================================================================
+# Enable/disable optional features. Set to true to show, false to hide.
+
+features:
+  # Show "Selected Publications" section on the homepage
+  # Displays your most important/recent papers
+  # Requires: Publication entries marked as "featured: true"
+  selected_publications: true
+
+  # Show "Education" section on the homepage
+  # Lists your degrees, institutions, graduation years
+  # Helps establish academic credentials
+  education: true
+
+  # Enable dark/light theme toggle
+  # Users can switch between light and dark mode
+  # The preference is saved in their browser
+  dark_mode: true
+
+  # Enable GSAP scroll animations
+  # Smooth scroll-triggered animations for elements
+  # Makes the site feel more interactive and polished
+  # Note: Slight performance impact on very old devices
+  animations: true
+
+  # Show the settings gear icon in the header
+  # Allows users to customize theme/appearance
+  # Opens a small settings panel for theme selection
+  settings_panel: true
+
+
+# =============================================================================
+# ABOUT PAGE CONTENT
+# =============================================================================
+# Main biographical content displayed on the homepage/about page
+# HTML is supported - use for links, emphasis, etc.
+
+about:
+  # Main biography paragraph
+  # This is the primary text about you shown on the homepage
+  #
+  # You can use HTML for:
+  #   - Links: <a href='URL' target='_blank'>text</a>
+  #   - Bold: <strong>text</strong>
+  #   - Italics: <em>text</em>
+  #   - Breaks: <br/>
+  #
+  # Use | for multi-line text (YAML pipe operator)
+  #
+  # TIP: Start with a compelling sentence. The first 1-2 sentences are often
+  # what people read. Make them count!
+  #
+  bio: |
+    I am a researcher exploring the fascinating intersection of <a href='https://en.wikipedia.org/wiki/Computational_neuroscience' target='_blank'>computational neuroscience</a> and <a href='https://distill.pub' target='_blank'>interpretable machine learning</a>. My work investigates how artificial systems can learn, reason, and adapt in ways that mirror—and sometimes surpass—biological intelligence.
+
+  # Research interests and focus areas
+  #
+  # Use this to explain:
+  #   - What problems you find interesting
+  #   - How your work bridges disciplines
+  #   - Your broader intellectual curiosity
+  #   - What drives your research
+  #
+  # Format: Same as bio (HTML supported, use | for multi-line)
+  #
+  research_interests: |
+    My research interests span representation learning, computational cognitive modeling, and the philosophical implications of artificial intelligence. I believe the most interesting questions emerge at disciplinary boundaries—where computer science meets neuroscience, where statistics meets epistemology. I'm also fascinated by open science and finding elegant solutions to complex problems.
+
+
+# =============================================================================
+# FOOTER CONFIGURATION
+# =============================================================================
+# Settings for the site footer
+
+footer:
+  # Show copyright notice with current year
+  # Example: "© 2024 Your Name"
+  # Set to false to hide
+  copyright: true
+
+  # Footer links (optional)
+  # Useful for: Email, CV download, social profiles, contact info
+  #
+  # Each link has:
+  #   - label: Text displayed
+  #   - href: URL or mailto:email
+  #
+  # Examples:
+  #   - label: Email
+  #     href: mailto:your.email@university.edu
+  #   - label: CV
+  #     href: /documents/cv.pdf
+  #   - label: GitHub
+  #     href: https://github.com/yourname
+  #
+  links:
+    - label: Email
+      href: mailto:your.email@university.edu
+
+
+# =============================================================================
+# TIPS FOR CUSTOMIZATION
+# =============================================================================
+#
+# 1. COLORS & THEMES:
+#    - Try different presets to find one that matches your style
+#    - Override accent colors for a unique look
+#    - Light and dark modes automatically adjust colors
+#
+# 2. CONTENT SECTIONS:
+#    - Remove entire sections by deleting their entries
+#    - Empty strings ("") hide individual fields
+#    - Use | for multi-line text with proper formatting
+#
+# 3. SOCIAL LINKS:
+#    - Verify your profile IDs/usernames are correct
+#    - Links open in new tabs for external profiles
+#    - Missing links won't break anything (they're just hidden)
+#
+# 4. NAVIGATION:
+#    - Order items by importance/frequency of access
+#    - Keep menu short (4-6 items optimal)
+#    - Auto-generation works well for simple sites
+#
+# 5. SEO:
+#    - Good site description helps search visibility
+#    - Include relevant keywords naturally
+#    - Keep title concise but descriptive
+#
+# 6. TESTING:
+#    - Test on mobile devices
+#    - Check dark mode appearance
+#    - Verify all social links work
+#    - Test settings panel and theme switching
+#
+# =============================================================================
