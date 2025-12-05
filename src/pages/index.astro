@@ -94,7 +94,7 @@ const prependBase = (path: string) => {
 <BaseLayout title={title}>
   <article class="about-page">
     <div class="container">
-      <h1 class="sr-only">{config.personal.name} - Academic Portfolio</h1>
+      <h1 class="sr-only">{[config.name.first, config.name.middle, config.name.last].filter(Boolean).join(' ')} - Academic Portfolio</h1>
       <!-- About Section -->
       <section class="about-section" data-animate="fade-up">
         <p set:html={config.about.bio} />
