@@ -266,9 +266,9 @@ const regularItems = variant === 'featured' ? visibleItems.slice(1) : visibleIte
   }
 
   .featured-description {
-    font-size: var(--font-size-lg);
-    line-height: var(--line-height-relaxed);
-    color: var(--color-text-secondary);
+    font-size: var(--view-description-size);
+    line-height: var(--line-height-normal);
+    color: var(--view-description-color);
     margin: 0 0 var(--space-4) 0;
     max-width: 65ch;
   }
@@ -333,8 +333,8 @@ const regularItems = variant === 'featured' ? visibleItems.slice(1) : visibleIte
   }
 
   .editorial-title {
-    font-size: var(--font-size-lg);
-    font-weight: var(--font-weight-medium);
+    font-size: var(--view-title-size);
+    font-weight: var(--view-title-weight);
     line-height: var(--line-height-snug);
     margin: 0 0 var(--space-2) 0;
     transition: color var(--transition-fast);
@@ -345,9 +345,9 @@ const regularItems = variant === 'featured' ? visibleItems.slice(1) : visibleIte
   }
 
   .editorial-description {
-    font-size: var(--font-size-base);
-    line-height: var(--line-height-relaxed);
-    color: var(--color-text-secondary);
+    font-size: var(--view-description-size);
+    line-height: var(--line-height-normal);
+    color: var(--view-description-color);
     margin: 0;
     max-width: 60ch;
   }
@@ -435,13 +435,7 @@ const regularItems = variant === 'featured' ? visibleItems.slice(1) : visibleIte
       --editorial-gutter: 80px;
     }
 
-    .featured-title {
-      font-size: var(--font-size-xl);
-    }
-
-    .featured-description {
-      font-size: var(--font-size-base);
-    }
+    /* featured elements inherit from main rules using view tokens */
   }
 
   @media (max-width: 600px) {

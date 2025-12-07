@@ -341,8 +341,8 @@ function estimateReadTime(item: ViewItem): number {
   }
 
   .hero-description {
-    font-size: var(--font-size-lg);
-    line-height: var(--line-height-relaxed);
+    font-size: var(--view-description-size);
+    line-height: var(--line-height-normal);
     margin: 0;
     max-width: 700px;
     opacity: 0.95;
@@ -449,8 +449,8 @@ function estimateReadTime(item: ViewItem): number {
   }
 
   .featured-title {
-    font-size: var(--font-size-xl);
-    font-weight: var(--font-weight-medium);
+    font-size: var(--view-title-size);
+    font-weight: var(--view-title-weight);
     line-height: var(--line-height-snug);
     margin: 0 0 var(--space-2) 0;
     transition: color var(--transition-fast);
@@ -461,9 +461,9 @@ function estimateReadTime(item: ViewItem): number {
   }
 
   .featured-description {
-    font-size: var(--font-size-base);
-    line-height: var(--line-height-relaxed);
-    color: var(--color-text-secondary);
+    font-size: var(--view-description-size);
+    line-height: var(--line-height-normal);
+    color: var(--view-description-color);
     margin: 0;
     flex: 1;
   }
@@ -599,9 +599,7 @@ function estimateReadTime(item: ViewItem): number {
       gap: var(--space-6);
     }
 
-    .featured-title {
-      font-size: var(--font-size-lg);
-    }
+    /* featured-title inherits from main rule using view tokens */
 
     .archive-link {
       grid-template-columns: 1fr;
