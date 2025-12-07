@@ -1,5 +1,5 @@
 ---
-import { getCollection, getEntry, render } from 'astro:content';
+import { getCollection, getEntry } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { PaperCard } from '../components/blocks';
 import NewsTimeline from '../components/blocks/NewsTimeline.astro';
@@ -18,8 +18,6 @@ let researchInterestsHtml = '';
 try {
   const aboutPage = await getEntry('pages', 'about');
   if (aboutPage) {
-    // Render the full markdown to HTML
-    const { Content } = await render(aboutPage);
 
     // Get the raw body to split into sections
     const rawBody = aboutPage.body;
@@ -61,7 +59,7 @@ try {
       bioHtml = convertMd(rawBody);
     }
   }
-} catch (e) {
+} catch {
   // About page not found, fallback to config
   // Fallback to config if about.md doesn't exist
   bioHtml = config.about?.bio || '';
@@ -100,7 +98,7 @@ try {
       href: prependBase(`/blog/${post.slug}`),
     }))
   );
-} catch (e) {
+} catch {
   // Blog collection not available
 }
 
@@ -113,7 +111,7 @@ try {
     date: talk.data.date,
     href: prependBase(`/talks/${talk.slug}`),
   })));
-} catch (e) {
+} catch {
   // Talks collection not available
 }
 
@@ -129,7 +127,7 @@ try {
       href: item.data.link, // Optional external link
     }))
   );
-} catch (e) {
+} catch {
   // News collection not available
 }
 

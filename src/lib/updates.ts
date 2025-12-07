@@ -35,7 +35,7 @@ export async function getAllUpdates(): Promise<UpdateItem[]> {
       url: `/publications/${pub.slug}`,
       description: pub.data.abstract,
     }));
-  } catch (e) {
+  } catch {
     // Collection doesn't exist, skip
   }
 
@@ -52,7 +52,7 @@ export async function getAllUpdates(): Promise<UpdateItem[]> {
       url: `/talks/${talk.slug}`,
       description: talk.data.abstract,
     }));
-  } catch (e) {
+  } catch {
     // Collection doesn't exist, skip
   }
 
@@ -77,7 +77,7 @@ export async function getAllUpdates(): Promise<UpdateItem[]> {
       url: `/teaching/${course.slug}`,
       description: course.data.description,
     }));
-  } catch (e) {
+  } catch {
     // Collection doesn't exist, skip
   }
 
@@ -93,7 +93,7 @@ export async function getAllUpdates(): Promise<UpdateItem[]> {
       description: project.data.description,
       tags: project.data.tags,
     }));
-  } catch (e) {
+  } catch {
     // Collection doesn't exist, skip
   }
 
