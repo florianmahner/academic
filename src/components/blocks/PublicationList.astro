@@ -52,7 +52,6 @@ const years = Object.keys(pubsByYear).sort((a, b) => Number(b) - Number(a));
               title={pub.title}
               authors={pub.authors}
               venue={pub.journal || pub.booktitle}
-              year={pub.year}
               preview={effectiveShowPreviews ? pub.preview : undefined}
               pdf={pub.pdf}
               html={pub.html}

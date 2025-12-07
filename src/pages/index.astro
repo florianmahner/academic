@@ -146,8 +146,7 @@ const prependBase = (path: string) => {
               <PaperCard
                 title={pub.title}
                 authors={pub.authors}
-                venue={pub.journal || pub.booktitle}
-                year={pub.year}
+                venue={`${pub.journal || pub.booktitle}${pub.year ? `, ${pub.year}` : ''}`}
                 preview={prependBase(pub.preview)}
                 pdf={pub.pdf}
                 html={pub.html}
