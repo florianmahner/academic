@@ -10,6 +10,7 @@
     "astro": "astro",
     "lint": "eslint . --ext .js,.ts,.astro",
     "lint:fix": "eslint . --ext .js,.ts,.astro --fix",
+    "check-links": "node scripts/check-links.js",
     "validate-config": "node scripts/validate-config.js",
     "prepare": "husky"
   },
