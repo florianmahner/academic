@@ -147,8 +147,12 @@ const collectionPages = defineCollection({
     // All options work across views; irrelevant options are ignored
     viewConfig: z.object({
       // === Style Variant ===
-      // For timeline view: "minimal" (clean rows) | "strip" (vertical line with connected dots)
-      style: z.enum(['minimal', 'strip']).optional(),
+      // For timeline view:
+      // - "minimal": Clean rows with date column and small dots
+      // - "strip": Simple vertical line with connected dots
+      // - "classic": Elegant gradient accent line, ringed dots, year pills
+      // - "alternating": True timeline with items on left/right of center line
+      style: z.enum(['minimal', 'strip', 'classic', 'alternating']).optional(),
 
       // === Grouping ===
       groupBy: z.enum(['year', 'semester', 'none']).optional(),

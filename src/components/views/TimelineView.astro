@@ -5,22 +5,21 @@
  * Chronological list view with year groupings and type indicators.
  * Best for: News feeds, talks, mixed content streams.
  *
- * Features:
- * - Groups items by year with decorative headers
- * - Type-colored dots for visual categorization
- * - Compact date display aligned for scanning
- * - Optional context line (event, venue, etc.)
- * - Action links with icons
+ * Styles:
+ * - "minimal": Clean rows with date column and small dots
+ * - "strip": Simple vertical line with connected dots
+ * - "classic": Elegant timeline with gradient accent line, ringed dots, year pills
+ * - "alternating": True timeline with items alternating left/right of center line
  *
  * Frontmatter Configuration:
  * ```yaml
  * view: "timeline"
  * viewConfig:
- *   style: "minimal"          # "minimal" (clean rows) | "strip" (vertical line with connected dots)
+ *   style: "classic"          # "minimal" | "strip" | "classic"
  *   groupBy: "year"           # Group items by year
  *   showDot: true             # Show type/status indicator
  *   dotType: "content"        # "content" | "status"
- *   showDate: true            # Show date column
+ *   showDate: true            # Show date
  *   dateFormat: "short"       # "short" | "long" | "month-year"
  *   showDescription: false    # Show description text
  *   showContext: true         # Show context line (event/venue)
@@ -33,28 +32,20 @@ import ViewDate from '../primitives/ViewDate.astro';
 import ViewDot from '../primitives/ViewDot.astro';
 import ViewLinks from '../primitives/ViewLinks.astro';
 import ViewTags from '../primitives/ViewTags.astro';
-import ViewYearHeader from '../primitives/ViewYearHeader.astro';
 
 interface ViewItem {
-  // Common fields
   title: string;
   slug?: string;
   date: Date;
   description?: string;
   tags?: string[];
-
-  // Type identification
   type?: 'blog' | 'talk' | 'publication' | 'project' | 'teaching';
   status?: 'active' | 'completed' | 'archived' | 'paused';
-
-  // Context fields
   event?: string;
   location?: string;
   venue?: string;
   institution?: string;
   authors?: string[];
-
-  // Link fields
   url?: string;
   github?: string;
   slides?: string;
@@ -66,7 +57,7 @@ interface ViewItem {
 }
 
 interface ViewConfig {
-  style?: 'minimal' | 'strip';
+  style?: 'minimal' | 'strip' | 'classic' | 'alternating';
   groupBy?: 'year' | 'none';
   showDot?: boolean;
   dotType?: 'content' | 'status';
@@ -92,7 +83,6 @@ interface Props {
 
 const { items, config = {}, collection, class: className } = Astro.props;
 
-// Default config
 const {
   style = 'minimal',
   groupBy = 'year',
@@ -111,7 +101,6 @@ const {
   linkStyle = 'text',
 } = config;
 
-// Group items by year
 function groupByYear(items: ViewItem[]): Record<string, ViewItem[]> {
   return items.reduce((acc, item) => {
     const year = item.date.getFullYear().toString();
@@ -124,7 +113,6 @@ function groupByYear(items: ViewItem[]): Record<string, ViewItem[]> {
 const grouped = groupBy === 'year' ? groupByYear(items) : { all: items };
 const years = Object.keys(grouped).sort((a, b) => parseInt(b) - parseInt(a));
 
-// Build link for item
 function getItemLink(item: ViewItem): string | null {
   if (!item.slug) return null;
   if (item.type === 'blog') return `/blog/${item.slug}`;
@@ -135,7 +123,6 @@ function getItemLink(item: ViewItem): string | null {
   return null;
 }
 
-// Build action links
 function getActionLinks(item: ViewItem): Array<{ label: string; url: string }> {
   const links: Array<{ label: string; url: string }> = [];
   const allowedLinks = showLinks.length > 0 ? showLinks : ['slides', 'video', 'pdf', 'code', 'github', 'materials'];
@@ -151,20 +138,34 @@ function getActionLinks(item: ViewItem): Array<{ label: string; url: string }> {
   return links;
 }
 
-// Truncate description
 function truncate(text: string, limit: number): string {
   if (text.length <= limit) return text;
   return text.slice(0, limit).trim() + '...';
 }
 
+const isClassic = style === 'classic';
 const isStrip = style === 'strip';
+const isMinimal = style === 'minimal';
+const isAlternating = style === 'alternating';
+
+// Track global index for alternating layout
+let globalIndex = 0;
 ---
 
 <div class:list={['timeline-view', `timeline-view--${style}`, className]}>
   {years.map(year => (
-    <section class="timeline-section" data-animate="fade-up">
+    <section class="timeline-group" data-animate="fade-up">
+      {/* Year header - different styles */}
       {groupBy === 'year' && year !== 'all' && (
-        <ViewYearHeader year={year} />
+        <>
+          {(isClassic || isAlternating) ? (
+            <div class="year-marker">
+              <span class="year-pill">{year}</span>
+            </div>
+          ) : (
+            <h2 class="year-header">{year}</h2>
+          )}
+        </>
       )}
 
       <ul class="timeline-list">
@@ -172,26 +173,37 @@ const isStrip = style === 'strip';
           const link = getItemLink(item);
           const actionLinks = getActionLinks(item);
           const isLast = index === grouped[year].length - 1;
+          const isActive = item.status === 'active';
+          const position = isAlternating ? (globalIndex % 2 === 0 ? 'left' : 'right') : null;
+          globalIndex++;
 
           return (
-            <li class:list={['timeline-item', 'view-item', { 'is-last': isLast }]} data-type={item.type}>
-              {/* Strip style: marker with connecting line */}
-              {isStrip && (
-                <div class="strip-marker">
-                  <span class="strip-dot" data-type={dotType === 'content' ? item.type : undefined} data-status={dotType === 'status' ? item.status : undefined}></span>
+            <li
+              class:list={['timeline-item', 'view-item', { 'is-last': isLast }]}
+              data-type={item.type}
+              data-position={position}
+            >
+              {/* Classic/Strip/Alternating: Dot marker */}
+              {(isClassic || isStrip || isAlternating) && (
+                <div class="dot-wrapper">
+                  <div
+                    class:list={['timeline-dot', { 'dot-pulse': isActive }]}
+                    data-type={dotType === 'content' ? item.type : undefined}
+                    data-status={dotType === 'status' ? item.status : undefined}
+                  ></div>
                 </div>
               )}
 
-              {/* Minimal style: date column */}
-              {!isStrip && showDate && (
-                <div class="item-date">
+              {/* Minimal: Date column */}
+              {isMinimal && showDate && (
+                <div class="date-col">
                   <ViewDate date={item.date} format={dateFormat} />
                 </div>
               )}
 
-              {/* Minimal style: dot indicator */}
-              {!isStrip && showDot && (
-                <div class="item-indicator">
+              {/* Minimal: Dot indicator */}
+              {isMinimal && showDot && (
+                <div class="dot-col">
                   <ViewDot
                     type={dotType === 'content' ? item.type : undefined}
                     status={dotType === 'status' ? item.status : undefined}
@@ -201,11 +213,11 @@ const isStrip = style === 'strip';
 
               {/* Content */}
               <div class="item-content">
-                {/* Strip style: date in header */}
-                {isStrip && showDate && (
-                  <div class="strip-date">
+                {/* Date for classic/strip/alternating */}
+                {(isClassic || isStrip || isAlternating) && showDate && (
+                  <time class="item-date">
                     <ViewDate date={item.date} format={dateFormat} />
-                  </div>
+                  </time>
                 )}
 
                 <div class="item-header">
@@ -216,7 +228,6 @@ const isStrip = style === 'strip';
                   )}
                 </div>
 
-                {/* Context line */}
                 {showContext && (item.event || item.venue || item.institution) && (
                   <div class="item-context">
                     {item.event && <span class="context-primary">{item.event}</span>}
@@ -226,7 +237,6 @@ const isStrip = style === 'strip';
                   </div>
                 )}
 
-                {/* Authors */}
                 {showAuthors && item.authors && item.authors.length > 0 && (
                   <div class="item-authors">
                     {item.authors.slice(0, authorLimit).join(', ')}
@@ -234,19 +244,16 @@ const isStrip = style === 'strip';
                   </div>
                 )}
 
-                {/* Description */}
                 {showDescription && item.description && (
                   <p class="item-description">
                     {truncate(item.description, descriptionLimit)}
                   </p>
                 )}
 
-                {/* Tags */}
                 {showTags && item.tags && item.tags.length > 0 && (
                   <ViewTags tags={item.tags} limit={tagLimit} style="minimal" class="item-tags" />
                 )}
 
-                {/* Action links */}
                 {actionLinks.length > 0 && (
                   <ViewLinks links={actionLinks} style={linkStyle} class="item-links" />
                 )}
@@ -264,23 +271,55 @@ const isStrip = style === 'strip';
     max-width: 100%;
   }
 
-  .timeline-section {
-    margin-bottom: var(--view-section-gap);
+  .timeline-group {
+    margin-bottom: var(--space-10);
   }
 
-  .timeline-section:last-child {
+  .timeline-group:last-child {
     margin-bottom: 0;
   }
 
-  /* List */
   .timeline-list {
     list-style: none;
     margin: 0;
     padding: 0;
+    position: relative;
   }
 
   /* ======================
-     MINIMAL STYLE (default)
+     YEAR HEADERS
+     ====================== */
+
+  /* Minimal/Strip: Simple header */
+  .year-header {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-muted);
+    margin: 0 0 var(--space-4) 0;
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  /* Classic: Year pill */
+  .year-marker {
+    margin-bottom: var(--space-6);
+  }
+
+  .year-pill {
+    display: inline-block;
+    padding: var(--space-2) var(--space-4);
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    font-family: var(--font-mono);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text);
+  }
+
+  /* ======================
+     MINIMAL STYLE
      ====================== */
   .timeline-view--minimal .timeline-item {
     display: grid;
@@ -304,21 +343,19 @@ const isStrip = style === 'strip';
     border-radius: var(--view-hover-radius);
   }
 
-  /* Date column */
-  .item-date {
+  .date-col {
     text-align: right;
     padding-top: 2px;
   }
 
-  /* Indicator column */
-  .item-indicator {
+  .dot-col {
     display: flex;
     justify-content: center;
     padding-top: 6px;
   }
 
   /* ======================
-     STRIP STYLE (vertical line)
+     STRIP STYLE
      ====================== */
   .timeline-view--strip .timeline-item {
     display: flex;
@@ -327,7 +364,6 @@ const isStrip = style === 'strip';
     position: relative;
   }
 
-  /* Vertical connecting line */
   .timeline-view--strip .timeline-item:not(.is-last)::before {
     content: '';
     position: absolute;
@@ -338,16 +374,13 @@ const isStrip = style === 'strip';
     background-color: var(--color-border);
   }
 
-  /* Marker dot */
-  .strip-marker {
+  .timeline-view--strip .dot-wrapper {
     flex-shrink: 0;
     width: 12px;
-    display: flex;
-    justify-content: center;
     padding-top: 4px;
   }
 
-  .strip-dot {
+  .timeline-view--strip .timeline-dot {
     width: 12px;
     height: 12px;
     border-radius: 50%;
@@ -356,63 +389,260 @@ const isStrip = style === 'strip';
     z-index: 1;
   }
 
-  /* Strip dot type colors */
-  .strip-dot[data-type="blog"] {
-    background-color: var(--view-dot-blog);
+  /* ======================
+     CLASSIC STYLE
+     ====================== */
+  .timeline-view--classic .timeline-list::before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      var(--color-accent) 5%,
+      var(--color-accent) 95%,
+      transparent 100%
+    );
   }
 
-  .strip-dot[data-type="talk"] {
-    background-color: var(--view-dot-talk);
+  .timeline-view--classic .timeline-item {
+    display: flex;
+    gap: var(--space-5);
+    padding-bottom: var(--space-8);
+    position: relative;
   }
 
-  .strip-dot[data-type="publication"] {
-    background-color: var(--view-dot-publication);
+  .timeline-view--classic .timeline-item:last-child {
+    padding-bottom: 0;
   }
 
-  .strip-dot[data-type="project"] {
-    background-color: var(--view-dot-project);
+  .timeline-view--classic .dot-wrapper {
+    flex-shrink: 0;
+    width: 16px;
+    padding-top: 2px;
+    z-index: 2;
   }
 
-  .strip-dot[data-type="teaching"] {
-    background-color: var(--view-dot-teaching);
+  .timeline-view--classic .timeline-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    border: 3px solid var(--color-bg);
+    box-shadow: 0 0 0 2px var(--color-accent);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
 
-  /* Strip dot status colors */
-  .strip-dot[data-status="active"] {
-    background-color: var(--view-dot-active);
+  .timeline-view--classic .timeline-item:hover .timeline-dot {
+    transform: scale(1.2);
+    box-shadow: 0 0 0 3px var(--color-accent);
   }
 
-  .strip-dot[data-status="completed"] {
-    background-color: var(--view-dot-completed);
+  /* Pulsing dot for active items */
+  .timeline-view--classic .dot-pulse {
+    animation: pulse-dot 2s ease-in-out infinite;
   }
 
-  .strip-dot[data-status="archived"] {
-    background-color: var(--view-dot-archived);
+  .timeline-view--classic .dot-pulse::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: var(--color-accent);
+    opacity: 0.4;
+    animation: ping-dot 2s ease-out infinite;
   }
 
-  .strip-dot[data-status="paused"] {
-    background-color: var(--view-dot-paused);
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
   }
 
-  /* Strip date display */
-  .strip-date {
-    font-size: var(--font-size-xs);
-    font-family: var(--font-mono);
-    color: var(--color-text-muted);
-    margin-bottom: var(--space-1);
+  @keyframes ping-dot {
+    75%, 100% {
+      transform: translate(-50%, -50%) scale(2.5);
+      opacity: 0;
+    }
   }
 
-  /* Strip content */
-  .timeline-view--strip .item-content {
+  .timeline-view--classic .item-content {
+    flex: 1;
+    min-width: 0;
+    padding-top: 0;
+  }
+
+  /* ======================
+     ALTERNATING STYLE
+     ====================== */
+  .timeline-view--alternating .timeline-list {
+    position: relative;
+  }
+
+  .timeline-view--alternating .timeline-list::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    transform: translateX(-50%);
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      var(--color-accent) 5%,
+      var(--color-accent) 95%,
+      transparent 100%
+    );
+  }
+
+  .timeline-view--alternating .timeline-item {
+    display: flex;
+    align-items: flex-start;
+    padding-bottom: var(--space-8);
+    position: relative;
+  }
+
+  .timeline-view--alternating .timeline-item:last-child {
+    padding-bottom: 0;
+  }
+
+  /* Left side items: content on left, dot in center */
+  .timeline-view--alternating .timeline-item[data-position="left"] {
+    flex-direction: row;
+    padding-right: calc(50% + var(--space-8));
+  }
+
+  .timeline-view--alternating .timeline-item[data-position="left"] .item-content {
+    text-align: right;
+    order: 0;
+  }
+
+  .timeline-view--alternating .timeline-item[data-position="left"] .dot-wrapper {
+    order: 1;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  /* Right side items: dot in center, content on right */
+  .timeline-view--alternating .timeline-item[data-position="right"] {
+    flex-direction: row;
+    padding-left: calc(50% + var(--space-8));
+  }
+
+  .timeline-view--alternating .timeline-item[data-position="right"] .dot-wrapper {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .timeline-view--alternating .dot-wrapper {
+    flex-shrink: 0;
+    width: 16px;
+    padding-top: 2px;
+    z-index: 2;
+  }
+
+  .timeline-view--alternating .timeline-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    border: 3px solid var(--color-bg);
+    box-shadow: 0 0 0 2px var(--color-accent);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .timeline-view--alternating .timeline-item:hover .timeline-dot {
+    transform: scale(1.2);
+    box-shadow: 0 0 0 3px var(--color-accent);
+  }
+
+  /* Pulsing dot for active items */
+  .timeline-view--alternating .dot-pulse {
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+
+  .timeline-view--alternating .item-content {
     flex: 1;
     min-width: 0;
   }
 
+  /* Align text properly for left items */
+  .timeline-view--alternating .timeline-item[data-position="left"] .item-header {
+    justify-content: flex-end;
+  }
+
+  .timeline-view--alternating .timeline-item[data-position="left"] .item-context {
+    text-align: right;
+  }
+
+  .timeline-view--alternating .timeline-item[data-position="left"] .item-links {
+    justify-content: flex-end;
+  }
+
+  /* Year marker for alternating */
+  .timeline-view--alternating .year-marker {
+    text-align: center;
+    margin-bottom: var(--space-8);
+    position: relative;
+  }
+
+  .timeline-view--alternating .year-pill {
+    display: inline-block;
+    padding: var(--space-2) var(--space-5);
+    background: var(--color-bg);
+    border: 2px solid var(--color-accent);
+    border-radius: var(--radius-full);
+    font-family: var(--font-mono);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-accent);
+    position: relative;
+    z-index: 3;
+  }
+
   /* ======================
-     SHARED STYLES
+     DOT COLORS (Classic/Strip/Alternating)
+     ====================== */
+  .timeline-dot[data-type="blog"] { background-color: var(--view-dot-blog); box-shadow: 0 0 0 2px var(--view-dot-blog); }
+  .timeline-dot[data-type="talk"] { background-color: var(--view-dot-talk); box-shadow: 0 0 0 2px var(--view-dot-talk); }
+  .timeline-dot[data-type="publication"] { background-color: var(--view-dot-publication); box-shadow: 0 0 0 2px var(--view-dot-publication); }
+  .timeline-dot[data-type="project"] { background-color: var(--view-dot-project); box-shadow: 0 0 0 2px var(--view-dot-project); }
+  .timeline-dot[data-type="teaching"] { background-color: var(--view-dot-teaching); box-shadow: 0 0 0 2px var(--view-dot-teaching); }
+  .timeline-dot[data-status="active"] { background-color: var(--view-dot-active); box-shadow: 0 0 0 2px var(--view-dot-active); }
+  .timeline-dot[data-status="completed"] { background-color: var(--view-dot-completed); box-shadow: 0 0 0 2px var(--view-dot-completed); }
+
+  /* Strip style: smaller, no ring */
+  .timeline-view--strip .timeline-dot {
+    box-shadow: none;
+  }
+  .timeline-view--strip .timeline-dot[data-type],
+  .timeline-view--strip .timeline-dot[data-status] {
+    box-shadow: none;
+  }
+
+  /* ======================
+     SHARED CONTENT STYLES
      ====================== */
   .item-content {
     min-width: 0;
+    flex: 1;
+  }
+
+  .item-date {
+    display: block;
+    font-size: var(--font-size-xs);
+    font-family: var(--font-mono);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-1);
   }
 
   .item-header {
@@ -440,7 +670,6 @@ const isStrip = style === 'strip';
 
   .item-context {
     font-size: var(--view-meta-size);
-    color: var(--view-meta-color);
     margin-top: var(--space-1);
   }
 
@@ -470,51 +699,107 @@ const isStrip = style === 'strip';
   }
 
   .item-links {
-    margin-top: var(--space-2);
+    margin-top: var(--space-3);
   }
 
   /* ======================
      MOBILE
      ====================== */
   @media (max-width: 600px) {
-    /* Minimal style mobile */
     .timeline-view--minimal .timeline-item {
       grid-template-columns: 1fr;
       gap: var(--space-1);
     }
 
-    .timeline-view--minimal .item-date {
+    .timeline-view--minimal .date-col {
       text-align: left;
       order: -1;
     }
 
-    .timeline-view--minimal .item-indicator {
+    .timeline-view--minimal .dot-col {
       display: none;
     }
 
-    .timeline-view--minimal .timeline-item:hover {
-      margin-left: calc(-1 * var(--space-2));
-      margin-right: calc(-1 * var(--space-2));
-      padding-left: var(--space-2);
-      padding-right: var(--space-2);
+    .timeline-view--classic .timeline-item,
+    .timeline-view--strip .timeline-item {
+      gap: var(--space-3);
     }
 
-    /* Strip style mobile - keep the visual */
-    .timeline-view--strip .timeline-item {
-      padding-bottom: var(--space-4);
+    .timeline-view--classic .timeline-list::before {
+      left: 5px;
+    }
+
+    .timeline-view--classic .dot-wrapper {
+      width: 12px;
+    }
+
+    .timeline-view--classic .timeline-dot {
+      width: 12px;
+      height: 12px;
+      border-width: 2px;
+    }
+
+    /* Alternating collapses to left-aligned on mobile */
+    .timeline-view--alternating .timeline-list::before {
+      left: 5px;
+      transform: none;
+    }
+
+    .timeline-view--alternating .timeline-item[data-position="left"],
+    .timeline-view--alternating .timeline-item[data-position="right"] {
+      padding-left: var(--space-8);
+      padding-right: 0;
+    }
+
+    .timeline-view--alternating .timeline-item[data-position="left"] .item-content,
+    .timeline-view--alternating .timeline-item[data-position="right"] .item-content {
+      text-align: left;
+    }
+
+    .timeline-view--alternating .timeline-item[data-position="left"] .dot-wrapper,
+    .timeline-view--alternating .timeline-item[data-position="right"] .dot-wrapper {
+      position: absolute;
+      left: 0;
+      transform: translateX(-3px);
+    }
+
+    .timeline-view--alternating .timeline-item[data-position="left"] .item-header,
+    .timeline-view--alternating .timeline-item[data-position="right"] .item-header {
+      justify-content: flex-start;
+    }
+
+    .timeline-view--alternating .timeline-item[data-position="left"] .item-context,
+    .timeline-view--alternating .timeline-item[data-position="right"] .item-context {
+      text-align: left;
+    }
+
+    .timeline-view--alternating .timeline-item[data-position="left"] .item-links,
+    .timeline-view--alternating .timeline-item[data-position="right"] .item-links {
+      justify-content: flex-start;
+    }
+
+    .timeline-view--alternating .dot-wrapper {
+      width: 12px;
+    }
+
+    .timeline-view--alternating .timeline-dot {
+      width: 12px;
+      height: 12px;
+      border-width: 2px;
     }
   }
 
-  /* Animations */
+  /* ======================
+     ANIMATIONS
+     ====================== */
   @media (prefers-reduced-motion: no-preference) {
-    .timeline-section {
+    .timeline-group {
       opacity: 0;
       transform: translateY(20px);
-      transition: opacity var(--view-animate-duration) ease,
-                  transform var(--view-animate-duration) ease;
+      transition: opacity 0.6s ease, transform 0.6s ease;
     }
 
-    .timeline-section[data-animate="visible"] {
+    .timeline-group[data-animate="visible"] {
       opacity: 1;
       transform: translateY(0);
     }
@@ -534,7 +819,7 @@ const isStrip = style === 'strip';
     { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
   );
 
-  document.querySelectorAll('.timeline-section[data-animate]').forEach((el) => {
+  document.querySelectorAll('.timeline-group[data-animate]').forEach((el) => {
     observer.observe(el);
   });
 </script>

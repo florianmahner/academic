@@ -9,25 +9,27 @@ view: "timeline"
 
 # Timeline View Options
 viewConfig:
-  # Style
-  style: "strip"               # "minimal" (clean rows) | "strip" (vertical line with connected dots)
+  # Style - the look of the timeline
+  # - "minimal": Clean rows with date column and small dots
+  # - "strip": Simple vertical line with connected dots
+  # - "classic": Elegant gradient accent line, ringed dots, year pills
+  # - "alternating": True timeline with items on left/right of center line
+  style: "alternating"
 
   # Grouping
-  groupBy: "year"              # "year" | "none" - Group items by year
+  groupBy: "year"              # "year" | "none"
 
-  # Dot indicator (used in both styles)
+  # Dot indicator
   dotType: "content"           # "content" (by type) | "status" (by status field)
 
   # Date display
-  showDate: true               # Show date
-  dateFormat: "short"          # "short" | "long" | "month-year" | "year"
+  showDate: true
+  dateFormat: "long"           # "short" | "long" | "month-year" | "year"
 
   # Content display
-  showDescription: false       # Show description/abstract text
-  descriptionLimit: 150        # Max characters for description
-  showContext: true            # Show context line (event, venue, location)
-  showTags: false              # Show tags below title
-  tagLimit: 3                  # Max tags to show
+  showDescription: false
+  showContext: true            # Show event, venue, location
+  showTags: false
 
   # Links
   showLinks: ["slides", "video", "poster", "materials"]
