@@ -438,12 +438,58 @@ const navModes = [
       }
     };
 
+    // Font URLs for dynamic loading (must match font-loader.ts)
+    const PRESET_FONT_URLS: Record<string, string> = {
+      'crimson-classic': 'https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap',
+      'editorial-newsreader': 'https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400;1,6..72,500&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap',
+      'modern-geist': 'https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@300;400;500;600;700&display=swap',
+      'classic-playfair': 'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Lora:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap',
+      'brutalist-space': 'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap',
+      'humanist-inter': 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap',
+      'elegant-josefin': 'https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100;0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap',
+      'clean-roboto': 'https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Roboto+Mono:wght@300;400;500;600;700&display=swap',
+      'refined-jost': 'https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100;0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap',
+      'editorial-instrument': 'https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap',
+    };
+
+    // Track loaded fonts to prevent duplicates
+    const loadedFonts = new Set<string>();
+
+    // Load fonts for a preset
+    const loadFonts = (presetId: string): Promise<void> => {
+      if (loadedFonts.has(presetId)) {
+        return Promise.resolve();
+      }
+
+      const url = PRESET_FONT_URLS[presetId];
+      if (!url) {
+        return Promise.resolve();
+      }
+
+      return new Promise((resolve) => {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = url;
+        link.onload = () => {
+          loadedFonts.add(presetId);
+          resolve();
+        };
+        link.onerror = () => resolve(); // Don't block on error
+        document.head.appendChild(link);
+      });
+    };
+
     // Apply typography preset
-    const applyPreset = (btn: Element) => {
+    const applyPreset = async (btn: Element) => {
       const presetId = btn.getAttribute('data-preset-id');
       const fonts = JSON.parse(btn.getAttribute('data-fonts') || '{}');
       const colors = JSON.parse(btn.getAttribute('data-colors') || '{}');
       const styles = JSON.parse(btn.getAttribute('data-styles') || '{}');
+
+      // Load fonts FIRST before applying styles
+      if (presetId) {
+        await loadFonts(presetId);
+      }
 
       html.setAttribute('data-typography', presetId || '');
       html.style.setProperty('--font-body', `"${fonts.body}", Georgia, serif`);

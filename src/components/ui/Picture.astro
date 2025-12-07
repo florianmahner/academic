@@ -10,8 +10,8 @@ interface Props {
 
 const { src, alt, width, height, class: className, loading = 'lazy' } = Astro.props;
 
-// Use WebP directly (convert .gif references to .webp)
-const imgSrc = src.replace('.gif', '.webp');
+// Use GIF directly for animated previews
+const imgSrc = src;
 ---
 
 <img

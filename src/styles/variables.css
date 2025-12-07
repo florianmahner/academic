@@ -30,16 +30,44 @@
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
 
-  /* Line Heights */
+  /* Line Heights - Desktop */
   --line-height-tight: 1.2;
+  --line-height-snug: 1.35;
   --line-height-normal: 1.6;
-  --line-height-relaxed: 1.8;
+  --line-height-relaxed: 1.75;
+  --line-height-loose: 1.9;
 
   /* Letter Spacing */
+  --letter-spacing-tighter: -0.03em;
   --letter-spacing-tight: -0.02em;
   --letter-spacing-normal: 0;
   --letter-spacing-wide: 0.025em;
   --letter-spacing-wider: 0.05em;
+
+  /* Word Spacing */
+  --word-spacing-tight: -0.02em;
+  --word-spacing-normal: 0;
+  --word-spacing-wide: 0.05em;
+
+  /* ============================================================
+     MOBILE TYPOGRAPHY SCALE
+     Principled approach based on:
+     1. Optical sizing: smaller text needs more spacing
+     2. Reading distance: phones held closer = larger apparent size
+     3. Line length: narrower columns need adjusted line-height
+     4. Touch targets: adequate spacing for readability
+     ============================================================ */
+
+  /* Mobile-specific line heights (applied via media query) */
+  --line-height-tight-mobile: 1.25;
+  --line-height-snug-mobile: 1.4;
+  --line-height-normal-mobile: 1.65;
+  --line-height-relaxed-mobile: 1.8;
+
+  /* Mobile letter spacing (looser for smaller screens) */
+  --letter-spacing-tight-mobile: -0.01em;
+  --letter-spacing-normal-mobile: 0.005em;
+  --letter-spacing-wide-mobile: 0.03em;
 
   /* Spacing Scale */
   --space-1: 0.25rem;

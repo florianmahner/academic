@@ -187,6 +187,115 @@ export const typographyPresets: TypographyPreset[] = [
       letterSpacing: 'normal',
     },
   },
+
+  // ============================================
+  // PRESET 7: Elegant Josefin
+  // ============================================
+  {
+    id: 'elegant-josefin',
+    name: 'Elegant Josefin',
+    description: 'Geometric elegance with vintage charm',
+    fonts: {
+      body: 'Josefin Sans',
+      heading: 'Josefin Sans',
+      ui: 'Josefin Sans',
+      mono: 'JetBrains Mono',
+    },
+    fontParams: {
+      'Josefin Sans': 'ital,wght@0,100;0,300;0,400;0,500;0,600;0,700;1,300;1,400',
+    },
+    colors: {
+      accentLight: '#9333ea',
+      accentDark: '#c084fc',
+    },
+    styles: {
+      headingStyle: 'normal',
+      headingWeight: 600,
+      bodyWeight: 300,
+      letterSpacing: 'wide',
+    },
+  },
+
+  // ============================================
+  // PRESET 8: Clean Roboto
+  // ============================================
+  {
+    id: 'clean-roboto',
+    name: 'Clean Roboto',
+    description: 'Google\'s versatile workhorse typeface',
+    fonts: {
+      body: 'Roboto',
+      heading: 'Roboto',
+      ui: 'Roboto',
+      mono: 'Roboto Mono',
+    },
+    colors: {
+      accentLight: '#0891b2',
+      accentDark: '#22d3ee',
+    },
+    styles: {
+      headingStyle: 'normal',
+      headingWeight: 500,
+      bodyWeight: 400,
+      letterSpacing: 'normal',
+    },
+  },
+
+  // ============================================
+  // PRESET 9: Refined Jost
+  // ============================================
+  {
+    id: 'refined-jost',
+    name: 'Refined Jost',
+    description: 'Bauhaus-inspired geometric elegance',
+    fonts: {
+      body: 'Jost',
+      heading: 'Jost',
+      ui: 'Jost',
+      mono: 'JetBrains Mono',
+    },
+    fontParams: {
+      'Jost': 'ital,wght@0,100;0,300;0,400;0,500;0,600;0,700;1,400',
+    },
+    colors: {
+      accentLight: '#7c3aed',
+      accentDark: '#a78bfa',
+    },
+    styles: {
+      headingStyle: 'normal',
+      headingWeight: 500,
+      bodyWeight: 400,
+      letterSpacing: 'normal',
+    },
+  },
+
+  // ============================================
+  // PRESET 10: Editorial Instrument
+  // ============================================
+  {
+    id: 'editorial-instrument',
+    name: 'Editorial Instrument',
+    description: 'Refined condensed sans for editorial elegance',
+    fonts: {
+      body: 'Instrument Sans',
+      heading: 'Instrument Sans',
+      ui: 'Instrument Sans',
+      mono: 'JetBrains Mono',
+    },
+    fontParams: {
+      'Instrument Sans': 'ital,wght@0,400;0,500;0,600;0,700;1,400;1,500',
+    },
+    colors: {
+      accentLight: '#0f172a',
+      accentDark: '#e2e8f0',
+    },
+    styles: {
+      headingStyle: 'normal',
+      headingWeight: 600,
+      bodyWeight: 400,
+      letterSpacing: 'tight',
+    },
+  },
 ];
 
 // Default preset ID
