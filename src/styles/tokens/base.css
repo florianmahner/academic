@@ -53,10 +53,10 @@
   /* Line Heights */
   --line-height-none: 1;
   --line-height-tight: 1.2;
-  --line-height-snug: 1.375;
-  --line-height-normal: 1.6;
-  --line-height-relaxed: 1.75;
-  --line-height-loose: 2;
+  --line-height-snug: 1.35;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.65;
+  --line-height-loose: 1.8;
 
   /* Letter Spacing */
   --letter-spacing-tighter: -0.05em;

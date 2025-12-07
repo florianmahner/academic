@@ -649,7 +649,7 @@ img:not([loading="lazy"]) {
   pre {
     padding: var(--space-3);
     margin: var(--space-4) 0;
-    line-height: 1.5;
+    line-height: var(--line-height-normal);
   }
 
   /* ========================================
