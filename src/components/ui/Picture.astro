@@ -10,16 +10,60 @@ interface Props {
 
 const { src, alt, width, height, class: className, loading = 'lazy' } = Astro.props;
 
-// Use GIF directly for animated previews
-const imgSrc = src;
+// Check if this is a light/dark variant image
+const hasThemeVariant = src.includes('-light.') || src.includes('-dark.');
+const lightSrc = src.replace('-dark.', '-light.');
+const darkSrc = src.replace('-light.', '-dark.');
 ---
 
-<img
-  src={imgSrc}
-  alt={alt}
-  width={width}
-  height={height}
-  loading={loading}
-  decoding="async"
-  class={className}
-/>
+{hasThemeVariant ? (
+  <>
+    <img
+      src={lightSrc}
+      alt={alt}
+      width={width}
+      height={height}
+      loading={loading}
+      decoding="async"
+      class:list={[className, 'theme-img', 'theme-img--light']}
+    />
+    <img
+      src={darkSrc}
+      alt={alt}
+      width={width}
+      height={height}
+      loading={loading}
+      decoding="async"
+      class:list={[className, 'theme-img', 'theme-img--dark']}
+    />
+  </>
+) : (
+  <img
+    src={src}
+    alt={alt}
+    width={width}
+    height={height}
+    loading={loading}
+    decoding="async"
+    class={className}
+  />
+)}
+
+<style>
+  /* Theme-aware image switching */
+  .theme-img--dark {
+    display: none;
+  }
+
+  .theme-img--light {
+    display: block;
+  }
+
+  [data-theme="dark"] .theme-img--light {
+    display: none;
+  }
+
+  [data-theme="dark"] .theme-img--dark {
+    display: block;
+  }
+</style>

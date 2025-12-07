@@ -45,6 +45,7 @@ const primaryLink = pdf || html;
   <div class="paper-content">
     <div class="paper-meta">
       {venue && <span class="paper-venue">{venue}</span>}
+      {venue && year && <span class="paper-sep">·</span>}
       {year && <span class="paper-year">{year}</span>}
     </div>
     <h3 class="paper-title">
@@ -159,6 +160,12 @@ const primaryLink = pdf || html;
     font-size: var(--font-size-xs);
     font-family: var(--font-mono);
     color: var(--color-text-muted);
+  }
+
+  .paper-sep {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    opacity: 0.5;
   }
 
   .paper-title {
