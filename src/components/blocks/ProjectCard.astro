@@ -57,18 +57,18 @@ const Tag = url ? 'a' : 'div';
   .project-card {
     display: block;
     padding: var(--space-4);
-    border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
     text-decoration: none;
     color: inherit;
     transition: all var(--transition-fast);
     background-color: var(--color-bg);
+    border-left: 2px solid transparent;
   }
 
-  a.project-card:hover {
-    border-color: var(--color-text-muted);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-sm);
+  @media (hover: hover) {
+    a.project-card:hover {
+      border-left-color: var(--color-accent);
+    }
   }
 
   .project-card.featured {
@@ -86,11 +86,6 @@ const Tag = url ? 'a' : 'div';
     width: 100%;
     height: 140px;
     object-fit: cover;
-    transition: transform var(--transition-normal);
-  }
-
-  a.project-card:hover .project-image img {
-    transform: scale(1.05);
   }
 
   .project-content {

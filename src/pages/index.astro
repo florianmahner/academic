@@ -326,11 +326,10 @@ const prependBase = (path: string) => {
 
   .education-item {
     display: grid;
-    grid-template-columns: 110px 1fr;
+    grid-template-columns: 140px 1fr;
     gap: var(--space-5);
     padding: var(--space-4);
-    border-radius: var(--radius-md);
-    transition: all var(--transition-fast);
+    transition: border-left-color var(--transition-fast);
     border-left: 2px solid transparent;
   }
 
@@ -341,7 +340,7 @@ const prependBase = (path: string) => {
   }
 
   .education-period {
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-sm);
     font-family: var(--font-mono);
     font-weight: var(--font-weight-normal);
     line-height: var(--line-height-normal);

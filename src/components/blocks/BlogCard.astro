@@ -57,11 +57,14 @@ const href = `/blog/${slug}`;
 <style>
   .blog-card {
     border-radius: var(--radius-md);
-    transition: background-color var(--transition-fast);
+    transition: all var(--transition-fast);
+    border-left: 2px solid transparent;
   }
 
-  .blog-card:hover {
-    background-color: var(--color-bg-alt);
+  @media (hover: hover) {
+    .blog-card:hover {
+      border-left-color: var(--color-accent);
+    }
   }
 
   .blog-link {
@@ -83,11 +86,6 @@ const href = `/blog/${slug}`;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform var(--transition-normal);
-  }
-
-  .blog-card:hover .blog-image img {
-    transform: scale(1.05);
   }
 
   .blog-content {

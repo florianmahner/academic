@@ -76,11 +76,14 @@ const {
   .talk-card {
     padding: var(--space-4);
     border-radius: var(--radius-md);
-    transition: background-color var(--transition-fast);
+    transition: all var(--transition-fast);
+    border-left: 2px solid transparent;
   }
 
-  .talk-card:hover {
-    background-color: var(--color-bg-alt);
+  @media (hover: hover) {
+    .talk-card:hover {
+      border-left-color: var(--color-accent);
+    }
   }
 
   .talk-header {
