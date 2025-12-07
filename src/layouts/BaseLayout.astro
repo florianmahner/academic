@@ -592,15 +592,17 @@ const footerLinks = [...config.footer.links, ...socialLinks];
       .mobile-nav-content {
         display: flex;
         flex-direction: column;
-        justify-content: center;
-        height: 100%;
-        padding: var(--space-16) var(--space-8);
+        justify-content: flex-start;
+        min-height: 100%;
+        padding: var(--space-20) var(--space-8) var(--space-8);
+        overflow-y: auto;
       }
 
       .mobile-nav-links-wrapper {
         flex: 1;
         display: flex;
-        align-items: center;
+        flex-direction: column;
+        justify-content: center;
       }
 
       .mobile-nav-links {
