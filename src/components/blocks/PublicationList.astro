@@ -12,6 +12,7 @@ interface Props {
   groupByYear?: boolean;
   highlightAuthor?: string;
   showPreviews?: boolean;
+  style?: 'default' | 'minimal';
   class?: string;
 }
 
@@ -20,8 +21,12 @@ const {
   groupByYear = true,
   highlightAuthor = 'Mahner',
   showPreviews = true,
+  style = 'default',
   class: className,
 } = Astro.props;
+
+// In minimal mode, never show previews
+const effectiveShowPreviews = style === 'minimal' ? false : showPreviews;
 
 // Group publications by year
 const pubsByYear: Record<number, Publication[]> = {};
@@ -36,7 +41,7 @@ publications.forEach(pub => {
 const years = Object.keys(pubsByYear).sort((a, b) => Number(b) - Number(a));
 ---
 
-<div class:list={['publication-list', className]}>
+<div class:list={['publication-list', `publication-list--${style}`, className]}>
   {groupByYear ? (
     years.map(year => (
       <section class="year-section" data-animate="fade-up">
@@ -48,11 +53,12 @@ const years = Object.keys(pubsByYear).sort((a, b) => Number(b) - Number(a));
               authors={pub.authors}
               venue={pub.journal || pub.booktitle}
               year={pub.year}
-              preview={showPreviews ? pub.preview : undefined}
+              preview={effectiveShowPreviews ? pub.preview : undefined}
               pdf={pub.pdf}
               html={pub.html}
               code={pub.code}
               highlightAuthor={highlightAuthor}
+              compact={style === 'minimal'}
             />
           ))}
         </div>
@@ -66,11 +72,12 @@ const years = Object.keys(pubsByYear).sort((a, b) => Number(b) - Number(a));
           authors={pub.authors}
           venue={pub.journal || pub.booktitle}
           year={pub.year}
-          preview={showPreviews ? pub.preview : undefined}
+          preview={effectiveShowPreviews ? pub.preview : undefined}
           pdf={pub.pdf}
           html={pub.html}
           code={pub.code}
           highlightAuthor={highlightAuthor}
+          compact={style === 'minimal'}
         />
       ))}
     </div>
@@ -103,5 +110,14 @@ const years = Object.keys(pubsByYear).sort((a, b) => Number(b) - Number(a));
     display: flex;
     flex-direction: column;
     gap: var(--space-4);
+  }
+
+  /* Minimal style - more compact spacing */
+  .publication-list--minimal .year-section {
+    margin-bottom: var(--space-8);
+  }
+
+  .publication-list--minimal .publications {
+    gap: var(--space-2);
   }
 </style>

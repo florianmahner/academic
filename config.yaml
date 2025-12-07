@@ -143,6 +143,24 @@ about:
 # FOOTER
 # =============================================================================
 
+# =============================================================================
+# PUBLICATIONS SETTINGS
+# =============================================================================
+
+publications:
+  # Style options: "default" (with preview GIFs) or "minimal" (compact, no images)
+  style: default
+  # Whether to show preview images (only applies to default style)
+  showPreviews: true
+  # Whether to group by year
+  groupByYear: true
+  # Author name to highlight (usually your last name)
+  highlightAuthor: Smith
+
+# =============================================================================
+# FOOTER
+# =============================================================================
+
 footer:
   copyright: true  # Show copyright with current year
   links:

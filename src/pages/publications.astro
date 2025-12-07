@@ -7,6 +7,9 @@ import path from 'node:path';
 
 const title = `Publications | ${config.site.title}`;
 
+// Get publications config
+const pubConfig = config.publications;
+
 // Load publications from BibTeX file
 const contentDir = path.join(process.cwd(), 'src', 'content');
 const publications = loadPublications(contentDir);
@@ -30,7 +33,13 @@ publications.forEach(pub => {
         </p>
       </header>
 
-      <PublicationList publications={publications} />
+      <PublicationList
+        publications={publications}
+        style={pubConfig.style}
+        showPreviews={pubConfig.showPreviews}
+        groupByYear={pubConfig.groupByYear}
+        highlightAuthor={pubConfig.highlightAuthor || config.name.last}
+      />
     </div>
   </article>
 </BaseLayout>

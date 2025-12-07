@@ -87,6 +87,13 @@ const FooterSchema = z.object({
   links: z.array(FooterLinkSchema).default([]),
 });
 
+const PublicationsSchema = z.object({
+  style: z.enum(["default", "minimal"]).default("default"),
+  showPreviews: z.boolean().default(true),
+  groupByYear: z.boolean().default(true),
+  highlightAuthor: z.string().default(""),
+}).optional();
+
 // Main config schema
 // NOTE: Layout configuration has been moved to frontmatter in src/content/collection-pages/
 const ConfigSchema = z.object({
@@ -102,6 +109,7 @@ const ConfigSchema = z.object({
   features: FeaturesSchema,
   about: AboutSchema,
   footer: FooterSchema,
+  publications: PublicationsSchema,
 });
 
 // =============================================================================
@@ -231,6 +239,19 @@ function transformConfig(yamlConfig: ConfigType) {
     footer: {
       copyright: yamlConfig.footer.copyright,
       links: yamlConfig.footer.links,
+    },
+
+    // Publications
+    publications: yamlConfig.publications ? {
+      style: yamlConfig.publications.style,
+      showPreviews: yamlConfig.publications.showPreviews,
+      groupByYear: yamlConfig.publications.groupByYear,
+      highlightAuthor: yamlConfig.publications.highlightAuthor,
+    } : {
+      style: 'default' as const,
+      showPreviews: true,
+      groupByYear: true,
+      highlightAuthor: '',
     },
   };
 }
