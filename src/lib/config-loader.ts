@@ -95,6 +95,21 @@ const PublicationsSchema = z.object({
   highlightAuthor: z.string().default(""),
 }).optional();
 
+const CVSchema = z.object({
+  file: z.string().default("cv.json"),
+  pdf: z.string().default("/cv.pdf"),
+  sections: z.array(z.enum([
+    "summary",
+    "education",
+    "work",
+    "awards",
+    "publications",
+    "skills",
+    "languages",
+    "references",
+  ])).default(["summary", "education", "work", "awards", "publications", "skills", "languages", "references"]),
+}).optional();
+
 // Main config schema
 // NOTE: Layout configuration has been moved to frontmatter in src/content/collection-pages/
 const ConfigSchema = z.object({
@@ -111,6 +126,7 @@ const ConfigSchema = z.object({
   about: AboutSchema,
   footer: FooterSchema,
   publications: PublicationsSchema,
+  cv: CVSchema,
 });
 
 // =============================================================================
@@ -255,6 +271,17 @@ function transformConfig(yamlConfig: ConfigType) {
       showPreviews: true,
       groupByYear: true,
       highlightAuthor: '',
+    },
+
+    // CV / Resume
+    cv: yamlConfig.cv ? {
+      file: yamlConfig.cv.file,
+      pdf: yamlConfig.cv.pdf,
+      sections: yamlConfig.cv.sections,
+    } : {
+      file: 'cv.json',
+      pdf: '/cv.pdf',
+      sections: ['summary', 'education', 'work', 'awards', 'publications', 'skills', 'languages', 'references'] as const,
     },
   };
 }

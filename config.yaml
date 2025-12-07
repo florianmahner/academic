@@ -159,6 +159,28 @@ publications:
   highlightAuthor: Smith
 
 # =============================================================================
+# CV / RESUME SETTINGS
+# =============================================================================
+# The CV uses JSON Resume format (https://jsonresume.org)
+# Edit src/content/cv.json to customize your CV content
+
+cv:
+  # Path to your JSON Resume file (relative to src/content/)
+  file: cv.json
+  # Path to downloadable PDF (relative to public/ folder, leave empty to hide button)
+  pdf: /cv.pdf
+  # Sections to display (comment out or remove sections you don't want)
+  sections:
+    - summary
+    - education
+    - work        # Displayed as "Positions"
+    - awards      # Displayed as "Awards & Honors"
+    - publications  # Displayed as "Selected Publications"
+    - skills      # Displayed as "Expertise"
+    - languages
+    - references
+
+# =============================================================================
 # FOOTER
 # =============================================================================
 

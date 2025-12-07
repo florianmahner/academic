@@ -5,12 +5,29 @@ import cvData from '../content/cv.json';
 
 const title = `CV | ${config.site.title}`;
 
+// CV configuration from config.yaml
+const cvConfig = config.cv;
+const sections = cvConfig.sections;
+const pdfPath = cvConfig.pdf;
+
+// Helper to check if section should be shown
+const showSection = (section: string) => sections.includes(section as any);
+
 // Format date range
 const formatDateRange = (start?: string, end?: string) => {
   if (!start) return '';
   if (!end || end === 'present' || end === '1934') return `${start} –`;
   if (start === end) return start;
   return `${start} – ${end}`;
+};
+
+// Prepend base path
+const base = import.meta.env.BASE_URL;
+const prependBase = (path: string) => {
+  if (!path || path.startsWith('http')) return path;
+  if (base === '/') return path;
+  const normalizedBase = base.endsWith('/') ? base.slice(0, -1) : base;
+  return `${normalizedBase}${path}`;
 };
 
 // Get name from basics or config
@@ -25,7 +42,7 @@ const displayName = cvData.basics?.name || `${config.name.first} ${config.name.l
           <h1>{displayName}</h1>
           {cvData.basics?.label && <p class="cv-label">{cvData.basics.label}</p>}
         </div>
-        <a href="/cv.pdf" class="cv-download" target="_blank" rel="noopener">
+        {pdfPath && <a href={prependBase(pdfPath)} class="cv-download" target="_blank" rel="noopener">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
             <polyline points="14 2 14 8 20 8"></polyline>
@@ -33,18 +50,18 @@ const displayName = cvData.basics?.name || `${config.name.first} ${config.name.l
             <line x1="16" y1="17" x2="8" y2="17"></line>
           </svg>
           PDF
-        </a>
+        </a>}
       </header>
 
       {/* Summary */}
-      {cvData.basics?.summary && (
+      {showSection('summary') && cvData.basics?.summary && (
         <section class="cv-summary" data-animate="fade-up">
           <p>{cvData.basics.summary}</p>
         </section>
       )}
 
       {/* Education */}
-      {cvData.education && cvData.education.length > 0 && (
+      {showSection('education') && cvData.education && cvData.education.length > 0 && (
         <section class="cv-section" data-animate="fade-up">
           <h2>Education</h2>
           <div class="timeline">
@@ -70,7 +87,7 @@ const displayName = cvData.basics?.name || `${config.name.first} ${config.name.l
       )}
 
       {/* Work / Positions */}
-      {cvData.work && cvData.work.length > 0 && (
+      {showSection('work') && cvData.work && cvData.work.length > 0 && (
         <section class="cv-section" data-animate="fade-up">
           <h2>Positions</h2>
           <div class="timeline">
@@ -94,7 +111,7 @@ const displayName = cvData.basics?.name || `${config.name.first} ${config.name.l
       )}
 
       {/* Awards */}
-      {cvData.awards && cvData.awards.length > 0 && (
+      {showSection('awards') && cvData.awards && cvData.awards.length > 0 && (
         <section class="cv-section" data-animate="fade-up">
           <h2>Awards & Honors</h2>
           <div class="timeline">
@@ -114,7 +131,7 @@ const displayName = cvData.basics?.name || `${config.name.first} ${config.name.l
       )}
 
       {/* Publications */}
-      {cvData.publications && cvData.publications.length > 0 && (
+      {showSection('publications') && cvData.publications && cvData.publications.length > 0 && (
         <section class="cv-section" data-animate="fade-up">
           <h2>Selected Publications</h2>
           <div class="timeline">
@@ -135,7 +152,7 @@ const displayName = cvData.basics?.name || `${config.name.first} ${config.name.l
 
       {/* Skills & Languages */}
       <div class="cv-grid" data-animate="fade-up">
-        {cvData.skills && cvData.skills.length > 0 && (
+        {showSection('skills') && cvData.skills && cvData.skills.length > 0 && (
           <section class="cv-section cv-section--compact">
             <h2>Expertise</h2>
             <div class="skill-list">
@@ -149,7 +166,7 @@ const displayName = cvData.basics?.name || `${config.name.first} ${config.name.l
           </section>
         )}
 
-        {cvData.languages && cvData.languages.length > 0 && (
+        {showSection('languages') && cvData.languages && cvData.languages.length > 0 && (
           <section class="cv-section cv-section--compact">
             <h2>Languages</h2>
             <div class="language-list">
@@ -165,7 +182,7 @@ const displayName = cvData.basics?.name || `${config.name.first} ${config.name.l
       </div>
 
       {/* References */}
-      {cvData.references && cvData.references.length > 0 && (
+      {showSection('references') && cvData.references && cvData.references.length > 0 && (
         <section class="cv-section" data-animate="fade-up">
           <h2>References</h2>
           <div class="reference-grid">
