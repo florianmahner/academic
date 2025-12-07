@@ -146,23 +146,37 @@ const { width, height } = sizes[size];
   /* Responsive sizing */
   @media (max-width: 768px) {
     .profile-picture--large .profile-image-wrapper {
-      width: 180px;
+      width: 160px;
     }
 
     .profile-picture--medium .profile-image-wrapper {
       width: 140px;
     }
+
+    .profile-accent {
+      top: -6px;
+      left: -6px;
+      width: 35%;
+      height: 35%;
+    }
   }
 
-  @media (max-width: 500px) {
+  @media (max-width: 480px) {
     .profile-picture--large .profile-image-wrapper,
     .profile-picture--medium .profile-image-wrapper {
       width: 120px;
     }
 
     .profile-accent {
-      top: -6px;
-      left: -6px;
+      top: -5px;
+      left: -5px;
+      width: 30%;
+      height: 30%;
+    }
+
+    .profile-picture:hover .profile-accent {
+      width: 40%;
+      height: 40%;
     }
   }
 </style>

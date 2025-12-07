@@ -95,6 +95,10 @@
   --full-width: 1400px;
   --container-padding: var(--space-6);
 
+  /* Mobile-specific spacing overrides */
+  --container-padding-mobile: var(--space-5);
+  --content-top-padding-mobile: var(--space-10);
+
   /* Mobile breakpoint */
   --breakpoint-mobile: 768px;
 
@@ -134,5 +138,19 @@
     --content-width: 90%;
     --margin-left: 5%;
     --margin-right: 5%;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --container-padding: var(--container-padding-mobile);
+    --content-top-padding: var(--content-top-padding-mobile);
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --container-padding: var(--space-4);
+    --content-top-padding: var(--space-8);
   }
 }

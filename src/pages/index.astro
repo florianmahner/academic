@@ -268,11 +268,19 @@ const prependBase = (path: string) => {
   @media (max-width: 768px) {
     .about-content-with-photo {
       flex-direction: column;
-      gap: var(--space-6);
+      gap: var(--space-5);
     }
 
     .about-photo {
-      align-self: center;
+      align-self: flex-start;
+    }
+
+    .about-section {
+      margin-bottom: var(--space-6);
+    }
+
+    .about-section p {
+      font-size: var(--font-size-base);
     }
   }
 
@@ -364,10 +372,43 @@ const prependBase = (path: string) => {
     background: none;
   }
 
-  @media (max-width: 500px) {
+  @media (max-width: 600px) {
     .education-item {
       grid-template-columns: 1fr;
-      gap: var(--space-1);
+      gap: var(--space-2);
+      padding: var(--space-3);
+    }
+
+    .education-period {
+      font-size: var(--font-size-sm);
+      margin-bottom: var(--space-1);
+    }
+
+    .education-content p {
+      font-size: var(--font-size-base);
+    }
+
+    .education-details {
+      font-size: var(--font-size-sm);
+    }
+
+    .thesis-link {
+      font-size: var(--font-size-sm);
+    }
+  }
+
+  /* Very small screens */
+  @media (max-width: 400px) {
+    .section {
+      margin-bottom: var(--space-6);
+    }
+
+    .section h2 {
+      margin-bottom: var(--space-3);
+    }
+
+    .view-all {
+      margin-top: var(--space-3);
     }
   }
 </style>

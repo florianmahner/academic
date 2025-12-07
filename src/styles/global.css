@@ -566,7 +566,6 @@ img:not([loading="lazy"]) {
     line-height: var(--line-height-normal-mobile, 1.65);
     letter-spacing: 0.01em;
     margin-bottom: 1.25em;
-    /* Optical adjustment: slightly looser tracking aids mobile reading */
   }
 
   /* Lead paragraphs need room to breathe */
@@ -578,7 +577,6 @@ img:not([loading="lazy"]) {
 
   /* ========================================
      MOBILE HEADING SYSTEM
-     Compressed scale with consistent rhythm
      ======================================== */
 
   h1 {
@@ -592,21 +590,21 @@ img:not([loading="lazy"]) {
     font-size: var(--font-size-xl);
     line-height: var(--line-height-snug-mobile, 1.4);
     letter-spacing: var(--letter-spacing-tight-mobile, -0.01em);
-    margin-top: var(--space-8);
+    margin-top: var(--space-6);
     margin-bottom: var(--space-3);
   }
 
   h3 {
     font-size: var(--font-size-lg);
     line-height: var(--line-height-snug-mobile, 1.4);
-    margin-top: var(--space-6);
+    margin-top: var(--space-5);
     margin-bottom: var(--space-2);
   }
 
   h4, h5, h6 {
     font-size: var(--font-size-base);
     line-height: var(--line-height-snug-mobile, 1.4);
-    margin-top: var(--space-5);
+    margin-top: var(--space-4);
     margin-bottom: var(--space-2);
   }
 
@@ -624,7 +622,6 @@ img:not([loading="lazy"]) {
     margin-bottom: var(--space-2);
   }
 
-  /* Nested lists - tighter spacing */
   li > ul, li > ol {
     margin-top: var(--space-2);
     margin-bottom: var(--space-1);
@@ -635,7 +632,7 @@ img:not([loading="lazy"]) {
      ======================================== */
 
   blockquote {
-    margin: var(--space-6) 0;
+    margin: var(--space-5) 0;
     padding-left: var(--space-4);
     border-left: 2px solid var(--color-accent);
   }
@@ -656,56 +653,45 @@ img:not([loading="lazy"]) {
   }
 
   /* ========================================
-     MOBILE LAYOUT ADJUSTMENTS
+     MOBILE LAYOUT - UNIFIED SYSTEM
+     Container handles all horizontal padding
      ======================================== */
 
-  /* Increase touch target sizes */
-  button, a.pub-link, a.paper-link {
-    min-height: 44px;
-    min-width: 44px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+  /* Article: only vertical padding (horizontal via container) */
+  article {
+    padding-top: var(--content-top-padding);
+    padding-bottom: var(--space-8);
+    padding-left: 0;
+    padding-right: 0;
   }
 
-  /* Improve card stacking */
-  .paper-card,
-  .publication-card,
-  .repo-card,
-  .tool-card {
-    padding: var(--space-3);
+  /* Container: horizontal padding only */
+  .container {
+    padding-left: var(--container-padding);
+    padding-right: var(--container-padding);
+  }
+
+  /* Touch-friendly link targets */
+  .paper-link {
+    min-height: 40px;
+    padding: var(--space-2) var(--space-3);
   }
 
   /* Better spacing on mobile */
   section {
-    margin-bottom: var(--space-8);
-  }
-
-  /* Container padding */
-  .container {
-    padding: 0 var(--space-4);
+    margin-bottom: var(--space-6);
   }
 
   /* Page header - more compact */
   .page-header {
-    margin-bottom: var(--space-6);
+    margin-bottom: var(--space-5);
   }
 
   .page-header h1 {
-    margin-bottom: var(--space-3);
+    margin-bottom: var(--space-2);
   }
 
-  /* Profile section - less margin on mobile */
-  .profile-section {
-    margin-bottom: var(--space-8);
-  }
-
-  /* Reduce article padding on mobile */
-  article {
-    padding: var(--space-8) var(--space-4);
-  }
-
-  /* Better link spacing for touch */
+  /* Paper links wrap properly */
   .paper-links, .footer-links {
     flex-wrap: wrap;
     gap: var(--space-2);
@@ -728,18 +714,18 @@ img:not([loading="lazy"]) {
   }
 }
 
-/* Very small screens */
+/* Very small screens - spacing now handled in variables.css */
 @media (max-width: 400px) {
-  :root {
-    --container-padding: var(--space-3);
-  }
-
   h1 {
-    font-size: var(--font-size-2xl);
+    font-size: var(--font-size-xl);
   }
 
   h2 {
-    font-size: var(--font-size-xl);
+    font-size: var(--font-size-lg);
+  }
+
+  h3 {
+    font-size: var(--font-size-base);
   }
 }
 
@@ -949,13 +935,21 @@ img:not([loading="lazy"]) {
 
   .paper-preview,
   .paper-preview--lg {
-    max-width: 240px;
+    max-width: 200px;
     height: auto;
     aspect-ratio: 16/10;
   }
 
   .paper-preview img {
     object-fit: contain;
+  }
+
+  .paper-meta {
+    margin-bottom: var(--space-1);
+  }
+
+  .paper-links {
+    gap: var(--space-2);
   }
 }
 

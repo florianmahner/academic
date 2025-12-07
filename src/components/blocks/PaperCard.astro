@@ -226,11 +226,41 @@ const primaryLink = pdf || html;
     .paper-card {
       grid-template-columns: 1fr;
       gap: var(--space-3);
+      padding: var(--space-3);
     }
 
     .paper-preview {
       width: 100%;
-      height: 120px;
+      max-width: 200px;
+      height: auto;
+      aspect-ratio: 16 / 10;
+    }
+
+    .paper-preview img {
+      object-fit: contain;
+    }
+
+    .paper-meta {
+      margin-bottom: var(--space-1);
+    }
+
+    .paper-title {
+      font-size: var(--font-size-base);
+      margin-bottom: var(--space-1);
+    }
+
+    .paper-authors {
+      font-size: var(--font-size-sm);
+      margin-bottom: var(--space-2);
+    }
+
+    .paper-links {
+      gap: var(--space-2);
+    }
+
+    .paper-link {
+      font-size: var(--font-size-xs);
+      padding: var(--space-2);
     }
   }
 

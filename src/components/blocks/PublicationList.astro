@@ -120,4 +120,30 @@ const years = Object.keys(pubsByYear).sort((a, b) => Number(b) - Number(a));
   .publication-list--minimal .publications {
     gap: var(--space-2);
   }
+
+  /* Mobile adjustments */
+  @media (max-width: 768px) {
+    .year-section {
+      margin-bottom: var(--space-8);
+    }
+
+    .year-label {
+      font-size: var(--font-size-base);
+      margin-bottom: var(--space-3);
+    }
+
+    .publications {
+      gap: var(--space-3);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .year-section {
+      margin-bottom: var(--space-6);
+    }
+
+    .publications {
+      gap: var(--space-2);
+    }
+  }
 </style>
