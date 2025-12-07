@@ -70,6 +70,7 @@ const FeaturesSchema = z.object({
   dark_mode: z.boolean().default(true),
   animations: z.boolean().default(true),
   settings_panel: z.boolean().default(true),
+  profile_picture: z.boolean().default(true),
 });
 
 const AboutSchema = z.object({
@@ -184,6 +185,7 @@ function transformConfig(yamlConfig: ConfigType) {
 
     title: yamlConfig.title,
     email: yamlConfig.email,
+    avatar: yamlConfig.avatar,
 
     social: {
       github: yamlConfig.social.github || "",
@@ -221,6 +223,7 @@ function transformConfig(yamlConfig: ConfigType) {
       darkMode: yamlConfig.features.dark_mode,
       animations: yamlConfig.features.animations,
       settingsPanel: yamlConfig.features.settings_panel,
+      profilePicture: yamlConfig.features.profile_picture,
     },
 
     // NOTE: Layout configuration has moved to frontmatter in src/content/collection-pages/

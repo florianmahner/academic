@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { PaperCard } from '../components/blocks';
 import NewsTimeline from '../components/blocks/NewsTimeline.astro';
+import ProfilePicture from '../components/blocks/ProfilePicture.astro';
 import { config } from '../config';
 import educationData from '../content/education.json';
 import { loadPublications, getSelectedPublications } from '../lib/bibtex';
@@ -98,13 +99,35 @@ const prependBase = (path: string) => {
   <article class="about-page">
     <div class="container">
       <h1 class="sr-only">{[config.name.first, config.name.middle, config.name.last].filter(Boolean).join(' ')} - Academic Portfolio</h1>
-      <!-- About Section -->
+      <!-- About Section with optional Profile Picture -->
       <section class="about-section" data-animate="fade-up">
-        <p set:html={config.about.bio} />
-        {config.about.affiliation && (
-          <p>
-            I am affiliated with <a href={config.about.affiliation.url}>{config.about.affiliation.name}</a>.
-          </p>
+        {config.features.profilePicture && config.avatar ? (
+          <div class="about-content-with-photo">
+            <div class="about-photo">
+              <ProfilePicture
+                src={prependBase(config.avatar)}
+                alt={`${config.name.first} ${config.name.last}`}
+                size="medium"
+              />
+            </div>
+            <div class="about-text">
+              <p set:html={config.about.bio} />
+              {config.about.affiliation && (
+                <p>
+                  I am affiliated with <a href={config.about.affiliation.url}>{config.about.affiliation.name}</a>.
+                </p>
+              )}
+            </div>
+          </div>
+        ) : (
+          <>
+            <p set:html={config.about.bio} />
+            {config.about.affiliation && (
+              <p>
+                I am affiliated with <a href={config.about.affiliation.url}>{config.about.affiliation.name}</a>.
+              </p>
+            )}
+          </>
         )}
       </section>
 
@@ -220,6 +243,37 @@ const prependBase = (path: string) => {
     font-size: var(--font-size-base);
     font-family: var(--font-body);
     line-height: var(--line-height-normal);
+  }
+
+  /* About section with profile photo */
+  .about-content-with-photo {
+    display: flex;
+    gap: var(--space-8);
+    align-items: flex-start;
+  }
+
+  .about-photo {
+    flex-shrink: 0;
+  }
+
+  .about-text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .about-text p:first-child {
+    margin-top: 0;
+  }
+
+  @media (max-width: 768px) {
+    .about-content-with-photo {
+      flex-direction: column;
+      gap: var(--space-6);
+    }
+
+    .about-photo {
+      align-self: center;
+    }
   }
 
   /* Sections */

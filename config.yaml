@@ -25,8 +25,8 @@ institution:
 # Contact information
 email: jane.smith@university.edu
 
-# Avatar image (path relative to public/ folder)
-avatar: /avatar.jpg
+# Avatar/Profile image (path relative to public/ folder)
+avatar: /marie-curie.jpg
 
 # =============================================================================
 # SOCIAL LINKS
@@ -125,6 +125,7 @@ features:
   dark_mode: true              # Enable dark/light mode toggle
   animations: true             # Enable GSAP scroll animations
   settings_panel: true         # Show settings gear icon for customization
+  profile_picture: true        # Show profile picture on about page
 
 # =============================================================================
 # ABOUT PAGE CONTENT
