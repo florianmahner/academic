@@ -1,5 +1,5 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, getEntry, render } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { PaperCard } from '../components/blocks';
 import NewsTimeline from '../components/blocks/NewsTimeline.astro';
@@ -10,6 +10,63 @@ import { loadPublications, getSelectedPublications } from '../lib/bibtex';
 import path from 'node:path';
 
 const title = config.site.title;
+
+// Load about page content from markdown and split into sections
+let bioHtml = '';
+let researchInterestsHtml = '';
+
+try {
+  const aboutPage = await getEntry('pages', 'about');
+  if (aboutPage) {
+    // Render the full markdown to HTML
+    const { Content } = await render(aboutPage);
+
+    // Get the raw body to split into sections
+    const rawBody = aboutPage.body;
+    const splitMarker = '## Research Interests';
+    const splitIndex = rawBody.indexOf(splitMarker);
+
+    if (splitIndex !== -1) {
+      // Parse bio (everything before ## Research Interests)
+      const bioMd = rawBody.substring(0, splitIndex).trim();
+      // Parse research interests (everything after the heading)
+      const researchMd = rawBody.substring(splitIndex + splitMarker.length).trim();
+
+      // Simple markdown to HTML conversion for these short sections
+      // Convert links: [text](url) -> <a href="url">text</a>
+      const convertMd = (md: string) => {
+        return md
+          // Convert links
+          .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
+          // Convert inline code
+          .replace(/`([^`]+)`/g, '<code>$1</code>')
+          // Convert paragraphs (double newlines)
+          .split(/\n\n+/)
+          .map(p => `<p>${p.replace(/\n/g, ' ')}</p>`)
+          .join('\n');
+      };
+
+      bioHtml = convertMd(bioMd);
+      researchInterestsHtml = convertMd(researchMd);
+    } else {
+      // No split marker, use entire content as bio
+      const convertMd = (md: string) => {
+        return md
+          .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
+          .replace(/`([^`]+)`/g, '<code>$1</code>')
+          .split(/\n\n+/)
+          .map(p => `<p>${p.replace(/\n/g, ' ')}</p>`)
+          .join('\n');
+      };
+      bioHtml = convertMd(rawBody);
+    }
+  }
+} catch (e) {
+  console.log('About page not found, falling back to config');
+  // Fallback to config if about.md doesn't exist
+  bioHtml = config.about?.bio || '';
+  researchInterestsHtml = config.about?.researchInterests || '';
+}
 
 // Load selected publications from BibTeX file
 let selectedPublications: any[] = [];
@@ -110,32 +167,20 @@ const prependBase = (path: string) => {
                 size="medium"
               />
             </div>
-            <div class="about-text">
-              <p set:html={config.about.bio} />
-              {config.about.affiliation && (
-                <p>
-                  I am affiliated with <a href={config.about.affiliation.url}>{config.about.affiliation.name}</a>.
-                </p>
-              )}
-            </div>
+            <div class="about-text prose" set:html={bioHtml} />
           </div>
         ) : (
-          <>
-            <p set:html={config.about.bio} />
-            {config.about.affiliation && (
-              <p>
-                I am affiliated with <a href={config.about.affiliation.url}>{config.about.affiliation.name}</a>.
-              </p>
-            )}
-          </>
+          <div class="prose" set:html={bioHtml} />
         )}
       </section>
 
       <!-- Research Interests -->
-      <section class="section" data-animate="fade-up">
-        <h2>Research Interests</h2>
-        <p set:html={config.about.researchInterests} />
-      </section>
+      {researchInterestsHtml && (
+        <section class="section" data-animate="fade-up">
+          <h2>Research Interests</h2>
+          <div class="prose" set:html={researchInterestsHtml} />
+        </section>
+      )}
 
       <!-- Selected Publications -->
       {config.features.selectedPublications && selectedPublications.length > 0 && (

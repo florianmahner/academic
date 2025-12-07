@@ -2,40 +2,40 @@
   "education": [
     {
       "degree": "PhD",
-      "field": "Computer Science",
-      "institution": "Stanford University",
-      "institutionUrl": "https://cs.stanford.edu",
-      "startYear": 2020,
-      "endYear": 2024,
+      "field": "Your Field of Study",
+      "institution": "University of Somewhere",
+      "institutionUrl": "https://www.university.edu",
+      "startYear": 2018,
+      "endYear": 2023,
       "supervisors": [
-        { "name": "Prof. Andrew Ng", "url": "https://www.andrewng.org" }
-      ]
+        { "name": "Prof. Supervisor Name", "url": "https://supervisor-website.edu" }
+      ],
+      "thesis": {
+        "title": "Your Dissertation Title: A Very Long and Impressive Sounding Academic Work",
+        "url": "/pdf/thesis-phd.pdf"
+      }
     },
     {
       "degree": "MSc",
-      "field": "Artificial Intelligence",
-      "institution": "Massachusetts Institute of Technology",
-      "institutionUrl": "https://www.csail.mit.edu",
-      "startYear": 2018,
-      "endYear": 2020,
-      "grade": "Summa Cum Laude",
+      "field": "Related Field",
+      "institution": "Another University",
+      "institutionUrl": "https://www.another-university.edu",
+      "startYear": 2016,
+      "endYear": 2018,
+      "grade": "With Distinction",
       "thesis": {
-        "title": "Deep Reinforcement Learning for Robotics",
+        "title": "Master's Thesis Title",
         "url": "/pdf/thesis-master.pdf"
       }
     },
     {
       "degree": "BSc",
-      "field": "Mathematics",
-      "institution": "University of Cambridge",
-      "institutionUrl": "https://www.maths.cam.ac.uk",
-      "startYear": 2014,
-      "endYear": 2018,
-      "grade": "First Class Honours",
-      "thesis": {
-        "title": "Applications of Linear Algebra in Machine Learning",
-        "url": "/pdf/thesis-bachelor.pdf"
-      }
+      "field": "Foundational Field",
+      "institution": "Your Undergraduate Institution",
+      "institutionUrl": "https://www.undergrad.edu",
+      "startYear": 2012,
+      "endYear": 2016,
+      "grade": "First Class Honours"
     }
   ]
 }

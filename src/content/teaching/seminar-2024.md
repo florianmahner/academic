@@ -1,38 +1,54 @@
 ---
-title: "Research Seminar in AI"
-code: "CS 7999"
+title: "Research Seminar"
+code: "SUBJ 799"
 role: "Instructor"
 semester: "Spring 2024"
-institution: "University Name"
+institution: "Your University"
 level: "graduate"
 students: 15
-tags: ["research-seminar", "graduate", "ai", "reading-group"]
-syllabus: "#"  # Replace with your actual syllabus PDF
-description: "Advanced research seminar for PhD students focusing on cutting-edge AI research. Students present recent papers, discuss research directions, and develop project proposals. Emphasis on critical thinking and research methodology."
+tags: ["seminar", "research", "reading-group", "phd"]
+# syllabus: "/teaching/seminar-syllabus.pdf"
+description: "Weekly research seminar for PhD students. We discuss recent papers, practice presentations, and develop research ideas together. A supportive environment for growing as researchers."
 ---
 
-# CS 7999: Research Seminar in AI
+# SUBJ 799: Research Seminar
 
-**Spring 2024** | University Name
+**Spring 2024** | Your University
 
-## Course Description
+## Seminar Description
 
-Advanced research seminar for PhD students focusing on cutting-edge AI research. Students present recent papers, discuss research directions, and develop project proposals. Emphasis on critical thinking and research methodology.
+Weekly research seminar for PhD students. We discuss recent papers, practice presentations, and develop research ideas together. This is a supportive environment for growing as researchers.
 
-## Topics Covered
+## What We Do
 
-- Foundation models and emergent abilities
-- Multimodal learning and vision-language models
-- AI safety, alignment, and ethical considerations
-- Generative models and few-shot learning
-- Research methodology and proposal development
+- Read and discuss 1-2 papers per week
+- Practice conference presentations
+- Give feedback on work-in-progress
+- Invite guest speakers
+- Develop collaboration opportunities
 
-## Assessment
+## Format
 
-- Presentation: 40%
-- Discussion Participation: 30%
-- Research Proposal: 30%
+Each week, one student leads discussion:
 
-## Office Hours
+- 20 min: Paper presentation
+- 30 min: Group discussion
+- 10 min: Connections to ongoing research
 
-By appointment. Email to schedule.
+## Why Run a Seminar?
+
+Seminars are valuable for both students and faculty:
+
+- **For Students**: Exposure to current research, presentation practice, community building
+- **For Faculty**: Identify talented students, stay current, foster collaboration
+
+## How to Customize
+
+1. **Focus Area**: What papers do you typically read?
+2. **Frequency**: Weekly, biweekly, or monthly?
+3. **Guest Speakers**: List notable visitors
+4. **Output**: Do participants co-author papers?
+
+## Joining
+
+Open to all graduate students in the department. Contact me if interested!

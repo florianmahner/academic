@@ -1,34 +1,46 @@
 ---
-title: "Hands-On Deep Learning: From Theory to Practice"
-event: "ICML 2023 Workshop on Teaching Machine Learning"
-location: "Honolulu, HI, USA"
-date: 2023-07-29
+title: "Hands-On Workshop: Your Topic"
+event: "Summer School or Workshop Name"
+location: "University or Venue"
+date: 2023-08-15
 type: "workshop"
-# slides: "/slides/icml-2023-workshop.pdf"  # TODO: Add presentation slides
-materials: "#"  # Replace with your actual materials URL
-tags: ["deep-learning", "education", "workshop", "hands-on"]
-abstract: "An interactive 3-hour workshop covering fundamentals of deep learning with hands-on coding exercises. Participants build and train neural networks from scratch, learning key concepts through practical implementation."
+# slides: "/slides/workshop-2023.pdf"
+# video: "https://youtube.com/watch?v=your-workshop"
+tags: ["workshop", "tutorial", "hands-on"]
+abstract: "A practical workshop introducing participants to [your topic]. Includes hands-on exercises and real-world examples. Perfect for beginners or those looking to deepen their understanding."
 ---
 
-# Hands-On Deep Learning: From Theory to Practice
+# Hands-On Workshop: Your Topic
 
-**ICML 2023 Workshop on Teaching Machine Learning** | Honolulu, HI, USA | July 29, 2023
+**Summer School or Workshop Name** | University or Venue | August 15, 2023
 
-## Abstract
+## Workshop Description
 
-An interactive 3-hour workshop covering fundamentals of deep learning with hands-on coding exercises. Participants build and train neural networks from scratch, learning key concepts through practical implementation.
+A practical workshop introducing participants to [your topic]. This session combines theory with hands-on exercises, helping attendees build practical skills they can apply immediately.
 
-## Key Topics
+## What Participants Learn
 
-- Neural network fundamentals and backpropagation
-- PyTorch basics: tensors, autograd, and nn.Module
-- Building CNNs for image classification
-- Text classification with RNNs and LSTMs
-- Transfer learning and fine-tuning
-- Common pitfalls and debugging strategies
+- Foundational concept #1
+- Practical skill #2
+- How to apply these ideas to real problems
+- Common pitfalls and how to avoid them
 
-## Resources
+## Workshop Materials
 
-- Slides: Coming soon
-- Code: github.com/username/dl-workshop-2023
-- Materials: All exercises and starter code available on GitHub
+If you're sharing materials, consider including:
+
+1. **Slides**: Presentation deck (PDF)
+2. **Code**: Jupyter notebooks or scripts
+3. **Datasets**: Sample data for exercises
+4. **Reading List**: Papers and resources for further learning
+
+## About Workshop Pages
+
+Workshops are great portfolio pieces because they show you can:
+
+- Explain complex topics clearly
+- Create educational materials
+- Engage with the community
+- Help others learn and grow
+
+Add your workshop materials here to help others benefit from your expertise!

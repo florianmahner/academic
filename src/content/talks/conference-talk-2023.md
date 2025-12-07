@@ -1,34 +1,42 @@
 ---
-title: "Scaling Laws and Efficient Training for Large Language Models"
-event: "Neural Information Processing Systems (NeurIPS) 2023"
-location: "New Orleans, LA, USA"
-date: 2023-12-12
+title: "Your Conference Paper Presentation"
+event: "Academic Conference 2023"
+location: "Another City, Country"
+date: 2023-11-20
 type: "conference"
-# slides: "/slides/neurips-2023-scaling-laws.pdf"  # TODO: Add presentation slides
-# poster: "/posters/neurips-2023-poster.pdf"  # TODO: Add poster PDF
-tags: ["large-language-models", "scaling-laws", "efficiency", "deep-learning"]
-abstract: "We investigate scaling laws for large language models and propose novel training techniques that achieve comparable performance with 40% less compute. Our analysis reveals insights into optimal model size, dataset size, and training duration trade-offs."
+# slides: "/slides/conference-2023.pdf"
+tags: ["conference", "research", "your-topic"]
+abstract: "Summarize your conference presentation here. What problem did you address? What's your key contribution? This abstract helps visitors understand what your talk was about without watching the full video."
 ---
 
-# Scaling Laws and Efficient Training for Large Language Models
+# Your Conference Paper Presentation
 
-**Neural Information Processing Systems (NeurIPS) 2023** | New Orleans, LA, USA | December 12, 2023
+**Academic Conference 2023** | Another City, Country | November 20, 2023
 
 ## Abstract
 
-We investigate scaling laws for large language models and propose novel training techniques that achieve comparable performance with 40% less compute. Our analysis reveals insights into optimal model size, dataset size, and training duration trade-offs.
+Summarize your conference presentation here. What problem did you address? What's your key contribution? This abstract helps visitors understand what your talk was about without watching the full video.
 
-## Key Topics
+## Talk Overview
 
-- Extended scaling law analysis with interaction terms
-- Progressive layerwise training technique
-- Adaptive batch size scheduling
-- Mixed precision with dynamic loss scaling
-- Compute-optimal training strategies
-- Experimental validation on models up to 6.7B parameters
+This is where you describe your presentation. Consider including:
 
-## Resources
+- **Motivation**: Why is this problem important?
+- **Approach**: What method did you use?
+- **Results**: What did you find?
+- **Impact**: Why should people care?
 
+## Tips for Talk Pages
+
+Conference talks are a great way to showcase your research communication skills. Include:
+
+- A clear, jargon-free abstract
+- Links to the associated paper
+- Slides (PDF) if you're comfortable sharing
+- Video recording when available
+
+## Materials
+
+- Paper: [Link to your paper]
+- Code: [Link to GitHub if applicable]
 - Slides: Coming soon
-- Poster: Coming soon
-- Code: github.com/username/efficient-llm-training

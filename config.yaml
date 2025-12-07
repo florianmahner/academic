@@ -11,19 +11,19 @@
 
 name:
   first: Jane
-  middle: M
-  last: Smith
+  middle: ""
+  last: Doe
 
 # Professional title/tagline
-title: Assistant Professor of Computer Science
+title: Your Position or Title Here
 
 # Institution/affiliation
 institution:
-  name: Center for Advanced Computational Research
-  url: https://research.university.edu
+  name: Your University or Institution
+  url: https://your-institution.edu
 
 # Contact information
-email: jane.smith@university.edu
+email: youremail@institution.edu
 
 # Avatar/Profile image (path relative to public/ folder)
 avatar: /marie-curie.jpg
@@ -34,23 +34,23 @@ avatar: /marie-curie.jpg
 # Leave empty string ("") to hide any social link
 
 social:
-  github: janesmith
-  scholar: EXAMPLE_ID  # Google Scholar ID
-  linkedin: janesmith
-  twitter: janesmith_cs
-  orcid: 0000-0001-2345-6789
-  researchgate: ""
+  github: ""           # Your GitHub username
+  scholar: ""          # Google Scholar ID (the part after user= in your profile URL)
+  linkedin: ""         # Your LinkedIn username
+  twitter: ""          # Your Twitter/X handle (without @)
+  orcid: ""            # Your ORCID iD (e.g., 0000-0001-2345-6789)
+  researchgate: ""     # Your ResearchGate username
 
 # =============================================================================
 # SITE METADATA
 # =============================================================================
 
 site:
-  url: https://florianmahner.github.io/academic
-  title: Jane Smith
-  description: Personal academic website of Jane Smith - Research in machine learning, natural language processing, and computational linguistics
+  url: https://your-username.github.io/academic
+  title: Jane Doe
+  description: Academic website of Jane Doe - Replace this with a brief description of your research focus
   language: en
-  base: /academic/  # Base URL for subdirectory deployments
+  base: /academic/  # Base URL for subdirectory deployments (use "/" for root)
 
 # =============================================================================
 # NAVIGATION
@@ -64,7 +64,7 @@ navigation:
   mode: sidebar
 
   # Navigation items (order matters!)
-  # Leave empty array [] to auto-generate from pages
+  # Comment out or remove items you don't need
   items:
     - id: about
       label: About
@@ -96,10 +96,6 @@ navigation:
     - id: contact
       label: Contact
       href: /contact
-    # Optional pages:
-    # - id: misc
-    #   label: Misc
-    #   href: /misc
 
 # =============================================================================
 # THEME SYSTEM
@@ -130,19 +126,8 @@ features:
 # =============================================================================
 # ABOUT PAGE CONTENT
 # =============================================================================
-
-about:
-  # Main bio paragraph (HTML allowed for links)
-  bio: |
-    I am a researcher exploring the fascinating intersection of <a href='https://en.wikipedia.org/wiki/Computational_neuroscience' target='_blank'>computational neuroscience</a> and <a href='https://distill.pub' target='_blank'>interpretable machine learning</a>. My work investigates how artificial systems can learn, reason, and adapt in ways that mirror—and sometimes surpass—biological intelligence. I'm particularly drawn to questions that bridge theory and practice, from <a href='https://colah.github.io/posts/2015-08-Understanding-LSTMs/' target='_blank'>understanding neural architectures</a> to building tools that democratize access to <a href='https://huggingface.co' target='_blank'>state-of-the-art AI</a>.
-
-  # Research interests section (HTML allowed for links)
-  research_interests: |
-    My research interests span representation learning, computational cognitive modeling, and the philosophical implications of artificial intelligence. I believe the most interesting questions emerge at disciplinary boundaries—where computer science meets neuroscience, where statistics meets epistemology, and where <a href='https://arxiv.org/abs/1706.03762' target='_blank'>engineering breakthroughs</a> inspire new scientific hypotheses. I'm also fascinated by <a href='https://www.lesswrong.com' target='_blank'>AI alignment</a>, open science, and finding elegant solutions to problems that seem impossibly complex. When I'm not writing code or reading papers, you'll find me contributing to <a href='https://github.com/pytorch/pytorch' target='_blank'>open-source projects</a>, exploring <a href='https://www.kaggle.com' target='_blank'>interesting datasets</a>, or pondering whether <a href='https://xkcd.com/1425/' target='_blank'>my model is actually learning anything meaningful</a>. Always happy to collaborate on ambitious research ideas or discuss the latest developments in the field over coffee (virtual or otherwise).
-
-# =============================================================================
-# FOOTER
-# =============================================================================
+# Edit your bio and research interests in: src/content/pages/about.md
+# The markdown file is split by "## Research Interests" heading into two sections.
 
 # =============================================================================
 # PUBLICATIONS SETTINGS
@@ -156,7 +141,7 @@ publications:
   # Whether to group by year
   groupByYear: true
   # Author name to highlight (usually your last name)
-  highlightAuthor: Smith
+  highlightAuthor: Curie
 
 # =============================================================================
 # CV / RESUME SETTINGS
@@ -188,4 +173,4 @@ footer:
   copyright: true  # Show copyright with current year
   links:
     - label: Email
-      href: mailto:jane.smith@university.edu
+      href: mailto:youremail@institution.edu

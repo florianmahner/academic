@@ -1,230 +1,148 @@
 {
   "$schema": "https://raw.githubusercontent.com/jsonresume/resume-schema/v1.0.0/schema.json",
   "basics": {
-    "name": "Marie Skłodowska-Curie",
-    "label": "Physicist & Chemist",
-    "email": "marie.curie@sorbonne.fr",
-    "url": "https://mariecurie.org",
-    "summary": "Pioneer in radioactivity research. First woman to win a Nobel Prize, first person to win Nobel Prizes in two different sciences, and first woman professor at the University of Paris. Discovered polonium and radium, developed mobile X-ray units during World War I, and founded the Curie Institutes in Paris and Warsaw.",
+    "name": "Jane Doe",
+    "label": "Your Title Here",
+    "email": "youremail@institution.edu",
+    "url": "https://your-website.com",
+    "summary": "Write a brief professional summary here. This appears at the top of your CV and should capture the essence of your academic identity. Mention your research focus, key achievements, and what drives your work. Keep it concise but compelling—think of it as your academic elevator pitch.",
     "location": {
-      "city": "Paris",
-      "countryCode": "FR"
+      "city": "Your City",
+      "countryCode": "US"
     },
     "profiles": [
       {
-        "network": "Institut Curie",
-        "url": "https://curie.fr"
+        "network": "Your Institution",
+        "url": "https://your-institution.edu"
       }
     ]
   },
   "education": [
     {
-      "institution": "University of Paris (Sorbonne)",
-      "url": "https://www.sorbonne-universite.fr",
-      "area": "Physics",
-      "studyType": "Doctorate",
-      "startDate": "1897",
-      "endDate": "1903",
-      "thesis": "Recherches sur les substances radioactives (Research on Radioactive Substances)",
-      "honors": "First woman in France to earn a doctoral degree in physics"
+      "institution": "University of Somewhere",
+      "url": "https://www.university.edu",
+      "area": "Your Field",
+      "studyType": "PhD",
+      "startDate": "2018",
+      "endDate": "2023",
+      "thesis": "Your Dissertation Title Goes Here",
+      "honors": "Any honors or distinctions"
     },
     {
-      "institution": "University of Paris (Sorbonne)",
-      "url": "https://www.sorbonne-universite.fr",
-      "area": "Mathematics",
-      "studyType": "Licentiate",
-      "startDate": "1893",
-      "endDate": "1894"
+      "institution": "Another University",
+      "url": "https://www.another-university.edu",
+      "area": "Related Field",
+      "studyType": "MSc",
+      "startDate": "2016",
+      "endDate": "2018",
+      "honors": "With distinction"
     },
     {
-      "institution": "University of Paris (Sorbonne)",
-      "url": "https://www.sorbonne-universite.fr",
-      "area": "Physics",
-      "studyType": "Licentiate",
-      "startDate": "1891",
-      "endDate": "1893",
-      "honors": "First in class"
-    },
-    {
-      "institution": "Flying University (Uniwersytet Latający)",
-      "area": "Natural Sciences",
-      "studyType": "Underground Studies",
-      "startDate": "1884",
-      "endDate": "1891",
-      "summary": "Clandestine institution in partitioned Poland"
+      "institution": "Your Undergraduate Institution",
+      "url": "https://www.undergrad.edu",
+      "area": "Foundational Field",
+      "studyType": "BSc",
+      "startDate": "2012",
+      "endDate": "2016",
+      "honors": "First Class Honours"
     }
   ],
   "work": [
     {
-      "name": "Radium Institute (Institut du Radium)",
-      "position": "Director, Curie Laboratory",
-      "url": "https://curie.fr",
-      "startDate": "1914",
-      "endDate": "1934",
-      "summary": "Founded and directed the radioactivity laboratory, training the next generation of researchers in radiation physics and chemistry"
+      "name": "Current Institution",
+      "position": "Your Current Position",
+      "url": "https://www.current-institution.edu",
+      "startDate": "2023",
+      "endDate": "present",
+      "summary": "Brief description of your current role and responsibilities"
     },
     {
-      "name": "University of Paris (Sorbonne)",
-      "position": "Professor of General Physics",
-      "url": "https://www.sorbonne-universite.fr",
-      "startDate": "1906",
-      "endDate": "1934",
-      "summary": "First woman to hold a professorship at the Sorbonne. Succeeded Pierre Curie after his death."
+      "name": "Previous Institution",
+      "position": "Previous Position",
+      "url": "https://www.previous-institution.edu",
+      "startDate": "2020",
+      "endDate": "2023",
+      "summary": "What you did in this role"
     },
     {
-      "name": "École Normale Supérieure",
-      "position": "Lecturer in Physics",
-      "startDate": "1900",
-      "endDate": "1906",
-      "summary": "Taught physics at the prestigious teacher training institution"
-    },
-    {
-      "name": "University of Paris",
-      "position": "Chief of Physics Laboratory",
-      "startDate": "1904",
-      "endDate": "1906"
-    },
-    {
-      "name": "French Red Cross",
-      "position": "Director, Radiological Service",
-      "startDate": "1914",
-      "endDate": "1918",
-      "summary": "Developed mobile X-ray units (petites Curies) for battlefield medicine, trained 150 radiological technicians, treated over one million soldiers"
-    },
-    {
-      "name": "League of Nations",
-      "position": "Member, International Committee on Intellectual Cooperation",
-      "startDate": "1922",
-      "endDate": "1934",
-      "summary": "Served alongside Albert Einstein, Hendrik Lorentz, and Henri Bergson"
+      "name": "Research Lab or Company",
+      "position": "Research Intern/Assistant",
+      "startDate": "2019",
+      "endDate": "2020",
+      "summary": "Description of research or work conducted"
     }
   ],
   "awards": [
     {
-      "title": "Nobel Prize in Physics",
-      "date": "1903",
-      "awarder": "Royal Swedish Academy of Sciences",
-      "summary": "Shared with Pierre Curie and Henri Becquerel for research on radiation phenomena"
+      "title": "Best Paper Award",
+      "date": "2023",
+      "awarder": "Conference Name",
+      "summary": "Brief description of the award"
     },
     {
-      "title": "Nobel Prize in Chemistry",
-      "date": "1911",
-      "awarder": "Royal Swedish Academy of Sciences",
-      "summary": "For the discovery of radium and polonium, isolation of radium, and study of its compounds"
+      "title": "Research Fellowship",
+      "date": "2022",
+      "awarder": "Funding Agency",
+      "summary": "Description of the fellowship"
     },
     {
-      "title": "Davy Medal",
-      "date": "1903",
-      "awarder": "Royal Society of London",
-      "summary": "Shared with Pierre Curie"
-    },
-    {
-      "title": "Matteucci Medal",
-      "date": "1904",
-      "awarder": "Italian Society of Sciences"
-    },
-    {
-      "title": "Elliott Cresson Medal",
-      "date": "1909",
-      "awarder": "Franklin Institute"
-    },
-    {
-      "title": "Albert Medal",
-      "date": "1910",
-      "awarder": "Royal Society of Arts"
-    },
-    {
-      "title": "Franklin Medal",
-      "date": "1921",
-      "awarder": "Franklin Institute"
-    },
-    {
-      "title": "Ellen Richards Research Prize",
-      "date": "1921",
-      "awarder": "American Association of University Women"
-    },
-    {
-      "title": "Cameron Prize",
-      "date": "1931",
-      "awarder": "University of Edinburgh"
+      "title": "Graduate Prize",
+      "date": "2018",
+      "awarder": "University Name"
     }
   ],
   "publications": [
     {
-      "name": "Recherches sur les substances radioactives",
-      "publisher": "Gauthier-Villars",
-      "releaseDate": "1903",
-      "summary": "Doctoral thesis establishing the scientific foundations of radioactivity research"
+      "name": "Your Paper Title",
+      "publisher": "Journal or Conference Name",
+      "releaseDate": "2023",
+      "summary": "Brief description of the publication"
     },
     {
-      "name": "Traité de Radioactivité",
-      "publisher": "Gauthier-Villars",
-      "releaseDate": "1910",
-      "summary": "Comprehensive two-volume treatise on radioactivity"
-    },
-    {
-      "name": "L'isotopie et les éléments isotopes",
-      "publisher": "Albert Blanchard",
-      "releaseDate": "1924"
-    },
-    {
-      "name": "Radioactivité",
-      "publisher": "Hermann",
-      "releaseDate": "1935",
-      "summary": "Posthumously published comprehensive work"
+      "name": "Another Publication",
+      "publisher": "Another Venue",
+      "releaseDate": "2022"
     }
   ],
   "skills": [
     {
-      "name": "Research Areas",
-      "keywords": ["Radioactivity", "Nuclear Physics", "Radiochemistry", "X-ray Imaging", "Spectroscopy"]
+      "name": "Research Methods",
+      "keywords": ["Method 1", "Method 2", "Method 3", "Method 4"]
     },
     {
-      "name": "Laboratory Techniques",
-      "keywords": ["Electrometry", "Spectral Analysis", "Chemical Isolation", "Crystallography"]
+      "name": "Technical Skills",
+      "keywords": ["Skill 1", "Skill 2", "Skill 3", "Skill 4"]
     }
   ],
   "languages": [
     {
-      "language": "Polish",
+      "language": "English",
       "fluency": "Native"
     },
     {
-      "language": "French",
-      "fluency": "Fluent"
-    },
-    {
-      "language": "Russian",
-      "fluency": "Fluent"
-    },
-    {
-      "language": "German",
-      "fluency": "Proficient"
-    },
-    {
-      "language": "English",
+      "language": "Another Language",
       "fluency": "Proficient"
     }
   ],
   "interests": [
     {
-      "name": "Science Education",
-      "keywords": ["Women in Science", "International Scientific Cooperation"]
+      "name": "Your Interests",
+      "keywords": ["Interest 1", "Interest 2"]
     }
   ],
   "references": [
     {
-      "name": "Prof. Henri Becquerel",
-      "reference": "École Polytechnique, Paris"
+      "name": "Prof. Reference One",
+      "reference": "Institution, Department"
     },
     {
-      "name": "Prof. Gabriel Lippmann",
-      "reference": "University of Paris, Nobel Laureate 1908"
+      "name": "Prof. Reference Two",
+      "reference": "Institution, Department"
     }
   ],
   "meta": {
     "canonical": "https://jsonresume.org/schema/",
     "version": "v1.0.0",
-    "lastModified": "1934-07-04"
+    "lastModified": "2024-01-01"
   }
 }

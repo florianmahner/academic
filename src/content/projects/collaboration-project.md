@@ -1,36 +1,61 @@
 ---
-title: "MedAI: Medical Image Analysis Platform"
-description: "A collaborative open-source platform for applying AI to medical imaging, developed in partnership with hospitals and research institutions to improve diagnostic accuracy and patient outcomes."
+title: "Collaborative Research Project"
+description: "A template for showcasing collaborative work. Highlight partnerships, funding, and impact!"
 date: 2023-05-10
-tags: ["medical-ai", "computer-vision", "healthcare", "collaboration", "deep-learning"]
+tags: ["collaboration", "research", "interdisciplinary"]
 featured: true
 status: "active"
-github: "#"  # Replace with your actual GitHub repo URL
-url: "#"  # Replace with your actual website URL
-documentation: "#"  # Replace with your actual docs URL
-partners: ["University Hospital", "Medical Research Institute", "Healthcare AI Lab"]
-funding: "NIH Grant R01-123456, Industry Partnership"
-# image: "/projects/medai-banner.png"  # TODO: Add project banner image
+github: "#"  # If applicable
+url: "#"  # Project website
+partners: ["Partner Institution 1", "Partner Institution 2"]
+funding: "Funding Agency Grant #12345"
 ---
 
-# MedAI: Medical Image Analysis Platform
+# Collaborative Research Project
 
-A collaborative open-source platform for applying AI to medical imaging, developed in partnership with hospitals and research institutions to improve diagnostic accuracy and patient outcomes.
+This template shows how to present collaborative work. Replace with your actual project!
 
-## Features
+## Project Overview
 
-- AI-powered disease detection models (lung, breast, skin cancer)
-- HIPAA-compliant with federated learning support
-- PACS and HL7 integration for clinical workflows
-- Explainable AI with gradient-based visualizations
-- Real-world deployment in 45+ hospitals across 12 countries
+What is this project about? What are the main goals?
 
-## Installation
+Collaborative projects are great for demonstrating:
+- Your ability to work across disciplines
+- Connections with other institutions
+- Successful grant writing
+- Real-world impact
 
-```bash
-pip install medai
-```
+## Team & Partners
 
-## Usage
+Highlight your collaborators:
 
-See the [documentation](#) for integration examples and clinical deployment guides.
+- **Partner Institution 1**: Their role and expertise
+- **Partner Institution 2**: What they contribute
+- **Funding Agency**: Grant details (if comfortable sharing)
+
+## Key Achievements
+
+What has the project accomplished?
+
+- Milestone 1: Description
+- Milestone 2: Description
+- Publication/output 3: Description
+
+## How to Get Involved
+
+Are you seeking new collaborators? Students? Industry partners?
+
+## Resources
+
+- [Project website](#)
+- [Publications](#)
+- [Press coverage](#)
+- [Contact](#)
+
+## Acknowledgments
+
+Thank your funders, collaborators, and anyone who made the work possible.
+
+---
+
+*This project is supported by [Funding Agency]. Views expressed are our own.*
