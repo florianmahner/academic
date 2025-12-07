@@ -1,0 +1,355 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { config } from '../config';
+import cvData from '../content/cv.json';
+
+const title = `CV | ${config.site.title}`;
+
+// Helper to format date ranges
+const formatDateRange = (start?: string, end?: string) => {
+  if (!start) return '';
+  if (!end || end === 'present') return `${start} - Present`;
+  return `${start} - ${end}`;
+};
+---
+
+<BaseLayout title={title} description="Curriculum Vitae">
+  <article class="cv-page">
+    <div class="container">
+      <header class="cv-header" data-animate="fade-up">
+        <h1>Curriculum Vitae</h1>
+        <p class="cv-subtitle">
+          <a href="/cv.pdf" class="cv-download" target="_blank" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Download PDF
+          </a>
+        </p>
+      </header>
+
+      {/* Education */}
+      {cvData.education && cvData.education.length > 0 && (
+        <section class="cv-section" data-animate="fade-up">
+          <h2 class="cv-section-title">Education</h2>
+          <div class="cv-list">
+            {cvData.education.map((edu) => (
+              <div class="cv-item">
+                <div class="cv-date">{formatDateRange(edu.startDate, edu.endDate)}</div>
+                <div class="cv-content">
+                  <h3 class="cv-item-title">
+                    {edu.degree} in {edu.field}
+                  </h3>
+                  <p class="cv-item-org">
+                    {edu.url ? (
+                      <a href={edu.url} target="_blank" rel="noopener">{edu.institution}</a>
+                    ) : edu.institution}
+                  </p>
+                  {edu.advisor && <p class="cv-item-detail">Advisor: {edu.advisor}</p>}
+                  {edu.thesis && <p class="cv-item-detail">Thesis: {edu.thesis}</p>}
+                  {edu.honors && <p class="cv-item-detail">{edu.honors}</p>}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Work Experience */}
+      {cvData.work && cvData.work.length > 0 && (
+        <section class="cv-section" data-animate="fade-up">
+          <h2 class="cv-section-title">Experience</h2>
+          <div class="cv-list">
+            {cvData.work.map((job) => (
+              <div class="cv-item">
+                <div class="cv-date">{formatDateRange(job.startDate, job.endDate)}</div>
+                <div class="cv-content">
+                  <h3 class="cv-item-title">{job.position}</h3>
+                  <p class="cv-item-org">
+                    {job.url ? (
+                      <a href={job.url} target="_blank" rel="noopener">{job.organization}</a>
+                    ) : job.organization}
+                  </p>
+                  {job.summary && <p class="cv-item-detail">{job.summary}</p>}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Awards */}
+      {cvData.awards && cvData.awards.length > 0 && (
+        <section class="cv-section" data-animate="fade-up">
+          <h2 class="cv-section-title">Awards & Honors</h2>
+          <div class="cv-list">
+            {cvData.awards.map((award) => (
+              <div class="cv-item">
+                <div class="cv-date">{award.date}</div>
+                <div class="cv-content">
+                  <h3 class="cv-item-title">{award.title}</h3>
+                  <p class="cv-item-org">{award.awarder}</p>
+                  {award.summary && <p class="cv-item-detail">{award.summary}</p>}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Grants */}
+      {cvData.grants && cvData.grants.length > 0 && (
+        <section class="cv-section" data-animate="fade-up">
+          <h2 class="cv-section-title">Grants & Funding</h2>
+          <div class="cv-list">
+            {cvData.grants.map((grant) => (
+              <div class="cv-item">
+                <div class="cv-date">{formatDateRange(grant.startDate, grant.endDate)}</div>
+                <div class="cv-content">
+                  <h3 class="cv-item-title">{grant.title}</h3>
+                  <p class="cv-item-org">{grant.funder}</p>
+                  <p class="cv-item-detail">
+                    {grant.amount && <span>{grant.amount}</span>}
+                    {grant.amount && grant.role && <span> · </span>}
+                    {grant.role && <span>{grant.role}</span>}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Teaching */}
+      {cvData.teaching && cvData.teaching.length > 0 && (
+        <section class="cv-section" data-animate="fade-up">
+          <h2 class="cv-section-title">Teaching</h2>
+          <div class="cv-list">
+            {cvData.teaching.map((course) => (
+              <div class="cv-item">
+                <div class="cv-date">{course.dates?.join(', ')}</div>
+                <div class="cv-content">
+                  <h3 class="cv-item-title">{course.course}</h3>
+                  <p class="cv-item-org">{course.institution}</p>
+                  {course.role && <p class="cv-item-detail">{course.role}</p>}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Service */}
+      {cvData.service && cvData.service.length > 0 && (
+        <section class="cv-section" data-animate="fade-up">
+          <h2 class="cv-section-title">Service</h2>
+          <div class="cv-list">
+            {cvData.service.map((item) => (
+              <div class="cv-item">
+                <div class="cv-date">{item.dates?.join(', ') || ''}</div>
+                <div class="cv-content">
+                  <h3 class="cv-item-title">{item.role}</h3>
+                  <p class="cv-item-org">{item.organization}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Skills */}
+      {cvData.skills && cvData.skills.length > 0 && (
+        <section class="cv-section" data-animate="fade-up">
+          <h2 class="cv-section-title">Skills</h2>
+          <div class="cv-skills">
+            {cvData.skills.map((skill) => (
+              <div class="cv-skill-group">
+                <span class="cv-skill-category">{skill.category}:</span>
+                <span class="cv-skill-items">{skill.items.join(', ')}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Languages */}
+      {cvData.languages && cvData.languages.length > 0 && (
+        <section class="cv-section" data-animate="fade-up">
+          <h2 class="cv-section-title">Languages</h2>
+          <div class="cv-languages">
+            {cvData.languages.map((lang) => (
+              <span class="cv-language">
+                <strong>{lang.language}</strong> ({lang.fluency})
+              </span>
+            ))}
+          </div>
+        </section>
+      )}
+
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .cv-page {
+    padding-bottom: var(--space-16);
+  }
+
+  .cv-header {
+    margin-bottom: var(--space-12);
+  }
+
+  .cv-header h1 {
+    margin-top: 0;
+    margin-bottom: var(--space-3);
+  }
+
+  .cv-subtitle {
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+
+  .cv-download {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-size-sm);
+    font-family: var(--font-ui);
+    color: var(--color-text-secondary);
+    background: none;
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    transition: all var(--transition-fast);
+  }
+
+  .cv-download:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  .cv-section {
+    margin-bottom: var(--space-12);
+  }
+
+  .cv-section-title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text);
+    margin-top: 0;
+    margin-bottom: var(--space-6);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .cv-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .cv-item {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: var(--space-5);
+    padding: var(--space-4);
+    transition: border-left-color var(--transition-fast);
+    border-left: 2px solid transparent;
+  }
+
+  @media (hover: hover) {
+    .cv-item:hover {
+      border-left-color: var(--color-accent);
+    }
+  }
+
+  .cv-date {
+    font-size: var(--font-size-sm);
+    font-family: var(--font-mono);
+    color: var(--color-text-muted);
+    white-space: nowrap;
+  }
+
+  .cv-content {
+    min-width: 0;
+  }
+
+  .cv-item-title {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    margin: 0 0 var(--space-1);
+    line-height: var(--line-height-snug);
+  }
+
+  .cv-item-org {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin: 0 0 var(--space-1);
+  }
+
+  .cv-item-org a {
+    color: inherit;
+    background: none;
+  }
+
+  .cv-item-org a:hover {
+    color: var(--color-accent);
+  }
+
+  .cv-item-detail {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+
+  .cv-skills {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding-left: var(--space-4);
+  }
+
+  .cv-skill-group {
+    font-size: var(--font-size-sm);
+  }
+
+  .cv-skill-category {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text);
+    margin-right: var(--space-2);
+  }
+
+  .cv-skill-items {
+    color: var(--color-text-secondary);
+  }
+
+  .cv-languages {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    padding-left: var(--space-4);
+  }
+
+  .cv-language {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+  }
+
+  .cv-language strong {
+    color: var(--color-text);
+    font-weight: var(--font-weight-medium);
+  }
+
+  @media (max-width: 600px) {
+    .cv-item {
+      grid-template-columns: 1fr;
+      gap: var(--space-2);
+      padding: var(--space-3);
+    }
+
+    .cv-date {
+      font-size: var(--font-size-xs);
+    }
+  }
+</style>

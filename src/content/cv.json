@@ -1,0 +1,178 @@
+{
+  "$schema": "./cv.schema.json",
+  "basics": {
+    "name": "Jane Doe",
+    "title": "Assistant Professor of Computer Science",
+    "email": "jane.doe@university.edu",
+    "url": "https://janedoe.com",
+    "location": {
+      "city": "Cambridge",
+      "country": "USA"
+    },
+    "profiles": [
+      { "network": "Google Scholar", "url": "https://scholar.google.com/citations?user=xxx" },
+      { "network": "GitHub", "url": "https://github.com/janedoe" },
+      { "network": "Twitter", "url": "https://twitter.com/janedoe" }
+    ]
+  },
+  "education": [
+    {
+      "degree": "PhD",
+      "field": "Computer Science",
+      "institution": "Stanford University",
+      "url": "https://cs.stanford.edu",
+      "startDate": "2016",
+      "endDate": "2021",
+      "thesis": "Deep Learning for Scientific Discovery",
+      "advisor": "Prof. Andrew Ng"
+    },
+    {
+      "degree": "MSc",
+      "field": "Machine Learning",
+      "institution": "MIT",
+      "url": "https://www.csail.mit.edu",
+      "startDate": "2014",
+      "endDate": "2016",
+      "honors": "Summa Cum Laude"
+    },
+    {
+      "degree": "BSc",
+      "field": "Mathematics",
+      "institution": "University of Cambridge",
+      "url": "https://www.maths.cam.ac.uk",
+      "startDate": "2010",
+      "endDate": "2014",
+      "honors": "First Class Honours"
+    }
+  ],
+  "work": [
+    {
+      "position": "Assistant Professor",
+      "organization": "Harvard University",
+      "url": "https://seas.harvard.edu",
+      "startDate": "2023",
+      "endDate": "present",
+      "summary": "Leading research in machine learning and computational neuroscience"
+    },
+    {
+      "position": "Postdoctoral Researcher",
+      "organization": "DeepMind",
+      "url": "https://deepmind.com",
+      "startDate": "2021",
+      "endDate": "2023",
+      "summary": "Research on large language models and AI safety"
+    },
+    {
+      "position": "Research Intern",
+      "organization": "Google Brain",
+      "url": "https://research.google",
+      "startDate": "2019",
+      "endDate": "2019",
+      "summary": "Summer internship on neural architecture search"
+    }
+  ],
+  "awards": [
+    {
+      "title": "NSF CAREER Award",
+      "date": "2024",
+      "awarder": "National Science Foundation"
+    },
+    {
+      "title": "Best Paper Award",
+      "date": "2023",
+      "awarder": "NeurIPS",
+      "summary": "For work on efficient transformers"
+    },
+    {
+      "title": "MIT Technology Review 35 Under 35",
+      "date": "2022",
+      "awarder": "MIT Technology Review"
+    },
+    {
+      "title": "Google PhD Fellowship",
+      "date": "2018",
+      "awarder": "Google"
+    }
+  ],
+  "grants": [
+    {
+      "title": "Foundations of Deep Learning Theory",
+      "funder": "NSF",
+      "amount": "$500,000",
+      "startDate": "2024",
+      "endDate": "2029",
+      "role": "PI"
+    },
+    {
+      "title": "AI for Scientific Discovery",
+      "funder": "NIH",
+      "amount": "$1.2M",
+      "startDate": "2023",
+      "endDate": "2026",
+      "role": "Co-PI"
+    }
+  ],
+  "teaching": [
+    {
+      "course": "CS 229: Machine Learning",
+      "institution": "Harvard University",
+      "role": "Instructor",
+      "dates": ["Fall 2023", "Fall 2024"]
+    },
+    {
+      "course": "CS 281: Advanced Machine Learning",
+      "institution": "Harvard University",
+      "role": "Instructor",
+      "dates": ["Spring 2024"]
+    },
+    {
+      "course": "CS 109: Data Science",
+      "institution": "Stanford University",
+      "role": "Teaching Assistant",
+      "dates": ["Fall 2018", "Spring 2019"]
+    }
+  ],
+  "service": [
+    {
+      "role": "Area Chair",
+      "organization": "NeurIPS",
+      "dates": ["2023", "2024"]
+    },
+    {
+      "role": "Reviewer",
+      "organization": "ICML, NeurIPS, ICLR, Nature Machine Intelligence",
+      "dates": ["2019-present"]
+    },
+    {
+      "role": "Organizer",
+      "organization": "Workshop on AI Safety at ICML 2023"
+    }
+  ],
+  "skills": [
+    {
+      "category": "Programming",
+      "items": ["Python", "PyTorch", "JAX", "C++", "Julia"]
+    },
+    {
+      "category": "Areas",
+      "items": ["Deep Learning", "Reinforcement Learning", "NLP", "Computer Vision"]
+    }
+  ],
+  "languages": [
+    { "language": "English", "fluency": "Native" },
+    { "language": "German", "fluency": "Professional" },
+    { "language": "French", "fluency": "Conversational" }
+  ],
+  "references": [
+    {
+      "name": "Prof. Andrew Ng",
+      "affiliation": "Stanford University",
+      "email": "ang@cs.stanford.edu"
+    },
+    {
+      "name": "Prof. Yann LeCun",
+      "affiliation": "New York University / Meta AI",
+      "email": "yann@cs.nyu.edu"
+    }
+  ]
+}
