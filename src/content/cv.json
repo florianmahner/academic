@@ -1,178 +1,230 @@
 {
-  "$schema": "./cv.schema.json",
+  "$schema": "https://raw.githubusercontent.com/jsonresume/resume-schema/v1.0.0/schema.json",
   "basics": {
-    "name": "Jane Doe",
-    "title": "Assistant Professor of Computer Science",
-    "email": "jane.doe@university.edu",
-    "url": "https://janedoe.com",
+    "name": "Marie Skłodowska-Curie",
+    "label": "Physicist & Chemist",
+    "email": "marie.curie@sorbonne.fr",
+    "url": "https://mariecurie.org",
+    "summary": "Pioneer in radioactivity research. First woman to win a Nobel Prize, first person to win Nobel Prizes in two different sciences, and first woman professor at the University of Paris. Discovered polonium and radium, developed mobile X-ray units during World War I, and founded the Curie Institutes in Paris and Warsaw.",
     "location": {
-      "city": "Cambridge",
-      "country": "USA"
+      "city": "Paris",
+      "countryCode": "FR"
     },
     "profiles": [
-      { "network": "Google Scholar", "url": "https://scholar.google.com/citations?user=xxx" },
-      { "network": "GitHub", "url": "https://github.com/janedoe" },
-      { "network": "Twitter", "url": "https://twitter.com/janedoe" }
+      {
+        "network": "Institut Curie",
+        "url": "https://curie.fr"
+      }
     ]
   },
   "education": [
     {
-      "degree": "PhD",
-      "field": "Computer Science",
-      "institution": "Stanford University",
-      "url": "https://cs.stanford.edu",
-      "startDate": "2016",
-      "endDate": "2021",
-      "thesis": "Deep Learning for Scientific Discovery",
-      "advisor": "Prof. Andrew Ng"
+      "institution": "University of Paris (Sorbonne)",
+      "url": "https://www.sorbonne-universite.fr",
+      "area": "Physics",
+      "studyType": "Doctorate",
+      "startDate": "1897",
+      "endDate": "1903",
+      "thesis": "Recherches sur les substances radioactives (Research on Radioactive Substances)",
+      "honors": "First woman in France to earn a doctoral degree in physics"
     },
     {
-      "degree": "MSc",
-      "field": "Machine Learning",
-      "institution": "MIT",
-      "url": "https://www.csail.mit.edu",
-      "startDate": "2014",
-      "endDate": "2016",
-      "honors": "Summa Cum Laude"
+      "institution": "University of Paris (Sorbonne)",
+      "url": "https://www.sorbonne-universite.fr",
+      "area": "Mathematics",
+      "studyType": "Licentiate",
+      "startDate": "1893",
+      "endDate": "1894"
     },
     {
-      "degree": "BSc",
-      "field": "Mathematics",
-      "institution": "University of Cambridge",
-      "url": "https://www.maths.cam.ac.uk",
-      "startDate": "2010",
-      "endDate": "2014",
-      "honors": "First Class Honours"
+      "institution": "University of Paris (Sorbonne)",
+      "url": "https://www.sorbonne-universite.fr",
+      "area": "Physics",
+      "studyType": "Licentiate",
+      "startDate": "1891",
+      "endDate": "1893",
+      "honors": "First in class"
+    },
+    {
+      "institution": "Flying University (Uniwersytet Latający)",
+      "area": "Natural Sciences",
+      "studyType": "Underground Studies",
+      "startDate": "1884",
+      "endDate": "1891",
+      "summary": "Clandestine institution in partitioned Poland"
     }
   ],
   "work": [
     {
-      "position": "Assistant Professor",
-      "organization": "Harvard University",
-      "url": "https://seas.harvard.edu",
-      "startDate": "2023",
-      "endDate": "present",
-      "summary": "Leading research in machine learning and computational neuroscience"
+      "name": "Radium Institute (Institut du Radium)",
+      "position": "Director, Curie Laboratory",
+      "url": "https://curie.fr",
+      "startDate": "1914",
+      "endDate": "1934",
+      "summary": "Founded and directed the radioactivity laboratory, training the next generation of researchers in radiation physics and chemistry"
     },
     {
-      "position": "Postdoctoral Researcher",
-      "organization": "DeepMind",
-      "url": "https://deepmind.com",
-      "startDate": "2021",
-      "endDate": "2023",
-      "summary": "Research on large language models and AI safety"
+      "name": "University of Paris (Sorbonne)",
+      "position": "Professor of General Physics",
+      "url": "https://www.sorbonne-universite.fr",
+      "startDate": "1906",
+      "endDate": "1934",
+      "summary": "First woman to hold a professorship at the Sorbonne. Succeeded Pierre Curie after his death."
     },
     {
-      "position": "Research Intern",
-      "organization": "Google Brain",
-      "url": "https://research.google",
-      "startDate": "2019",
-      "endDate": "2019",
-      "summary": "Summer internship on neural architecture search"
+      "name": "École Normale Supérieure",
+      "position": "Lecturer in Physics",
+      "startDate": "1900",
+      "endDate": "1906",
+      "summary": "Taught physics at the prestigious teacher training institution"
+    },
+    {
+      "name": "University of Paris",
+      "position": "Chief of Physics Laboratory",
+      "startDate": "1904",
+      "endDate": "1906"
+    },
+    {
+      "name": "French Red Cross",
+      "position": "Director, Radiological Service",
+      "startDate": "1914",
+      "endDate": "1918",
+      "summary": "Developed mobile X-ray units (petites Curies) for battlefield medicine, trained 150 radiological technicians, treated over one million soldiers"
+    },
+    {
+      "name": "League of Nations",
+      "position": "Member, International Committee on Intellectual Cooperation",
+      "startDate": "1922",
+      "endDate": "1934",
+      "summary": "Served alongside Albert Einstein, Hendrik Lorentz, and Henri Bergson"
     }
   ],
   "awards": [
     {
-      "title": "NSF CAREER Award",
-      "date": "2024",
-      "awarder": "National Science Foundation"
+      "title": "Nobel Prize in Physics",
+      "date": "1903",
+      "awarder": "Royal Swedish Academy of Sciences",
+      "summary": "Shared with Pierre Curie and Henri Becquerel for research on radiation phenomena"
     },
     {
-      "title": "Best Paper Award",
-      "date": "2023",
-      "awarder": "NeurIPS",
-      "summary": "For work on efficient transformers"
+      "title": "Nobel Prize in Chemistry",
+      "date": "1911",
+      "awarder": "Royal Swedish Academy of Sciences",
+      "summary": "For the discovery of radium and polonium, isolation of radium, and study of its compounds"
     },
     {
-      "title": "MIT Technology Review 35 Under 35",
-      "date": "2022",
-      "awarder": "MIT Technology Review"
+      "title": "Davy Medal",
+      "date": "1903",
+      "awarder": "Royal Society of London",
+      "summary": "Shared with Pierre Curie"
     },
     {
-      "title": "Google PhD Fellowship",
-      "date": "2018",
-      "awarder": "Google"
+      "title": "Matteucci Medal",
+      "date": "1904",
+      "awarder": "Italian Society of Sciences"
+    },
+    {
+      "title": "Elliott Cresson Medal",
+      "date": "1909",
+      "awarder": "Franklin Institute"
+    },
+    {
+      "title": "Albert Medal",
+      "date": "1910",
+      "awarder": "Royal Society of Arts"
+    },
+    {
+      "title": "Franklin Medal",
+      "date": "1921",
+      "awarder": "Franklin Institute"
+    },
+    {
+      "title": "Ellen Richards Research Prize",
+      "date": "1921",
+      "awarder": "American Association of University Women"
+    },
+    {
+      "title": "Cameron Prize",
+      "date": "1931",
+      "awarder": "University of Edinburgh"
     }
   ],
-  "grants": [
+  "publications": [
     {
-      "title": "Foundations of Deep Learning Theory",
-      "funder": "NSF",
-      "amount": "$500,000",
-      "startDate": "2024",
-      "endDate": "2029",
-      "role": "PI"
+      "name": "Recherches sur les substances radioactives",
+      "publisher": "Gauthier-Villars",
+      "releaseDate": "1903",
+      "summary": "Doctoral thesis establishing the scientific foundations of radioactivity research"
     },
     {
-      "title": "AI for Scientific Discovery",
-      "funder": "NIH",
-      "amount": "$1.2M",
-      "startDate": "2023",
-      "endDate": "2026",
-      "role": "Co-PI"
-    }
-  ],
-  "teaching": [
-    {
-      "course": "CS 229: Machine Learning",
-      "institution": "Harvard University",
-      "role": "Instructor",
-      "dates": ["Fall 2023", "Fall 2024"]
+      "name": "Traité de Radioactivité",
+      "publisher": "Gauthier-Villars",
+      "releaseDate": "1910",
+      "summary": "Comprehensive two-volume treatise on radioactivity"
     },
     {
-      "course": "CS 281: Advanced Machine Learning",
-      "institution": "Harvard University",
-      "role": "Instructor",
-      "dates": ["Spring 2024"]
+      "name": "L'isotopie et les éléments isotopes",
+      "publisher": "Albert Blanchard",
+      "releaseDate": "1924"
     },
     {
-      "course": "CS 109: Data Science",
-      "institution": "Stanford University",
-      "role": "Teaching Assistant",
-      "dates": ["Fall 2018", "Spring 2019"]
-    }
-  ],
-  "service": [
-    {
-      "role": "Area Chair",
-      "organization": "NeurIPS",
-      "dates": ["2023", "2024"]
-    },
-    {
-      "role": "Reviewer",
-      "organization": "ICML, NeurIPS, ICLR, Nature Machine Intelligence",
-      "dates": ["2019-present"]
-    },
-    {
-      "role": "Organizer",
-      "organization": "Workshop on AI Safety at ICML 2023"
+      "name": "Radioactivité",
+      "publisher": "Hermann",
+      "releaseDate": "1935",
+      "summary": "Posthumously published comprehensive work"
     }
   ],
   "skills": [
     {
-      "category": "Programming",
-      "items": ["Python", "PyTorch", "JAX", "C++", "Julia"]
+      "name": "Research Areas",
+      "keywords": ["Radioactivity", "Nuclear Physics", "Radiochemistry", "X-ray Imaging", "Spectroscopy"]
     },
     {
-      "category": "Areas",
-      "items": ["Deep Learning", "Reinforcement Learning", "NLP", "Computer Vision"]
+      "name": "Laboratory Techniques",
+      "keywords": ["Electrometry", "Spectral Analysis", "Chemical Isolation", "Crystallography"]
     }
   ],
   "languages": [
-    { "language": "English", "fluency": "Native" },
-    { "language": "German", "fluency": "Professional" },
-    { "language": "French", "fluency": "Conversational" }
+    {
+      "language": "Polish",
+      "fluency": "Native"
+    },
+    {
+      "language": "French",
+      "fluency": "Fluent"
+    },
+    {
+      "language": "Russian",
+      "fluency": "Fluent"
+    },
+    {
+      "language": "German",
+      "fluency": "Proficient"
+    },
+    {
+      "language": "English",
+      "fluency": "Proficient"
+    }
+  ],
+  "interests": [
+    {
+      "name": "Science Education",
+      "keywords": ["Women in Science", "International Scientific Cooperation"]
+    }
   ],
   "references": [
     {
-      "name": "Prof. Andrew Ng",
-      "affiliation": "Stanford University",
-      "email": "ang@cs.stanford.edu"
+      "name": "Prof. Henri Becquerel",
+      "reference": "École Polytechnique, Paris"
     },
     {
-      "name": "Prof. Yann LeCun",
-      "affiliation": "New York University / Meta AI",
-      "email": "yann@cs.nyu.edu"
+      "name": "Prof. Gabriel Lippmann",
+      "reference": "University of Paris, Nobel Laureate 1908"
     }
-  ]
+  ],
+  "meta": {
+    "canonical": "https://jsonresume.org/schema/",
+    "version": "v1.0.0",
+    "lastModified": "1934-07-04"
+  }
 }

@@ -8,17 +8,23 @@ const title = `CV | ${config.site.title}`;
 // Format date range
 const formatDateRange = (start?: string, end?: string) => {
   if (!start) return '';
-  if (!end || end === 'present') return `${start} – Present`;
+  if (!end || end === 'present' || end === '1934') return `${start} –`;
   if (start === end) return start;
   return `${start} – ${end}`;
 };
+
+// Get name from basics or config
+const displayName = cvData.basics?.name || `${config.name.first} ${config.name.last}`;
 ---
 
 <BaseLayout title={title} description="Curriculum Vitae">
   <article class="cv-page">
     <div class="container">
       <header class="cv-header" data-animate="fade-up">
-        <h1>Curriculum Vitae</h1>
+        <div class="cv-title-block">
+          <h1>{displayName}</h1>
+          {cvData.basics?.label && <p class="cv-label">{cvData.basics.label}</p>}
+        </div>
         <a href="/cv.pdf" class="cv-download" target="_blank" rel="noopener">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
@@ -26,11 +32,18 @@ const formatDateRange = (start?: string, end?: string) => {
             <line x1="16" y1="13" x2="8" y2="13"></line>
             <line x1="16" y1="17" x2="8" y2="17"></line>
           </svg>
-          Download PDF
+          PDF
         </a>
       </header>
 
-      <!-- Education -->
+      {/* Summary */}
+      {cvData.basics?.summary && (
+        <section class="cv-summary" data-animate="fade-up">
+          <p>{cvData.basics.summary}</p>
+        </section>
+      )}
+
+      {/* Education */}
       {cvData.education && cvData.education.length > 0 && (
         <section class="cv-section" data-animate="fade-up">
           <h2>Education</h2>
@@ -40,15 +53,15 @@ const formatDateRange = (start?: string, end?: string) => {
                 <div class="timeline-marker"></div>
                 <div class="timeline-date">{formatDateRange(edu.startDate, edu.endDate)}</div>
                 <div class="timeline-content">
-                  <h3>{edu.degree} in {edu.field}</h3>
+                  <h3>{edu.studyType} in {edu.area}</h3>
                   <p class="timeline-org">
                     {edu.url ? (
                       <a href={edu.url} target="_blank" rel="noopener">{edu.institution}</a>
                     ) : edu.institution}
                   </p>
-                  {edu.advisor && <p class="timeline-detail">Advisor: {edu.advisor}</p>}
-                  {edu.thesis && <p class="timeline-detail">Thesis: <em>{edu.thesis}</em></p>}
+                  {edu.thesis && <p class="timeline-detail"><em>{edu.thesis}</em></p>}
                   {edu.honors && <p class="timeline-detail">{edu.honors}</p>}
+                  {edu.summary && <p class="timeline-detail">{edu.summary}</p>}
                 </div>
               </div>
             ))}
@@ -56,10 +69,10 @@ const formatDateRange = (start?: string, end?: string) => {
         </section>
       )}
 
-      <!-- Employment -->
+      {/* Work / Positions */}
       {cvData.work && cvData.work.length > 0 && (
         <section class="cv-section" data-animate="fade-up">
-          <h2>Employment</h2>
+          <h2>Positions</h2>
           <div class="timeline">
             {cvData.work.map((job) => (
               <div class="timeline-item">
@@ -69,8 +82,8 @@ const formatDateRange = (start?: string, end?: string) => {
                   <h3>{job.position}</h3>
                   <p class="timeline-org">
                     {job.url ? (
-                      <a href={job.url} target="_blank" rel="noopener">{job.organization}</a>
-                    ) : job.organization}
+                      <a href={job.url} target="_blank" rel="noopener">{job.name}</a>
+                    ) : job.name}
                   </p>
                   {job.summary && <p class="timeline-detail">{job.summary}</p>}
                 </div>
@@ -80,27 +93,7 @@ const formatDateRange = (start?: string, end?: string) => {
         </section>
       )}
 
-      <!-- Grants -->
-      {cvData.grants && cvData.grants.length > 0 && (
-        <section class="cv-section" data-animate="fade-up">
-          <h2>Grants & Funding</h2>
-          <div class="timeline">
-            {cvData.grants.map((grant) => (
-              <div class="timeline-item">
-                <div class="timeline-marker"></div>
-                <div class="timeline-date">{formatDateRange(grant.startDate, grant.endDate)}</div>
-                <div class="timeline-content">
-                  <h3>{grant.title}</h3>
-                  <p class="timeline-org">{grant.funder}</p>
-                  <p class="timeline-detail">{grant.amount}{grant.role && ` · ${grant.role}`}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      <!-- Awards -->
+      {/* Awards */}
       {cvData.awards && cvData.awards.length > 0 && (
         <section class="cv-section" data-animate="fade-up">
           <h2>Awards & Honors</h2>
@@ -120,19 +113,19 @@ const formatDateRange = (start?: string, end?: string) => {
         </section>
       )}
 
-      <!-- Teaching -->
-      {cvData.teaching && cvData.teaching.length > 0 && (
+      {/* Publications */}
+      {cvData.publications && cvData.publications.length > 0 && (
         <section class="cv-section" data-animate="fade-up">
-          <h2>Teaching</h2>
+          <h2>Selected Publications</h2>
           <div class="timeline">
-            {cvData.teaching.map((course) => (
+            {cvData.publications.map((pub) => (
               <div class="timeline-item">
                 <div class="timeline-marker"></div>
-                <div class="timeline-date">{course.dates?.join(', ')}</div>
+                <div class="timeline-date">{pub.releaseDate}</div>
                 <div class="timeline-content">
-                  <h3>{course.course}</h3>
-                  <p class="timeline-org">{course.institution}</p>
-                  {course.role && <p class="timeline-detail">{course.role}</p>}
+                  <h3>{pub.name}</h3>
+                  <p class="timeline-org">{pub.publisher}</p>
+                  {pub.summary && <p class="timeline-detail">{pub.summary}</p>}
                 </div>
               </div>
             ))}
@@ -140,35 +133,16 @@ const formatDateRange = (start?: string, end?: string) => {
         </section>
       )}
 
-      <!-- Service -->
-      {cvData.service && cvData.service.length > 0 && (
-        <section class="cv-section" data-animate="fade-up">
-          <h2>Service</h2>
-          <div class="timeline">
-            {cvData.service.map((item) => (
-              <div class="timeline-item">
-                <div class="timeline-marker"></div>
-                <div class="timeline-date">{item.dates?.join(', ') || ''}</div>
-                <div class="timeline-content">
-                  <h3>{item.role}</h3>
-                  <p class="timeline-org">{item.organization}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      <!-- Skills & Languages -->
+      {/* Skills & Languages */}
       <div class="cv-grid" data-animate="fade-up">
         {cvData.skills && cvData.skills.length > 0 && (
           <section class="cv-section cv-section--compact">
-            <h2>Skills</h2>
+            <h2>Expertise</h2>
             <div class="skill-list">
               {cvData.skills.map((skill) => (
                 <div class="skill-group">
-                  <span class="skill-category">{skill.category}</span>
-                  <span class="skill-items">{skill.items.join(' · ')}</span>
+                  <span class="skill-category">{skill.name}</span>
+                  <span class="skill-items">{skill.keywords.join(' · ')}</span>
                 </div>
               ))}
             </div>
@@ -190,7 +164,7 @@ const formatDateRange = (start?: string, end?: string) => {
         )}
       </div>
 
-      <!-- References -->
+      {/* References */}
       {cvData.references && cvData.references.length > 0 && (
         <section class="cv-section" data-animate="fade-up">
           <h2>References</h2>
@@ -198,10 +172,7 @@ const formatDateRange = (start?: string, end?: string) => {
             {cvData.references.map((ref) => (
               <div class="reference-card">
                 <div class="reference-name">{ref.name}</div>
-                <div class="reference-affiliation">{ref.affiliation}</div>
-                {ref.email && (
-                  <a href={`mailto:${ref.email}`} class="reference-email">{ref.email}</a>
-                )}
+                <div class="reference-affiliation">{ref.reference}</div>
               </div>
             ))}
           </div>
@@ -220,16 +191,24 @@ const formatDateRange = (start?: string, end?: string) => {
   /* Header */
   .cv-header {
     display: flex;
-    align-items: baseline;
+    align-items: flex-start;
     justify-content: space-between;
     gap: var(--space-4);
-    margin-bottom: var(--space-10);
+    margin-bottom: var(--space-8);
     padding-bottom: var(--space-4);
     border-bottom: 1px solid var(--color-border);
   }
 
-  .cv-header h1 {
+  .cv-title-block h1 {
     margin: 0;
+    font-size: var(--font-size-2xl);
+  }
+
+  .cv-label {
+    margin: var(--space-1) 0 0;
+    font-size: var(--font-size-base);
+    color: var(--color-text-secondary);
+    font-style: italic;
   }
 
   .cv-download {
@@ -237,7 +216,7 @@ const formatDateRange = (start?: string, end?: string) => {
     align-items: center;
     gap: var(--space-2);
     font-size: var(--font-size-sm);
-    font-family: var(--font-ui);
+    font-family: var(--font-mono);
     color: var(--color-text-muted);
     text-decoration: none;
     padding: var(--space-2) var(--space-3);
@@ -245,11 +224,28 @@ const formatDateRange = (start?: string, end?: string) => {
     border-radius: var(--radius-full);
     transition: all var(--transition-fast);
     background: none;
+    flex-shrink: 0;
   }
 
   .cv-download:hover {
     color: var(--color-accent);
     border-color: var(--color-accent);
+  }
+
+  /* Summary */
+  .cv-summary {
+    margin-bottom: var(--space-8);
+    padding: var(--space-4);
+    background: var(--color-surface);
+    border-radius: var(--radius-md);
+    border-left: 3px solid var(--color-accent);
+  }
+
+  .cv-summary p {
+    margin: 0;
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-relaxed);
+    color: var(--color-text-secondary);
   }
 
   /* Sections */
@@ -271,7 +267,6 @@ const formatDateRange = (start?: string, end?: string) => {
     padding-left: var(--space-6);
   }
 
-  /* Vertical line */
   .timeline::before {
     content: '';
     position: absolute;
@@ -285,7 +280,7 @@ const formatDateRange = (start?: string, end?: string) => {
   .timeline-item {
     position: relative;
     display: grid;
-    grid-template-columns: 120px 1fr;
+    grid-template-columns: 100px 1fr;
     gap: var(--space-4);
     padding-bottom: var(--space-5);
   }
@@ -294,7 +289,6 @@ const formatDateRange = (start?: string, end?: string) => {
     padding-bottom: 0;
   }
 
-  /* Dot marker */
   .timeline-marker {
     position: absolute;
     left: calc(-1 * var(--space-6));
@@ -342,7 +336,7 @@ const formatDateRange = (start?: string, end?: string) => {
   .timeline-detail {
     font-size: var(--font-size-sm);
     color: var(--color-text-muted);
-    margin: 0;
+    margin: var(--space-1) 0 0;
   }
 
   .timeline-detail em {
@@ -414,7 +408,7 @@ const formatDateRange = (start?: string, end?: string) => {
   .reference-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: var(--space-5);
+    gap: var(--space-4);
   }
 
   .reference-card {
@@ -432,18 +426,6 @@ const formatDateRange = (start?: string, end?: string) => {
   .reference-affiliation {
     font-size: var(--font-size-sm);
     color: var(--color-text-secondary);
-    margin-bottom: var(--space-2);
-  }
-
-  .reference-email {
-    font-size: var(--font-size-xs);
-    font-family: var(--font-mono);
-    color: var(--color-text-muted);
-    background: none;
-  }
-
-  .reference-email:hover {
-    color: var(--color-accent);
   }
 
   /* Responsive */
@@ -451,7 +433,10 @@ const formatDateRange = (start?: string, end?: string) => {
     .cv-header {
       flex-direction: column;
       gap: var(--space-3);
-      align-items: flex-start;
+    }
+
+    .cv-title-block h1 {
+      font-size: var(--font-size-xl);
     }
 
     .timeline-item {
@@ -477,6 +462,11 @@ const formatDateRange = (start?: string, end?: string) => {
 
     .cv-page {
       padding: 0;
+    }
+
+    .cv-summary {
+      background: transparent;
+      border-left-color: #666;
     }
 
     .timeline::before {
