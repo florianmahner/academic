@@ -83,6 +83,9 @@ interface Props {
 
 const { items, config = {}, collection, class: className } = Astro.props;
 
+// Get base URL for proper path prefixing
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
 const {
   style = 'minimal',
   groupBy = 'year',
@@ -115,11 +118,11 @@ const years = Object.keys(grouped).sort((a, b) => parseInt(b) - parseInt(a));
 
 function getItemLink(item: ViewItem): string | null {
   if (!item.slug) return null;
-  if (item.type === 'blog') return `/blog/${item.slug}`;
-  if (item.type === 'talk') return `/talks/${item.slug}`;
-  if (item.type === 'project') return `/projects/${item.slug}`;
-  if (item.type === 'teaching') return `/teaching/${item.slug}`;
-  if (collection) return `/${collection}/${item.slug}`;
+  if (item.type === 'blog') return `${base}/blog/${item.slug}`;
+  if (item.type === 'talk') return `${base}/talks/${item.slug}`;
+  if (item.type === 'project') return `${base}/projects/${item.slug}`;
+  if (item.type === 'teaching') return `${base}/teaching/${item.slug}`;
+  if (collection) return `${base}/${collection}/${item.slug}`;
   return null;
 }
 

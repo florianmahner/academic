@@ -9,7 +9,7 @@ import { defineCollection, z } from 'astro:content';
 const LayoutTypeEnum = z.enum(['list', 'cards', 'timeline', 'node', 'masonry', 'accordion', 'minimal']);
 
 // View type enum (new unified view system)
-const ViewTypeEnum = z.enum(['timeline', 'showcase', 'grid', 'minimal', 'academic']);
+const ViewTypeEnum = z.enum(['timeline', 'showcase', 'grid', 'minimal', 'editorial', 'magazine', 'academic']);
 
 // Blog posts collection
 const blog = defineCollection({
@@ -203,6 +203,9 @@ const collectionPages = defineCollection({
 
       // === Status Display (ShowcaseView) ===
       showStatus: z.boolean().optional(),
+
+      // === Editorial View Variant ===
+      variant: z.enum(['classic', 'compact', 'featured']).optional(),
     }).optional(),
 
     // LEGACY: Layout type selection (for backwards compatibility)

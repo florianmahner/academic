@@ -4,6 +4,8 @@ description: "Recent progress on our transfer learning project, including new ex
 date: 2024-02-28
 tags: ["research", "machine-learning", "transfer-learning", "update"]
 draft: false
+image: /blog/transfer-learning.jpg
+imageAlt: "Abstract code visualization representing machine learning"
 ---
 
 # Research Update: Transfer Learning Project

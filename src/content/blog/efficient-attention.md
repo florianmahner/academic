@@ -4,6 +4,8 @@ description: "A deep dive into various efficient attention mechanisms that enabl
 date: 2024-03-15
 tags: ["transformers", "attention", "efficiency"]
 draft: false
+image: /blog/attention-neural.jpg
+imageAlt: "Neural network visualization with glowing connections"
 ---
 
 # Understanding Efficient Attention Mechanisms

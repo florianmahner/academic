@@ -4,6 +4,8 @@ description: "Reflections on my PhD journey and advice for students starting the
 date: 2024-02-01
 tags: ["academia", "advice", "phd"]
 draft: false
+image: /blog/phd-books.jpg
+imageAlt: "Stack of academic books and journals"
 ---
 
 # Advice for Incoming PhD Students

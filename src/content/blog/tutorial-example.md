@@ -4,6 +4,8 @@ description: "A comprehensive beginner-friendly guide to implementing and traini
 date: 2024-01-20
 tags: ["tutorial", "pytorch", "deep-learning", "beginners"]
 draft: false
+image: /blog/tutorial-data.jpg
+imageAlt: "Globe with data visualization representing deep learning"
 ---
 
 # Building Your First Neural Network in PyTorch

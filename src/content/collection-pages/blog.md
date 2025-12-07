@@ -4,19 +4,17 @@ description: "Thoughts on research, machine learning, and academia."
 collection: "blog"
 
 # View System Configuration
-view: "grid"
+view: "magazine"
 viewConfig:
-  columns: 2
-  showImage: true
-  imageAspect: "16:9"
+  heroPost: true
+  featuredCount: 2
   showDate: true
   dateFormat: "long"
   showDescription: true
-  descriptionLimit: 120
+  descriptionLimit: 200
   showTags: true
   tagLimit: 3
-  showReadTime: false
-  gap: "medium"
+  showReadTime: true
 
 # Sorting
 sortBy: "date"

@@ -71,6 +71,9 @@ interface Props {
 
 const { items, config = {}, collection = 'teaching', class: className } = Astro.props;
 
+// Get base URL for proper path prefixing
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
 // Default config
 const {
   groupBy = 'year',
@@ -117,10 +120,10 @@ const groups = Object.keys(grouped).sort((a, b) => {
   return b.localeCompare(a);
 });
 
-// Build item link
+// Build item link with base URL
 function getItemLink(item: ViewItem): string | null {
   if (!item.slug) return null;
-  return `/${collection}/${item.slug}`;
+  return `${base}/${collection}/${item.slug}`;
 }
 
 // Build action links

@@ -4,6 +4,8 @@ description: "An introduction to my blog where I'll share thoughts on research, 
 date: 2024-01-15
 tags: ["welcome", "introduction"]
 draft: false
+image: /blog/welcome-tech.jpg
+imageAlt: "Team working on laptops in modern office"
 ---
 
 # Welcome!

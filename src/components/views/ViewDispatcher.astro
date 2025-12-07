@@ -35,9 +35,11 @@ import TimelineView from './TimelineView.astro';
 import ShowcaseView from './ShowcaseView.astro';
 import GridView from './GridView.astro';
 import MinimalView from './MinimalView.astro';
+import EditorialView from './EditorialView.astro';
+import MagazineView from './MagazineView.astro';
 
 // View types
-type ViewType = 'timeline' | 'showcase' | 'grid' | 'minimal' | 'academic' | 'list' | 'cards';
+type ViewType = 'timeline' | 'showcase' | 'grid' | 'minimal' | 'editorial' | 'magazine' | 'academic' | 'list' | 'cards';
 
 interface Props {
   view: ViewType;
@@ -67,13 +69,15 @@ const viewMapping: Record<string, ViewType> = {
   showcase: 'showcase',
   grid: 'grid',
   minimal: 'minimal',
+  editorial: 'editorial',
+  magazine: 'magazine',
   academic: 'timeline',  // Fallback until academic view is ready
 };
 
 const resolvedView = viewMapping[view] || 'timeline';
 
 // Validate view
-const validViews = ['timeline', 'showcase', 'grid', 'minimal'];
+const validViews = ['timeline', 'showcase', 'grid', 'minimal', 'editorial', 'magazine'];
 if (!validViews.includes(resolvedView)) {
   console.warn(`[ViewDispatcher] Unknown view '${view}'. Falling back to 'timeline'.`);
 }
@@ -102,6 +106,14 @@ if (!validViews.includes(resolvedView)) {
 
     {resolvedView === 'minimal' && (
       <MinimalView items={items} config={config} collection={collection} />
+    )}
+
+    {resolvedView === 'editorial' && (
+      <EditorialView items={items} config={config} collection={collection} />
+    )}
+
+    {resolvedView === 'magazine' && (
+      <MagazineView items={items} config={config} collection={collection} />
     )}
   </div>
 </div>

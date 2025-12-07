@@ -40,7 +40,7 @@ try {
       type: 'blog' as const,
       title: post.data.title,
       date: post.data.date,
-      href: `/blog/${post.slug}`,
+      href: prependBase(`/blog/${post.slug}`),
     }))
   );
 } catch (e) {
@@ -54,7 +54,7 @@ try {
     type: 'talk' as const,
     title: talk.data.title,
     date: talk.data.date,
-    href: `/talks/${talk.slug}`,
+    href: prependBase(`/talks/${talk.slug}`),
   })));
 } catch (e) {
   console.log('Talks collection not available');
@@ -157,7 +157,7 @@ const prependBase = (path: string) => {
             ))}
           </div>
           <p class="view-all">
-            <a href="/publications">View all publications &rarr;</a>
+            <a href={prependBase('/publications')}>View all publications &rarr;</a>
           </p>
         </section>
       )}
@@ -205,7 +205,7 @@ const prependBase = (path: string) => {
           <h2>News</h2>
           <NewsTimeline items={newsItems} limit={5} showType={true} />
           <p class="view-all">
-            <a href="/news">View all news &rarr;</a>
+            <a href={prependBase('/news')}>View all news &rarr;</a>
           </p>
         </section>
       )}

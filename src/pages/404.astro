@@ -5,6 +5,9 @@
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { config } from '../config';
+
+// Get base URL for proper path prefixing
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
 <BaseLayout
@@ -20,24 +23,24 @@ import { config } from '../config';
       </p>
 
       <div class="error-actions">
-        <a href="/" class="button-primary">
+        <a href={base || '/'} class="button-primary">
           <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
             <polyline points="9 22 9 12 15 12 15 22"></polyline>
           </svg>
           Go Home
         </a>
-        <a href="/publications" class="button-secondary">View Publications</a>
+        <a href={`${base}/publications`} class="button-secondary">View Publications</a>
       </div>
 
       <nav class="error-nav" aria-label="Popular pages">
         <h2 class="sr-only">Popular Pages</h2>
         <p class="nav-label">Or try one of these:</p>
         <ul class="nav-list">
-          <li><a href="/publications">Publications</a></li>
-          <li><a href="/blog">Blog</a></li>
-          <li><a href="/projects">Projects</a></li>
-          <li><a href="/teaching">Teaching</a></li>
+          <li><a href={`${base}/publications`}>Publications</a></li>
+          <li><a href={`${base}/blog`}>Blog</a></li>
+          <li><a href={`${base}/projects`}>Projects</a></li>
+          <li><a href={`${base}/teaching`}>Teaching</a></li>
         </ul>
       </nav>
     </div>

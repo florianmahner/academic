@@ -1,0 +1,513 @@
+---
+/**
+ * EditorialView Component
+ *
+ * Typography-first blog listing inspired by literary journals and editorial magazines.
+ * Prioritizes reading experience over visual chrome.
+ *
+ * Design principles:
+ * - Asymmetric date gutter creates visual rhythm
+ * - Hair-line dividers, not heavy card boundaries
+ * - Generous whitespace lets content breathe
+ * - Titles are the hero, not images
+ * - Subtle hover states reward exploration
+ *
+ * Frontmatter Configuration:
+ * ```yaml
+ * view: "editorial"
+ * viewConfig:
+ *   showDate: true
+ *   dateFormat: "short"      # "short" = "Dec 7", "long" = "December 7, 2024"
+ *   showDescription: true
+ *   descriptionLimit: 160
+ *   showTags: true
+ *   tagLimit: 3
+ *   showImage: false         # Images optional, shown inline when true
+ *   variant: "classic"       # "classic" | "compact" | "featured"
+ * ```
+ */
+
+import ViewDate from '../primitives/ViewDate.astro';
+import ViewTags from '../primitives/ViewTags.astro';
+
+interface ViewItem {
+  title: string;
+  slug?: string;
+  description?: string;
+  date?: Date;
+  image?: string;
+  imageAlt?: string;
+  tags?: string[];
+  readTime?: number;
+  draft?: boolean;
+}
+
+interface ViewConfig {
+  showDate?: boolean;
+  dateFormat?: 'short' | 'long' | 'month-year';
+  showDescription?: boolean;
+  descriptionLimit?: number;
+  showTags?: boolean;
+  tagLimit?: number;
+  showImage?: boolean;
+  showReadTime?: boolean;
+  variant?: 'classic' | 'compact' | 'featured';
+}
+
+interface Props {
+  items: ViewItem[];
+  config?: ViewConfig;
+  collection?: string;
+  class?: string;
+}
+
+const { items, config = {}, collection = 'blog', class: className } = Astro.props;
+
+// Get base URL for proper path prefixing
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+// Default config
+const {
+  showDate = true,
+  dateFormat = 'short',
+  showDescription = true,
+  descriptionLimit = 160,
+  showTags = true,
+  tagLimit = 3,
+  showImage = false,
+  showReadTime = false,
+  variant = 'classic',
+} = config;
+
+// Build item link with base URL
+function getItemLink(item: ViewItem): string {
+  return `${base}/${collection}/${item.slug}`;
+}
+
+// Truncate description
+function truncate(text: string, limit: number): string {
+  if (text.length <= limit) return text;
+  return text.slice(0, limit).trim() + '...';
+}
+
+// Filter out drafts
+const visibleItems = items.filter(item => !item.draft);
+
+// For featured variant, separate first item
+const featuredItem = variant === 'featured' && visibleItems.length > 0 ? visibleItems[0] : null;
+const regularItems = variant === 'featured' ? visibleItems.slice(1) : visibleItems;
+---
+
+<div class:list={['editorial-view', `editorial-view--${variant}`, className]}>
+  {/* Featured item for 'featured' variant */}
+  {featuredItem && (
+    <article class="editorial-featured" data-animate="fade-up">
+      <a href={getItemLink(featuredItem)} class="featured-link">
+        {showImage && featuredItem.image && (
+          <div class="featured-image">
+            <img
+              src={featuredItem.image}
+              alt={featuredItem.imageAlt || featuredItem.title}
+              loading="eager"
+            />
+          </div>
+        )}
+        <div class="featured-content">
+          {showDate && featuredItem.date && (
+            <div class="featured-meta">
+              <ViewDate date={featuredItem.date} format={dateFormat} />
+              {showReadTime && featuredItem.readTime && (
+                <span class="read-time">{featuredItem.readTime} min</span>
+              )}
+            </div>
+          )}
+          <h2 class="featured-title">{featuredItem.title}</h2>
+          {showDescription && featuredItem.description && (
+            <p class="featured-description">
+              {truncate(featuredItem.description, descriptionLimit + 40)}
+            </p>
+          )}
+          {showTags && featuredItem.tags && featuredItem.tags.length > 0 && (
+            <ViewTags tags={featuredItem.tags} limit={tagLimit} style="minimal" class="featured-tags" />
+          )}
+        </div>
+      </a>
+    </article>
+  )}
+
+  {/* Regular items list */}
+  <div class="editorial-list">
+    {regularItems.map((item, index) => (
+      <article
+        class="editorial-item"
+        data-animate="fade-up"
+        style={`--stagger-delay: ${index * 0.05}s`}
+      >
+        <a href={getItemLink(item)} class="editorial-link">
+          {/* Date gutter */}
+          {showDate && item.date && (
+            <div class="editorial-date">
+              <ViewDate date={item.date} format={dateFormat} />
+            </div>
+          )}
+
+          {/* Content */}
+          <div class="editorial-content">
+            <h3 class="editorial-title">{item.title}</h3>
+
+            {showDescription && item.description && (
+              <p class="editorial-description">
+                {truncate(item.description, descriptionLimit)}
+              </p>
+            )}
+
+            <div class="editorial-footer">
+              {showTags && item.tags && item.tags.length > 0 && (
+                <ViewTags tags={item.tags} limit={tagLimit} style="minimal" class="editorial-tags" />
+              )}
+              {showReadTime && item.readTime && (
+                <span class="editorial-read-time">{item.readTime} min read</span>
+              )}
+            </div>
+          </div>
+
+          {/* Optional inline image */}
+          {showImage && item.image && (
+            <div class="editorial-image">
+              <img
+                src={item.image}
+                alt={item.imageAlt || item.title}
+                loading="lazy"
+              />
+            </div>
+          )}
+        </a>
+      </article>
+    ))}
+  </div>
+
+  {visibleItems.length === 0 && (
+    <div class="empty-state">
+      <p>No posts yet. Check back soon.</p>
+    </div>
+  )}
+</div>
+
+<style>
+  /* ==========================================================================
+     Editorial View - Typography-First Blog Listing
+     ========================================================================== */
+
+  .editorial-view {
+    --editorial-gutter: 100px;
+    --editorial-gap: var(--space-1);
+  }
+
+  /* ==========================================================================
+     Featured Item (for 'featured' variant)
+     ========================================================================== */
+
+  .editorial-featured {
+    margin-bottom: var(--space-10);
+    padding-bottom: var(--space-8);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .featured-link {
+    display: block;
+    text-decoration: none;
+    background: none;
+    color: inherit;
+  }
+
+  .featured-link:hover {
+    background: none;
+  }
+
+  .featured-image {
+    margin-bottom: var(--space-5);
+    overflow: hidden;
+    border-radius: var(--radius-sm);
+  }
+
+  .featured-image img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 2.5 / 1;
+    object-fit: cover;
+    transition: transform var(--transition-slow);
+  }
+
+  .featured-link:hover .featured-image img {
+    transform: scale(1.02);
+  }
+
+  .featured-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .featured-title {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-normal);
+    line-height: var(--line-height-tight);
+    margin: 0 0 var(--space-3) 0;
+    transition: color var(--transition-fast);
+  }
+
+  .featured-link:hover .featured-title {
+    color: var(--color-accent);
+  }
+
+  .featured-description {
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-relaxed);
+    color: var(--color-text-secondary);
+    margin: 0 0 var(--space-4) 0;
+    max-width: 65ch;
+  }
+
+  .featured-tags {
+    margin-top: var(--space-2);
+  }
+
+  /* ==========================================================================
+     Editorial List
+     ========================================================================== */
+
+  .editorial-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--editorial-gap);
+  }
+
+  .editorial-item {
+    position: relative;
+  }
+
+  .editorial-link {
+    display: grid;
+    grid-template-columns: var(--editorial-gutter) 1fr;
+    gap: var(--space-5);
+    padding: var(--space-4) 0;
+    text-decoration: none;
+    background: none;
+    color: inherit;
+    border-bottom: 1px solid var(--color-border);
+    transition: background-color var(--transition-fast);
+  }
+
+  .editorial-link:hover {
+    background: none;
+  }
+
+  /* Hover highlight - subtle background wash */
+  .editorial-item:hover .editorial-link {
+    background-color: var(--color-bg-alt);
+    margin-left: calc(-1 * var(--space-4));
+    margin-right: calc(-1 * var(--space-4));
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+    border-radius: var(--radius-sm);
+    border-bottom-color: transparent;
+  }
+
+  /* Date Gutter */
+  .editorial-date {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    padding-top: 0.15em; /* Align with title baseline */
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  /* Content */
+  .editorial-content {
+    min-width: 0;
+  }
+
+  .editorial-title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-snug);
+    margin: 0 0 var(--space-2) 0;
+    transition: color var(--transition-fast);
+  }
+
+  .editorial-link:hover .editorial-title {
+    color: var(--color-accent);
+  }
+
+  .editorial-description {
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-relaxed);
+    color: var(--color-text-secondary);
+    margin: 0;
+    max-width: 60ch;
+  }
+
+  .editorial-footer {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    margin-top: var(--space-3);
+  }
+
+  .editorial-tags {
+    flex: 1;
+  }
+
+  .editorial-read-time {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+  }
+
+  /* Optional Image */
+  .editorial-image {
+    width: 120px;
+    height: 80px;
+    flex-shrink: 0;
+    overflow: hidden;
+    border-radius: var(--radius-sm);
+    background: var(--color-bg-alt);
+  }
+
+  .editorial-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-normal);
+  }
+
+  .editorial-link:hover .editorial-image img {
+    transform: scale(1.05);
+  }
+
+  /* When image is shown, add it to grid */
+  .editorial-link:has(.editorial-image) {
+    grid-template-columns: var(--editorial-gutter) 1fr 120px;
+  }
+
+  /* ==========================================================================
+     Compact Variant
+     ========================================================================== */
+
+  .editorial-view--compact .editorial-link {
+    padding: var(--space-3) 0;
+  }
+
+  .editorial-view--compact .editorial-title {
+    font-size: var(--font-size-base);
+  }
+
+  .editorial-view--compact .editorial-description {
+    display: none;
+  }
+
+  .editorial-view--compact .editorial-footer {
+    margin-top: var(--space-1);
+  }
+
+  /* ==========================================================================
+     Empty State
+     ========================================================================== */
+
+  .empty-state {
+    text-align: center;
+    padding: var(--space-12) var(--space-4);
+    color: var(--color-text-muted);
+    font-style: italic;
+  }
+
+  /* ==========================================================================
+     Responsive Design
+     ========================================================================== */
+
+  @media (max-width: 768px) {
+    .editorial-view {
+      --editorial-gutter: 80px;
+    }
+
+    .featured-title {
+      font-size: var(--font-size-xl);
+    }
+
+    .featured-description {
+      font-size: var(--font-size-base);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .editorial-link {
+      grid-template-columns: 1fr;
+      gap: var(--space-2);
+    }
+
+    .editorial-link:has(.editorial-image) {
+      grid-template-columns: 1fr;
+    }
+
+    .editorial-date {
+      font-size: var(--font-size-xs);
+      margin-bottom: var(--space-1);
+    }
+
+    .editorial-image {
+      display: none; /* Hide images on mobile for cleaner list */
+    }
+
+    .editorial-item:hover .editorial-link {
+      margin-left: calc(-1 * var(--space-3));
+      margin-right: calc(-1 * var(--space-3));
+      padding-left: var(--space-3);
+      padding-right: var(--space-3);
+    }
+  }
+
+  /* ==========================================================================
+     Animation
+     ========================================================================== */
+
+  @media (prefers-reduced-motion: no-preference) {
+    .editorial-item,
+    .editorial-featured {
+      opacity: 0;
+      transform: translateY(12px);
+      transition:
+        opacity 0.4s ease,
+        transform 0.4s ease;
+      transition-delay: var(--stagger-delay, 0s);
+    }
+
+    .editorial-item[data-animate="visible"],
+    .editorial-featured[data-animate="visible"] {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+
+<script>
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.setAttribute('data-animate', 'visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.1, rootMargin: '0px 0px -30px 0px' }
+  );
+
+  document.querySelectorAll('.editorial-item[data-animate], .editorial-featured[data-animate]').forEach((el) => {
+    observer.observe(el);
+  });
+</script>

@@ -21,6 +21,9 @@ const { Content } = await entry.render();
 
 const title = `${entry.data.title} | Teaching | ${config.site.title}`;
 const description = entry.data.description || `${entry.data.role} - ${entry.data.institution}`;
+
+// Get base URL for proper path prefixing
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
 <BaseLayout title={title} description={description}>
@@ -28,7 +31,7 @@ const description = entry.data.description || `${entry.data.role} - ${entry.data
     <div class="container container--narrow">
       <header class="detail-header" data-animate="fade-up">
         <nav class="breadcrumb">
-          <a href="/teaching">← Back to teaching</a>
+          <a href={`${base}/teaching`}>← Back to teaching</a>
         </nav>
 
         <div class="role-badge">{entry.data.role}</div>

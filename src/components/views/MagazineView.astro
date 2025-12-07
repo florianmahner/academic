@@ -1,0 +1,680 @@
+---
+/**
+ * MagazineView Component
+ *
+ * Newspaper/magazine-style blog layout with dramatic hero images
+ * and sophisticated typography hierarchy.
+ *
+ * Design inspiration: The New York Times, The Atlantic, Medium
+ *
+ * Layout structure:
+ * - Hero: First post spans full width with large image
+ * - Secondary: 2-column feature cards with images
+ * - Remaining: Clean editorial list (no images)
+ *
+ * Frontmatter Configuration:
+ * ```yaml
+ * view: "magazine"
+ * viewConfig:
+ *   heroPost: true           # Show first post as hero
+ *   featuredCount: 2         # Number of featured cards after hero
+ *   showDate: true
+ *   dateFormat: "long"
+ *   showDescription: true
+ *   descriptionLimit: 200
+ *   showTags: true
+ *   tagLimit: 3
+ *   showReadTime: true
+ * ```
+ */
+
+import ViewDate from '../primitives/ViewDate.astro';
+import ViewTags from '../primitives/ViewTags.astro';
+
+interface ViewItem {
+  title: string;
+  slug?: string;
+  description?: string;
+  date?: Date;
+  image?: string;
+  imageAlt?: string;
+  tags?: string[];
+  readTime?: number;
+  draft?: boolean;
+}
+
+interface ViewConfig {
+  heroPost?: boolean;
+  featuredCount?: number;
+  showDate?: boolean;
+  dateFormat?: 'short' | 'long' | 'month-year';
+  showDescription?: boolean;
+  descriptionLimit?: number;
+  showTags?: boolean;
+  tagLimit?: number;
+  showReadTime?: boolean;
+}
+
+interface Props {
+  items: ViewItem[];
+  config?: ViewConfig;
+  collection?: string;
+  class?: string;
+}
+
+const { items, config = {}, collection = 'blog', class: className } = Astro.props;
+
+// Get base URL for proper path prefixing
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+// Default config
+const {
+  heroPost = true,
+  featuredCount = 2,
+  showDate = true,
+  dateFormat = 'long',
+  showDescription = true,
+  descriptionLimit = 200,
+  showTags = true,
+  tagLimit = 3,
+  showReadTime = true,
+} = config;
+
+// Build item link with base URL
+function getItemLink(item: ViewItem): string {
+  return `${base}/${collection}/${item.slug}`;
+}
+
+// Truncate description
+function truncate(text: string, limit: number): string {
+  if (text.length <= limit) return text;
+  return text.slice(0, limit).trim() + '...';
+}
+
+// Filter out drafts
+const visibleItems = items.filter(item => !item.draft);
+
+// Split items into sections
+const hero = heroPost && visibleItems.length > 0 ? visibleItems[0] : null;
+const featured = heroPost ? visibleItems.slice(1, 1 + featuredCount) : visibleItems.slice(0, featuredCount);
+const remaining = heroPost ? visibleItems.slice(1 + featuredCount) : visibleItems.slice(featuredCount);
+
+// Estimate read time if not provided (assuming 200 words per minute)
+function estimateReadTime(item: ViewItem): number {
+  if (item.readTime) return item.readTime;
+  // Rough estimate based on description length
+  return Math.max(3, Math.ceil((item.description?.length || 100) / 50));
+}
+---
+
+<div class:list={['magazine-view', className]}>
+  {/* Hero Section */}
+  {hero && (
+    <article class="magazine-hero" data-animate="fade-up">
+      <a href={getItemLink(hero)} class="hero-link">
+        {hero.image && (
+          <div class="hero-image">
+            <img
+              src={hero.image}
+              alt={hero.imageAlt || hero.title}
+              loading="eager"
+            />
+            <div class="hero-overlay"></div>
+          </div>
+        )}
+        <div class="hero-content">
+          <div class="hero-meta">
+            {showTags && hero.tags && hero.tags.length > 0 && (
+              <span class="hero-category">{hero.tags[0]}</span>
+            )}
+            {showDate && hero.date && (
+              <ViewDate date={hero.date} format={dateFormat} class="hero-date" />
+            )}
+            {showReadTime && (
+              <span class="hero-read-time">{estimateReadTime(hero)} min read</span>
+            )}
+          </div>
+          <h2 class="hero-title">{hero.title}</h2>
+          {showDescription && hero.description && (
+            <p class="hero-description">
+              {truncate(hero.description, descriptionLimit + 60)}
+            </p>
+          )}
+        </div>
+      </a>
+    </article>
+  )}
+
+  {/* Featured Grid */}
+  {featured.length > 0 && (
+    <div class="magazine-featured">
+      {featured.map((item, index) => (
+        <article
+          class="featured-card"
+          data-animate="fade-up"
+          style={`--stagger-delay: ${(index + 1) * 0.1}s`}
+        >
+          <a href={getItemLink(item)} class="featured-link">
+            {item.image && (
+              <div class="featured-image">
+                <img
+                  src={item.image}
+                  alt={item.imageAlt || item.title}
+                  loading="lazy"
+                />
+              </div>
+            )}
+            <div class="featured-content">
+              <div class="featured-meta">
+                {showTags && item.tags && item.tags.length > 0 && (
+                  <span class="featured-category">{item.tags[0]}</span>
+                )}
+                {showDate && item.date && (
+                  <ViewDate date={item.date} format="short" class="featured-date" />
+                )}
+              </div>
+              <h3 class="featured-title">{item.title}</h3>
+              {showDescription && item.description && (
+                <p class="featured-description">
+                  {truncate(item.description, descriptionLimit - 40)}
+                </p>
+              )}
+              {showReadTime && (
+                <span class="featured-read-time">{estimateReadTime(item)} min read</span>
+              )}
+            </div>
+          </a>
+        </article>
+      ))}
+    </div>
+  )}
+
+  {/* Remaining Posts - Editorial List */}
+  {remaining.length > 0 && (
+    <div class="magazine-archive">
+      <h3 class="archive-heading">More Articles</h3>
+      <div class="archive-list">
+        {remaining.map((item, index) => (
+          <article
+            class="archive-item"
+            data-animate="fade-up"
+            style={`--stagger-delay: ${(index + featured.length + 1) * 0.05}s`}
+          >
+            <a href={getItemLink(item)} class="archive-link">
+              <div class="archive-date">
+                {showDate && item.date && (
+                  <ViewDate date={item.date} format="short" />
+                )}
+              </div>
+              <div class="archive-content">
+                <h4 class="archive-title">{item.title}</h4>
+                {showDescription && item.description && (
+                  <p class="archive-description">
+                    {truncate(item.description, 120)}
+                  </p>
+                )}
+              </div>
+              {showReadTime && (
+                <span class="archive-read-time">{estimateReadTime(item)} min</span>
+              )}
+            </a>
+          </article>
+        ))}
+      </div>
+    </div>
+  )}
+
+  {visibleItems.length === 0 && (
+    <div class="empty-state">
+      <p>No posts yet. Check back soon.</p>
+    </div>
+  )}
+</div>
+
+<style>
+  /* ==========================================================================
+     Magazine View - Newspaper-Style Blog Layout
+     ========================================================================== */
+
+  .magazine-view {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-10);
+  }
+
+  /* ==========================================================================
+     Hero Section
+     ========================================================================== */
+
+  .magazine-hero {
+    position: relative;
+    margin: 0 calc(-1 * var(--container-padding));
+  }
+
+  @media (min-width: 900px) {
+    .magazine-hero {
+      margin: 0 calc(-1 * var(--space-8));
+    }
+  }
+
+  .hero-link {
+    display: block;
+    position: relative;
+    text-decoration: none;
+    background: none;
+    color: inherit;
+    overflow: hidden;
+  }
+
+  .hero-link:hover {
+    background: none;
+  }
+
+  .hero-image {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 21 / 9;
+    overflow: hidden;
+  }
+
+  .hero-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+  }
+
+  .hero-link:hover .hero-image img {
+    transform: scale(1.03);
+  }
+
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.7) 0%,
+      rgba(0, 0, 0, 0.3) 40%,
+      rgba(0, 0, 0, 0) 100%
+    );
+  }
+
+  .hero-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: var(--space-8);
+    color: white;
+  }
+
+  .hero-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    margin-bottom: var(--space-3);
+    font-size: var(--font-size-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .hero-category {
+    background: var(--color-accent);
+    color: white;
+    padding: var(--space-1) var(--space-3);
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-xs);
+  }
+
+  .hero-date,
+  .hero-read-time {
+    opacity: 0.9;
+  }
+
+  .hero-title {
+    font-size: clamp(var(--font-size-2xl), 5vw, var(--font-size-4xl));
+    font-weight: var(--font-weight-normal);
+    line-height: var(--line-height-tight);
+    margin: 0 0 var(--space-3) 0;
+    max-width: 900px;
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .hero-description {
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-relaxed);
+    margin: 0;
+    max-width: 700px;
+    opacity: 0.95;
+    text-shadow: 0 1px 10px rgba(0, 0, 0, 0.3);
+  }
+
+  /* No image fallback */
+  .magazine-hero:not(:has(.hero-image)) .hero-content {
+    position: relative;
+    color: var(--color-text);
+    padding: var(--space-8) var(--container-padding);
+    background: var(--color-bg-alt);
+  }
+
+  .magazine-hero:not(:has(.hero-image)) .hero-category {
+    background: var(--color-text);
+  }
+
+  .magazine-hero:not(:has(.hero-image)) .hero-title {
+    text-shadow: none;
+  }
+
+  .magazine-hero:not(:has(.hero-image)) .hero-description {
+    text-shadow: none;
+    color: var(--color-text-secondary);
+  }
+
+  /* ==========================================================================
+     Featured Cards
+     ========================================================================== */
+
+  .magazine-featured {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-6);
+  }
+
+  .featured-card {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .featured-link {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    text-decoration: none;
+    background: none;
+    color: inherit;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    transition: transform var(--transition-normal);
+  }
+
+  .featured-link:hover {
+    background: none;
+    transform: translateY(-3px);
+  }
+
+  .featured-image {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background: var(--color-bg-alt);
+  }
+
+  .featured-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+
+  .featured-link:hover .featured-image img {
+    transform: scale(1.05);
+  }
+
+  .featured-content {
+    padding: var(--space-4) 0;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .featured-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-2);
+  }
+
+  .featured-category {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-accent);
+  }
+
+  .featured-date {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+  }
+
+  .featured-title {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-snug);
+    margin: 0 0 var(--space-2) 0;
+    transition: color var(--transition-fast);
+  }
+
+  .featured-link:hover .featured-title {
+    color: var(--color-accent);
+  }
+
+  .featured-description {
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-relaxed);
+    color: var(--color-text-secondary);
+    margin: 0;
+    flex: 1;
+  }
+
+  .featured-read-time {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    margin-top: var(--space-3);
+    font-family: var(--font-mono);
+  }
+
+  /* ==========================================================================
+     Archive List
+     ========================================================================== */
+
+  .magazine-archive {
+    border-top: 2px solid var(--color-text);
+    padding-top: var(--space-6);
+  }
+
+  .archive-heading {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-muted);
+    margin: 0 0 var(--space-6) 0;
+  }
+
+  .archive-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .archive-item {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .archive-link {
+    display: grid;
+    grid-template-columns: 80px 1fr auto;
+    gap: var(--space-4);
+    padding: var(--space-4) 0;
+    text-decoration: none;
+    background: none;
+    color: inherit;
+    transition: background-color var(--transition-fast);
+  }
+
+  .archive-link:hover {
+    background: var(--color-bg-alt);
+    margin: 0 calc(-1 * var(--space-4));
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+    border-radius: var(--radius-sm);
+  }
+
+  .archive-date {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .archive-content {
+    min-width: 0;
+  }
+
+  .archive-title {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-snug);
+    margin: 0 0 var(--space-1) 0;
+    transition: color var(--transition-fast);
+  }
+
+  .archive-link:hover .archive-title {
+    color: var(--color-accent);
+  }
+
+  .archive-description {
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-relaxed);
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+
+  .archive-read-time {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    white-space: nowrap;
+  }
+
+  /* ==========================================================================
+     Empty State
+     ========================================================================== */
+
+  .empty-state {
+    text-align: center;
+    padding: var(--space-12) var(--space-4);
+    color: var(--color-text-muted);
+    font-style: italic;
+  }
+
+  /* ==========================================================================
+     Responsive Design
+     ========================================================================== */
+
+  @media (max-width: 768px) {
+    .magazine-view {
+      gap: var(--space-8);
+    }
+
+    .hero-content {
+      padding: var(--space-5);
+    }
+
+    .hero-title {
+      font-size: var(--font-size-xl);
+    }
+
+    .hero-description {
+      font-size: var(--font-size-base);
+      display: none;
+    }
+
+    .hero-meta {
+      flex-wrap: wrap;
+      gap: var(--space-2);
+    }
+
+    .magazine-featured {
+      grid-template-columns: 1fr;
+      gap: var(--space-6);
+    }
+
+    .featured-title {
+      font-size: var(--font-size-lg);
+    }
+
+    .archive-link {
+      grid-template-columns: 1fr;
+      gap: var(--space-2);
+    }
+
+    .archive-date {
+      font-size: var(--font-size-xs);
+    }
+
+    .archive-read-time {
+      display: none;
+    }
+  }
+
+  /* ==========================================================================
+     Animation
+     ========================================================================== */
+
+  @media (prefers-reduced-motion: no-preference) {
+    .magazine-hero,
+    .featured-card,
+    .archive-item {
+      opacity: 0;
+      transform: translateY(20px);
+      transition:
+        opacity 0.5s ease,
+        transform 0.5s ease;
+      transition-delay: var(--stagger-delay, 0s);
+    }
+
+    .magazine-hero[data-animate="visible"],
+    .featured-card[data-animate="visible"],
+    .archive-item[data-animate="visible"] {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* ==========================================================================
+     Dark Mode Adjustments
+     ========================================================================== */
+
+  [data-theme="dark"] .hero-overlay {
+    background: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.85) 0%,
+      rgba(0, 0, 0, 0.4) 40%,
+      rgba(0, 0, 0, 0) 100%
+    );
+  }
+
+  [data-theme="dark"] .magazine-archive {
+    border-top-color: var(--color-text-muted);
+  }
+</style>
+
+<script>
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.setAttribute('data-animate', 'visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.1, rootMargin: '0px 0px -30px 0px' }
+  );
+
+  document.querySelectorAll('.magazine-hero[data-animate], .featured-card[data-animate], .archive-item[data-animate]').forEach((el) => {
+    observer.observe(el);
+  });
+</script>
