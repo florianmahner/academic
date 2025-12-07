@@ -341,8 +341,8 @@ const prependBase = (path: string) => {
   }
 
   .education-period {
-    font-size: var(--font-size-base);
-    font-family: var(--font-body);
+    font-size: var(--font-size-xs);
+    font-family: var(--font-mono);
     font-weight: var(--font-weight-normal);
     line-height: var(--line-height-normal);
     color: var(--color-text-muted);
@@ -352,8 +352,16 @@ const prependBase = (path: string) => {
     margin: 0 0 var(--space-1);
   }
 
+  .education-content p:first-child {
+    font-size: var(--font-size-base);
+  }
+
   .education-content strong {
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .education-institution {
+    font-size: var(--font-size-sm);
   }
 
   .education-institution a {
@@ -361,12 +369,13 @@ const prependBase = (path: string) => {
   }
 
   .education-details {
+    font-size: var(--font-size-sm);
     color: var(--color-text-muted);
   }
 
   .thesis-link {
     display: inline-block;
-    font-size: var(--font-size-base);
+    font-size: var(--font-size-sm);
     color: var(--color-accent);
     background: none;
   }

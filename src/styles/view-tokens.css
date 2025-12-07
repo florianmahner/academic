@@ -38,18 +38,27 @@
   --view-dot-teaching: #ec4899;    /* Pink */
 
   /* ========================================
-     Typography
+     Typography - 3-Tier System
+
+     Tier 1 (Title): base size, semibold - Primary focus
+     Tier 2 (Description): sm size, normal - Supporting text
+     Tier 3 (Meta): xs size, normal - Dates, tags, links
      ======================================== */
+
+  /* Tier 3: Meta/Date */
   --view-date-font: var(--font-mono);
   --view-date-size: var(--font-size-xs);
   --view-date-color: var(--color-text-muted);
 
-  --view-title-weight: var(--font-weight-medium);
+  /* Tier 1: Titles */
+  --view-title-weight: var(--font-weight-semibold);
   --view-title-size: var(--font-size-base);
 
-  --view-meta-size: var(--font-size-sm);
-  --view-meta-color: var(--color-text-secondary);
+  /* Tier 3: Meta labels */
+  --view-meta-size: var(--font-size-xs);
+  --view-meta-color: var(--color-text-muted);
 
+  /* Tier 2: Descriptions */
   --view-description-size: var(--font-size-sm);
   --view-description-color: var(--color-text-secondary);
 
