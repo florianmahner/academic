@@ -146,11 +146,14 @@ article {
 .hover-item {
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-md);
-  transition: background-color var(--transition-fast);
+  border-left: 2px solid transparent;
+  transition: border-color var(--transition-fast);
 }
 
-.hover-item:hover {
-  background-color: var(--color-bg-alt);
+@media (hover: hover) {
+  .hover-item:hover {
+    border-left-color: var(--color-accent);
+  }
 }
 
 /* View all link - consistent CTA style */
@@ -953,7 +956,6 @@ img:not([loading="lazy"]) {
 
   .paper-preview img {
     object-fit: contain;
-    background: var(--color-bg-alt);
   }
 }
 
