@@ -11,6 +11,7 @@
     "lint": "eslint . --ext .js,.ts,.astro",
     "lint:fix": "eslint . --ext .js,.ts,.astro --fix",
     "check-links": "node scripts/check-links.js",
+    "check-links:build": "npm run build && linkinator ./dist --recurse --skip 'github.com|linkedin.com|twitter.com|scholar.google'",
     "validate-config": "node scripts/validate-config.js",
     "prepare": "husky"
   },
@@ -30,6 +31,7 @@
     "eslint": "^9.39.1",
     "eslint-plugin-astro": "^1.5.0",
     "husky": "^9.1.7",
+    "linkinator": "^7.5.1",
     "sharp": "^0.34.5"
   }
 }
