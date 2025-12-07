@@ -858,15 +858,16 @@ img:not([loading="lazy"]) {
 }
 
 .paper-venue {
-  font-size: var(--font-size-base);
-  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  font-family: var(--font-ui);
   font-weight: var(--font-weight-medium);
   color: var(--color-accent);
+  letter-spacing: 0.01em;
 }
 
 .paper-year {
-  font-size: var(--font-size-base);
-  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  font-family: var(--font-ui);
   color: var(--color-text-muted);
 }
 
@@ -876,7 +877,7 @@ img:not([loading="lazy"]) {
   font-family: var(--font-body);
   font-weight: var(--font-weight-medium);
   margin: 0 0 var(--space-2);
-  line-height: var(--line-height-normal);
+  line-height: var(--line-height-snug);
 }
 
 .paper-title a {
@@ -891,7 +892,7 @@ img:not([loading="lazy"]) {
 
 /* Authors */
 .paper-authors {
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-sm);
   font-family: var(--font-body);
   margin: 0 0 var(--space-3);
   color: var(--color-text-secondary);
@@ -915,8 +916,9 @@ img:not([loading="lazy"]) {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: var(--font-size-base);
-  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-ui);
+  font-weight: var(--font-weight-medium);
   color: var(--color-text-secondary);
   background: none;
   transition: color var(--transition-fast);

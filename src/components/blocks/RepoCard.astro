@@ -100,7 +100,8 @@ const langColor = langColors[language?.toLowerCase() || 'default'] || langColors
   }
 
   .repo-desc {
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-sm);
+    font-family: var(--font-body);
     color: var(--color-text-muted);
     line-height: var(--line-height-normal);
     margin-bottom: var(--space-3);
@@ -111,6 +112,7 @@ const langColor = langColors[language?.toLowerCase() || 'default'] || langColors
     align-items: center;
     justify-content: space-between;
     font-size: var(--font-size-xs);
+    font-family: var(--font-ui);
     color: var(--color-text-muted);
   }
 
@@ -118,6 +120,7 @@ const langColor = langColors[language?.toLowerCase() || 'default'] || langColors
     display: flex;
     align-items: center;
     gap: 6px;
+    font-family: var(--font-ui);
   }
 
   .dot {

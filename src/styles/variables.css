@@ -23,6 +23,22 @@
      DO NOT hardcode fonts here - they will conflict with presets!
      ============================================================ */
 
+  /* ============================================================
+     TYPOGRAPHY HIERARCHY - Consistent Visual Language
+
+     FONT FAMILY ASSIGNMENT:
+     • --font-body: All readable text (titles, descriptions, prose)
+     • --font-heading: Display headings only (h1, hero text)
+     • --font-ui: Meta elements (dates, venues, badges, nav, buttons)
+     • --font-mono: Code blocks and inline code ONLY
+
+     CARD TYPOGRAPHY PATTERN:
+     • Meta (date/venue): font-size-xs, font-ui, text-muted
+     • Title: font-size-base, font-body, font-weight-medium
+     • Description: font-size-sm, font-body, text-secondary
+     • Links: font-size-sm, font-ui
+     ============================================================ */
+
   /* Font Weights - using extremes for impact (300 vs 700) */
   --font-weight-light: 300;
   --font-weight-normal: 400;

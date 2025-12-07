@@ -101,7 +101,9 @@ const Tag = url ? 'a' : 'div';
 
   .project-title {
     font-size: var(--font-size-base);
-    font-weight: var(--font-weight-semibold);
+    font-family: var(--font-body);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-snug);
     margin: 0;
     transition: color var(--transition-fast);
   }
@@ -112,6 +114,7 @@ const Tag = url ? 'a' : 'div';
 
   .project-description {
     font-size: var(--font-size-sm);
+    font-family: var(--font-body);
     color: var(--color-text-secondary);
     margin: 0;
     line-height: var(--line-height-normal);
