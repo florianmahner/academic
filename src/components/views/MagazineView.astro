@@ -513,12 +513,10 @@ function estimateReadTime(item: ViewItem): number {
     transition: background-color var(--transition-fast);
   }
 
-  .archive-link:hover {
-    background: var(--color-bg-alt);
-    margin: 0 calc(-1 * var(--space-4));
-    padding-left: var(--space-4);
-    padding-right: var(--space-4);
-    border-radius: var(--radius-sm);
+  @media (hover: hover) {
+    .archive-link:hover .archive-title {
+      color: var(--color-accent);
+    }
   }
 
   .archive-date {

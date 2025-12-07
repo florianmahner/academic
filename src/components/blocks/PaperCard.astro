@@ -106,10 +106,13 @@ const primaryLink = pdf || html;
     padding: var(--space-4);
     border-radius: var(--radius-md);
     transition: all var(--transition-fast);
+    border-left: 2px solid transparent;
   }
 
-  .paper-card:hover {
-    background-color: var(--color-bg-alt);
+  @media (hover: hover) {
+    .paper-card:hover {
+      border-left-color: var(--color-accent);
+    }
   }
 
   .paper-preview {

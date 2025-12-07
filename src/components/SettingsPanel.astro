@@ -2,16 +2,12 @@
 /**
  * Unified Settings Panel (Development Only)
  *
- * Floating panel to customize:
- * - Typography presets (fonts + colors)
- * - Accent color (independent of preset)
- * - Navigation mode (floating, sidebar, inline)
- *
- * Only visible in development mode.
+ * Mobile-first design with bottom sheet on mobile, dropdown on desktop.
+ * No internal scrolling - shows all options at once.
  */
-import { typographyPresets, DEFAULT_PRESET_ID } from '../lib/typography-presets';
+import { typographyPresets } from '../lib/typography-presets';
 
-// Curated accent colors - distinct and visually pleasing
+// Curated accent colors
 const accentColors = [
   { id: 'crimson', name: 'Crimson', light: '#c41e3a', dark: '#ff4d6a' },
   { id: 'rose', name: 'Rose', light: '#e11d48', dark: '#fb7185' },
@@ -26,190 +22,201 @@ const accentColors = [
 ];
 
 const navModes = [
-  {
-    id: 'floating',
-    name: 'Floating Pill',
-    description: 'Safari-style bottom nav',
-  },
-  {
-    id: 'sidebar',
-    name: 'Left Sidebar',
-    description: 'Fixed sidebar navigation',
-  },
-  {
-    id: 'inline',
-    name: 'Inline Header',
-    description: 'Simple top header',
-  },
+  { id: 'floating', name: 'Floating' },
+  { id: 'sidebar', name: 'Sidebar' },
+  { id: 'inline', name: 'Header' },
 ];
 ---
 
+<!-- Backdrop for mobile -->
+<div id="settings-backdrop" class="settings-backdrop" hidden></div>
+
 <div id="settings-panel" class="settings-panel">
   <button id="settings-toggle" class="toggle-btn" aria-label="Toggle settings">
-    <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <circle cx="12" cy="12" r="3"></circle>
       <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
     </svg>
   </button>
 
   <div id="settings-dropdown" class="dropdown" hidden>
+    <!-- Drag handle for mobile -->
+    <div class="drag-handle"><span></span></div>
+
     <div class="dropdown-header">
       <span class="dropdown-title">Settings</span>
       <button id="settings-close" class="close-btn" aria-label="Close">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <line x1="18" y1="6" x2="6" y2="18"></line>
           <line x1="6" y1="6" x2="18" y2="18"></line>
         </svg>
       </button>
     </div>
 
-    <!-- Theme & Color Section (combined) -->
-    <div class="section">
-      <div class="section-row">
-        <div class="section-col">
-          <div class="section-title">Theme</div>
-          <fieldset class="theme-toggle-group">
-            <legend class="sr-only">Color Theme</legend>
-            <button class="theme-option" data-theme="light">
-              <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="5"></circle>
-                <line x1="12" y1="1" x2="12" y2="3"></line>
-                <line x1="12" y1="21" x2="12" y2="23"></line>
-                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                <line x1="1" y1="12" x2="3" y2="12"></line>
-                <line x1="21" y1="12" x2="23" y2="12"></line>
-                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-              </svg>
-              <span>Light</span>
-            </button>
-            <button class="theme-option" data-theme="dark">
-              <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-              </svg>
-              <span>Dark</span>
-            </button>
-          </fieldset>
+    <div class="dropdown-body">
+      <!-- Theme Toggle -->
+      <div class="setting-row">
+        <span class="setting-label">Theme</span>
+        <div class="toggle-group" role="radiogroup" aria-label="Color Theme">
+          <button class="toggle-item" data-theme="light" aria-pressed="false">
+            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+          </button>
+          <button class="toggle-item" data-theme="dark" aria-pressed="false">
+            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+          </button>
         </div>
       </div>
 
-      <div class="section-title" style="margin-top: 8px;">Accent</div>
-      <fieldset class="color-grid">
-        <legend class="sr-only">Accent Color</legend>
-        {accentColors.map(color => (
-          <button
-            class="color-option"
-            data-color-id={color.id}
-            data-color-light={color.light}
-            data-color-dark={color.dark}
-            title={color.name}
-            aria-label={color.name}
-          >
-            <span class="color-dot" style={`background: ${color.light}`}></span>
-          </button>
-        ))}
-      </fieldset>
-    </div>
+      <!-- Layout Toggle -->
+      <div class="setting-row">
+        <span class="setting-label">Layout</span>
+        <div class="toggle-group toggle-group--text" role="radiogroup" aria-label="Navigation Style">
+          {navModes.map(mode => (
+            <button class="toggle-item nav-option" data-nav-mode={mode.id} aria-pressed="false">
+              {mode.name}
+            </button>
+          ))}
+        </div>
+      </div>
 
-    <!-- Typography Section -->
-    <div class="section">
-      <div class="section-title">Typography</div>
-      <fieldset class="option-list">
-        <legend class="sr-only">Typography Style</legend>
-        {typographyPresets.map(preset => (
-          <button
-            class="option-btn typography-option"
-            data-preset-id={preset.id}
-            data-fonts={JSON.stringify(preset.fonts)}
-            data-colors={JSON.stringify(preset.colors)}
-            data-styles={JSON.stringify(preset.styles)}
-          >
-            <span class="option-name">{preset.name}</span>
-            <span class="option-desc">{preset.description}</span>
-          </button>
-        ))}
-      </fieldset>
-    </div>
+      <!-- Accent Colors -->
+      <div class="setting-section">
+        <span class="setting-label">Accent Color</span>
+        <div class="color-grid" role="radiogroup" aria-label="Accent Color">
+          {accentColors.map(color => (
+            <button
+              class="color-option"
+              data-color-id={color.id}
+              data-color-light={color.light}
+              data-color-dark={color.dark}
+              title={color.name}
+              aria-label={color.name}
+              aria-pressed="false"
+            >
+              <span class="color-dot" style={`--dot-color: ${color.light}`}></span>
+            </button>
+          ))}
+        </div>
+      </div>
 
-    <!-- Navigation Mode Section -->
-    <div class="section">
-      <div class="section-title">Layout</div>
-      <fieldset class="option-list nav-list">
-        <legend class="sr-only">Navigation Style</legend>
-        {navModes.map(mode => (
-          <button
-            class="option-btn nav-option"
-            data-nav-mode={mode.id}
-          >
-            <span class="option-name">{mode.name}</span>
-            <span class="option-desc">{mode.description}</span>
-          </button>
-        ))}
-      </fieldset>
-    </div>
-
-    <div class="dropdown-footer">
-      <span class="footer-label">
-        <span id="current-typography">-</span> · <span id="current-color">-</span> · <span id="current-nav">-</span> · <span id="current-theme">-</span>
-      </span>
+      <!-- Typography -->
+      <div class="setting-section">
+        <span class="setting-label">Typography</span>
+        <div class="typography-grid" role="radiogroup" aria-label="Typography Style">
+          {typographyPresets.map(preset => (
+            <button
+              class="typo-option"
+              data-preset-id={preset.id}
+              data-fonts={JSON.stringify(preset.fonts)}
+              data-colors={JSON.stringify(preset.colors)}
+              data-styles={JSON.stringify(preset.styles)}
+              aria-pressed="false"
+            >
+              <span class="typo-name">{preset.name}</span>
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
 <style>
-  .settings-panel {
+  /* Backdrop for mobile */
+  .settings-backdrop {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 9999;
-    font-family: system-ui, -apple-system, sans-serif;
-    font-size: 13px;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 9998;
+    opacity: 0;
+    transition: opacity 0.2s ease;
   }
 
+  .settings-backdrop.visible {
+    opacity: 1;
+  }
+
+  .settings-backdrop[hidden] {
+    display: none;
+  }
+
+  /* Panel container */
+  .settings-panel {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    z-index: 9999;
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 14px;
+  }
+
+  /* Toggle button - larger touch target */
   .toggle-btn {
-    width: 36px;
-    height: 36px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
-    background: transparent;
-    color: #a1a1aa;
-    border: 1px solid #e4e4e7;
+    background: var(--color-bg, #fff);
+    color: var(--color-text-muted, #71717a);
+    border: 1px solid var(--color-border, #e4e4e7);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: color 0.2s, border-color 0.2s;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 
   .toggle-btn:hover {
-    color: #71717a;
-    border-color: #a1a1aa;
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
 
   [data-theme="dark"] .toggle-btn {
+    background: #27272a;
     border-color: #3f3f46;
-    color: #71717a;
-  }
-
-  [data-theme="dark"] .toggle-btn:hover {
     color: #a1a1aa;
-    border-color: #52525b;
   }
 
+  /* Dropdown - desktop */
   .dropdown {
     position: absolute;
-    bottom: 46px;
+    bottom: 54px;
     right: 0;
-    width: 280px;
+    width: 320px;
+    max-width: calc(100vw - 32px);
     background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-    overflow: hidden;
+    border-radius: 16px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);
     border: 1px solid #e4e4e7;
+    transform-origin: bottom right;
+    animation: dropdownIn 0.2s ease;
+  }
+
+  @keyframes dropdownIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95) translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
   }
 
   [data-theme="dark"] .dropdown {
-    background: #27272a;
+    background: #1c1c1e;
     border-color: #3f3f46;
   }
 
@@ -217,11 +224,17 @@ const navModes = [
     display: none;
   }
 
+  /* Drag handle - hidden on desktop */
+  .drag-handle {
+    display: none;
+  }
+
+  /* Header */
   .dropdown-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 16px;
+    padding: 16px 20px 12px;
     border-bottom: 1px solid #e4e4e7;
   }
 
@@ -231,202 +244,130 @@ const navModes = [
 
   .dropdown-title {
     font-weight: 600;
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: #71717a;
+    font-size: 15px;
+    color: #18181b;
+  }
+
+  [data-theme="dark"] .dropdown-title {
+    color: #fafafa;
   }
 
   .close-btn {
+    width: 32px;
+    height: 32px;
     background: none;
     border: none;
     cursor: pointer;
-    padding: 4px;
     color: #71717a;
     display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: 8px;
+    transition: all 0.15s;
   }
 
   .close-btn:hover {
+    background: #f4f4f5;
     color: #18181b;
   }
 
   [data-theme="dark"] .close-btn:hover {
+    background: #3f3f46;
     color: #fafafa;
   }
 
-  .section {
-    border-bottom: 1px solid #e4e4e7;
-  }
-
-  .section:last-of-type {
-    border-bottom: none;
-  }
-
-  [data-theme="dark"] .section {
-    border-color: #3f3f46;
-  }
-
-  .section-title {
-    padding: 10px 16px 6px;
-    font-size: 10px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: #a1a1aa;
-  }
-
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border-width: 0;
-  }
-  .option-list {
-    border: none;
-    margin: 0;
-    max-height: 180px;
-    overflow-y: auto;
-    padding: 0 8px 8px;
-  }
-
-  .option-btn {
-    width: 100%;
-    text-align: left;
-    background: transparent;
-    border: 1px solid transparent;
-    border-radius: 8px;
-    padding: 8px 10px;
-    cursor: pointer;
+  /* Body */
+  .dropdown-body {
+    padding: 16px 20px 20px;
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    transition: all 0.15s;
+    gap: 20px;
   }
 
-  .option-btn:hover {
-    background: #f4f4f5;
-  }
-
-  [data-theme="dark"] .option-btn:hover {
-    background: #3f3f46;
-  }
-
-  .option-btn.active {
-    background: #f4f4f5;
-    border-color: #a1a1aa;
-  }
-
-  [data-theme="dark"] .option-btn.active {
-    background: #3f3f46;
-    border-color: #71717a;
-  }
-
-  .option-header {
+  /* Setting row - horizontal layout */
+  .setting-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 100%;
+    gap: 16px;
   }
 
-  .option-name {
+  .setting-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .setting-label {
+    font-size: 13px;
     font-weight: 500;
-    color: #18181b;
-    font-size: 12px;
-  }
-
-  [data-theme="dark"] .option-name {
-    color: #fafafa;
-  }
-
-  .option-desc {
-    font-size: 10px;
     color: #71717a;
+    flex-shrink: 0;
   }
 
-  .dropdown-footer {
-    padding: 8px 16px;
-    border-top: 1px solid #e4e4e7;
-    background: #fafafa;
+  /* Toggle group - segmented control style */
+  .toggle-group {
+    display: flex;
+    background: #f4f4f5;
+    border-radius: 10px;
+    padding: 3px;
+    gap: 2px;
   }
 
-  [data-theme="dark"] .dropdown-footer {
-    border-color: #3f3f46;
-    background: #1f1f23;
+  [data-theme="dark"] .toggle-group {
+    background: #27272a;
   }
 
-  .footer-label {
-    font-size: 10px;
-    color: #71717a;
-  }
-
-  .theme-toggle-group {
-    border: none;
-    margin: 0;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    padding: 0 8px 8px;
-  }
-
-  .theme-option {
+  .toggle-item {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    padding: 10px;
+    padding: 8px 12px;
     background: transparent;
-    border: 1px solid transparent;
+    border: none;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 12px;
+    color: #71717a;
+    font-size: 13px;
     font-weight: 500;
-    color: #18181b;
     transition: all 0.15s;
+    min-width: 44px;
   }
 
-  .theme-option:hover {
-    background: #f4f4f5;
+  .toggle-group--text .toggle-item {
+    padding: 8px 14px;
   }
 
-  [data-theme="dark"] .theme-option {
+  .toggle-item:hover {
+    color: #18181b;
+  }
+
+  [data-theme="dark"] .toggle-item:hover {
     color: #fafafa;
   }
 
-  [data-theme="dark"] .theme-option:hover {
+  .toggle-item.active {
+    background: #ffffff;
+    color: #18181b;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  [data-theme="dark"] .toggle-item.active {
     background: #3f3f46;
+    color: #fafafa;
   }
 
-  .theme-option.active {
-    background: #f4f4f5;
-    border-color: #a1a1aa;
-  }
-
-  [data-theme="dark"] .theme-option.active {
-    background: #3f3f46;
-    border-color: #71717a;
-  }
-
-  /* Color Grid */
+  /* Color grid */
   .color-grid {
-    border: none;
-    margin: 0;
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    display: flex;
+    flex-wrap: wrap;
     gap: 8px;
-    padding: 0 12px 12px;
   }
 
   .color-option {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
     background: transparent;
     border: 2px solid transparent;
     cursor: pointer;
@@ -438,77 +379,230 @@ const navModes = [
   }
 
   .color-option:hover {
-    background: #f4f4f5;
     transform: scale(1.1);
   }
 
-  [data-theme="dark"] .color-option:hover {
-    background: #3f3f46;
-  }
-
   .color-option.active {
-    border-color: #a1a1aa;
-    background: #f4f4f5;
+    border-color: var(--dot-color);
+    background: rgba(0, 0, 0, 0.05);
   }
 
   [data-theme="dark"] .color-option.active {
-    border-color: #71717a;
-    background: #3f3f46;
+    background: rgba(255, 255, 255, 0.1);
   }
 
   .color-dot {
-    width: 18px;
-    height: 18px;
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    background: var(--dot-color);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
   }
 
-  [data-theme="dark"] .color-dot {
-    border-color: rgba(255, 255, 255, 0.1);
+  /* Typography grid */
+  .typography-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
   }
 
-  /* Navigation list - more compact */
-  .nav-list {
-    max-height: 120px;
+  .typo-option {
+    padding: 10px 12px;
+    background: #f4f4f5;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.15s;
+  }
+
+  .typo-option:hover {
+    background: #e4e4e7;
+  }
+
+  [data-theme="dark"] .typo-option {
+    background: #27272a;
+  }
+
+  [data-theme="dark"] .typo-option:hover {
+    background: #3f3f46;
+  }
+
+  .typo-option.active {
+    border-color: var(--color-accent, #2563eb);
+    background: #ffffff;
+  }
+
+  [data-theme="dark"] .typo-option.active {
+    background: #1c1c1e;
+  }
+
+  .typo-name {
+    font-size: 12px;
+    font-weight: 500;
+    color: #18181b;
+  }
+
+  [data-theme="dark"] .typo-name {
+    color: #fafafa;
+  }
+
+  /* ==========================================
+     MOBILE STYLES - Bottom Sheet
+     ========================================== */
+  @media (max-width: 640px) {
+    .settings-panel {
+      bottom: 12px;
+      right: 12px;
+    }
+
+    .dropdown {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      max-width: 100%;
+      border-radius: 20px 20px 0 0;
+      transform-origin: bottom center;
+      animation: sheetUp 0.3s ease;
+      max-height: 85vh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    @keyframes sheetUp {
+      from {
+        opacity: 0;
+        transform: translateY(100%);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .drag-handle {
+      display: flex;
+      justify-content: center;
+      padding: 12px 0 4px;
+    }
+
+    .drag-handle span {
+      width: 36px;
+      height: 4px;
+      background: #d1d5db;
+      border-radius: 2px;
+    }
+
+    [data-theme="dark"] .drag-handle span {
+      background: #52525b;
+    }
+
+    .dropdown-header {
+      padding: 8px 20px 16px;
+      border-bottom: none;
+    }
+
+    .dropdown-body {
+      padding: 8px 20px 32px;
+      gap: 24px;
+    }
+
+    .setting-row {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 10px;
+    }
+
+    .toggle-group {
+      width: 100%;
+      justify-content: stretch;
+    }
+
+    .toggle-item {
+      flex: 1;
+      padding: 12px;
+    }
+
+    .color-grid {
+      justify-content: flex-start;
+      gap: 10px;
+    }
+
+    .color-option {
+      width: 44px;
+      height: 44px;
+    }
+
+    .color-dot {
+      width: 28px;
+      height: 28px;
+    }
+
+    .typography-grid {
+      gap: 10px;
+    }
+
+    .typo-option {
+      padding: 14px 16px;
+    }
+
+    .typo-name {
+      font-size: 14px;
+    }
   }
 </style>
 
 <script>
   function initSettingsPanel() {
-    // Get default preset from localStorage or data attribute (set by config)
-    const getDefaultPresetId = () => {
-      const stored = localStorage.getItem('typography-preset');
-      if (stored) return stored;
-      // Fallback to data attribute set by config
-      const html = document.documentElement;
-      return html.getAttribute('data-typography') || 'editorial-newsreader';
-    };
     const toggle = document.getElementById('settings-toggle');
     const dropdown = document.getElementById('settings-dropdown');
+    const backdrop = document.getElementById('settings-backdrop');
     const close = document.getElementById('settings-close');
     const navOptions = document.querySelectorAll('.nav-option');
-    const typographyOptions = document.querySelectorAll('.typography-option');
+    const typographyOptions = document.querySelectorAll('.typo-option');
     const colorOptions = document.querySelectorAll('.color-option');
-    const themeOptions = document.querySelectorAll('.theme-option');
-    const currentNav = document.getElementById('current-nav');
-    const currentTypography = document.getElementById('current-typography');
-    const currentColor = document.getElementById('current-color');
-    const currentTheme = document.getElementById('current-theme');
+    const themeOptions = document.querySelectorAll('[data-theme]');
     const html = document.documentElement;
     const body = document.body;
 
-    // Nav mode names
-    const navModeNames: Record<string, string> = {
-      'floating': 'Floating',
-      'sidebar': 'Sidebar',
-      'inline': 'Inline',
+    // Check if mobile
+    const isMobile = () => window.innerWidth <= 640;
+
+    // Get default preset
+    const getDefaultPresetId = () => {
+      const stored = localStorage.getItem('typography-preset');
+      if (stored) return stored;
+      return html.getAttribute('data-typography') || 'editorial-newsreader';
     };
 
     // Get stored values
     const getStoredNavMode = () => localStorage.getItem('nav-mode') || 'sidebar';
     const getStoredPreset = () => localStorage.getItem('typography-preset') || getDefaultPresetId();
     const getStoredColor = () => localStorage.getItem('accent-color') || null;
+    const getStoredTheme = () => {
+      const stored = localStorage.getItem('theme');
+      if (stored) return stored;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+
+    // Open/close panel
+    const openPanel = () => {
+      dropdown?.removeAttribute('hidden');
+      if (isMobile()) {
+        backdrop?.removeAttribute('hidden');
+        requestAnimationFrame(() => backdrop?.classList.add('visible'));
+        document.body.style.overflow = 'hidden';
+      }
+    };
+
+    const closePanel = () => {
+      dropdown?.setAttribute('hidden', '');
+      backdrop?.classList.remove('visible');
+      setTimeout(() => backdrop?.setAttribute('hidden', ''), 200);
+      document.body.style.overflow = '';
+    };
 
     // Apply nav mode
     const applyNavMode = (mode: string) => {
@@ -519,14 +613,11 @@ const navModes = [
       navOptions.forEach(opt => {
         const optMode = (opt as HTMLElement).dataset.navMode;
         opt.classList.toggle('active', optMode === mode);
+        opt.setAttribute('aria-pressed', String(optMode === mode));
       });
-
-      if (currentNav) {
-        currentNav.textContent = navModeNames[mode] || mode;
-      }
     };
 
-    // Font URLs for dynamic loading (must match font-loader.ts)
+    // Font URLs
     const PRESET_FONT_URLS: Record<string, string> = {
       'crimson-classic': 'https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap',
       'editorial-newsreader': 'https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400;1,6..72,500&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap',
@@ -540,29 +631,19 @@ const navModes = [
       'editorial-instrument': 'https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap',
     };
 
-    // Track loaded fonts to prevent duplicates
     const loadedFonts = new Set<string>();
 
-    // Load fonts for a preset
     const loadFonts = (presetId: string): Promise<void> => {
-      if (loadedFonts.has(presetId)) {
-        return Promise.resolve();
-      }
-
+      if (loadedFonts.has(presetId)) return Promise.resolve();
       const url = PRESET_FONT_URLS[presetId];
-      if (!url) {
-        return Promise.resolve();
-      }
+      if (!url) return Promise.resolve();
 
       return new Promise((resolve) => {
         const link = document.createElement('link');
         link.rel = 'stylesheet';
         link.href = url;
-        link.onload = () => {
-          loadedFonts.add(presetId);
-          resolve();
-        };
-        link.onerror = () => resolve(); // Don't block on error
+        link.onload = () => { loadedFonts.add(presetId); resolve(); };
+        link.onerror = () => resolve();
         document.head.appendChild(link);
       });
     };
@@ -581,12 +662,12 @@ const navModes = [
         localStorage.setItem('accent-color-dark', colorDark);
       }
 
-      colorOptions.forEach(b => b.classList.remove('active'));
+      colorOptions.forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-pressed', 'false');
+      });
       btn.classList.add('active');
-
-      if (currentColor) {
-        currentColor.textContent = btn.getAttribute('title') || '-';
-      }
+      btn.setAttribute('aria-pressed', 'true');
     };
 
     // Apply typography preset
@@ -596,10 +677,7 @@ const navModes = [
       const colors = JSON.parse(btn.getAttribute('data-colors') || '{}');
       const styles = JSON.parse(btn.getAttribute('data-styles') || '{}');
 
-      // Load fonts FIRST before applying styles
-      if (presetId) {
-        await loadFonts(presetId);
-      }
+      if (presetId) await loadFonts(presetId);
 
       html.setAttribute('data-typography', presetId || '');
       html.style.setProperty('--font-body', `"${fonts.body}", Georgia, serif`);
@@ -610,16 +688,10 @@ const navModes = [
       html.style.setProperty('--heading-weight', styles.headingWeight);
       html.style.setProperty('--body-weight', styles.bodyWeight);
 
-      // Only apply preset colors if no custom color is stored or skipColorOverride is false
       const storedColor = getStoredColor();
-      if (!storedColor || !skipColorOverride) {
-        // If no custom color, use preset colors but don't mark anything active in color grid
-        if (!storedColor) {
-          html.style.setProperty('--color-accent-light', colors.accentLight);
-          html.style.setProperty('--color-accent-dark', colors.accentDark);
-          colorOptions.forEach(b => b.classList.remove('active'));
-          if (currentColor) currentColor.textContent = 'Default';
-        }
+      if (!storedColor && !skipColorOverride) {
+        html.style.setProperty('--color-accent-light', colors.accentLight);
+        html.style.setProperty('--color-accent-dark', colors.accentDark);
       }
 
       localStorage.setItem('typography-preset', presetId || '');
@@ -627,15 +699,15 @@ const navModes = [
       localStorage.setItem('typography-colors', JSON.stringify(colors));
       localStorage.setItem('typography-styles', JSON.stringify(styles));
 
-      typographyOptions.forEach(b => b.classList.remove('active'));
+      typographyOptions.forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-pressed', 'false');
+      });
       btn.classList.add('active');
-
-      if (currentTypography) {
-        currentTypography.textContent = btn.querySelector('.option-name')?.textContent || '-';
-      }
+      btn.setAttribute('aria-pressed', 'true');
     };
 
-    // Apply theme (light/dark)
+    // Apply theme
     const applyTheme = (theme: string) => {
       html.setAttribute('data-theme', theme);
       localStorage.setItem('theme', theme);
@@ -643,58 +715,35 @@ const navModes = [
       themeOptions.forEach(opt => {
         const optTheme = (opt as HTMLElement).dataset.theme;
         opt.classList.toggle('active', optTheme === theme);
+        opt.setAttribute('aria-pressed', String(optTheme === theme));
       });
-
-      if (currentTheme) {
-        currentTheme.textContent = theme === 'dark' ? 'Dark' : 'Light';
-      }
     };
 
-    // Get stored theme
-    const getStoredTheme = () => {
-      const stored = localStorage.getItem('theme');
-      if (stored) return stored;
-      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    };
-
-    // Initialize with stored values
+    // Initialize states
     applyNavMode(getStoredNavMode());
     applyTheme(getStoredTheme());
 
     const storedPresetId = getStoredPreset();
     const storedPresetBtn = document.querySelector(`[data-preset-id="${storedPresetId}"]`);
-    if (storedPresetBtn) {
-      applyPreset(storedPresetBtn, true);
-    }
+    if (storedPresetBtn) applyPreset(storedPresetBtn, true);
 
-    // Apply stored accent color if exists
     const storedColorId = getStoredColor();
     if (storedColorId) {
       const storedColorBtn = document.querySelector(`[data-color-id="${storedColorId}"]`);
-      if (storedColorBtn) {
-        applyColor(storedColorBtn);
-      }
-    } else {
-      // No custom color, show "Default" in footer
-      if (currentColor) currentColor.textContent = 'Default';
+      if (storedColorBtn) applyColor(storedColorBtn);
     }
 
-    // Toggle dropdown
-    toggle?.addEventListener('click', () => {
+    // Event listeners
+    toggle?.addEventListener('click', (e) => {
+      e.stopPropagation();
       const isHidden = dropdown?.hasAttribute('hidden');
-      if (isHidden) {
-        dropdown?.removeAttribute('hidden');
-      } else {
-        dropdown?.setAttribute('hidden', '');
-      }
+      if (isHidden) openPanel();
+      else closePanel();
     });
 
-    // Close dropdown
-    close?.addEventListener('click', () => {
-      dropdown?.setAttribute('hidden', '');
-    });
+    close?.addEventListener('click', closePanel);
+    backdrop?.addEventListener('click', closePanel);
 
-    // Nav mode selection
     navOptions.forEach(opt => {
       opt.addEventListener('click', () => {
         const mode = (opt as HTMLElement).dataset.navMode;
@@ -702,17 +751,14 @@ const navModes = [
       });
     });
 
-    // Typography selection (async for font loading)
     typographyOptions.forEach(btn => {
       btn.addEventListener('click', async () => await applyPreset(btn, true));
     });
 
-    // Color selection
     colorOptions.forEach(btn => {
       btn.addEventListener('click', () => applyColor(btn));
     });
 
-    // Theme selection
     themeOptions.forEach(opt => {
       opt.addEventListener('click', () => {
         const theme = (opt as HTMLElement).dataset.theme;
@@ -720,16 +766,23 @@ const navModes = [
       });
     });
 
-    // Close on outside click
+    // Close on outside click (desktop only)
     document.addEventListener('click', (e) => {
+      if (isMobile()) return;
       const panel = document.getElementById('settings-panel');
       if (panel && !panel.contains(e.target as Node)) {
-        dropdown?.setAttribute('hidden', '');
+        closePanel();
+      }
+    });
+
+    // Handle escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !dropdown?.hasAttribute('hidden')) {
+        closePanel();
       }
     });
   }
 
-  // Initialize
   initSettingsPanel();
   document.addEventListener('astro:after-swap', initSettingsPanel);
 </script>

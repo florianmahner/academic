@@ -248,13 +248,10 @@ function getActionLinks(item: ViewItem): Array<{ label: string; url: string }> {
     border-bottom: none;
   }
 
-  .minimal-item:hover {
-    background-color: var(--view-hover-bg);
-    margin-left: calc(-1 * var(--view-hover-offset));
-    margin-right: calc(-1 * var(--view-hover-offset));
-    padding-left: var(--view-hover-offset);
-    padding-right: var(--view-hover-offset);
-    border-radius: var(--view-hover-radius);
+  @media (hover: hover) {
+    .minimal-item:hover .item-title {
+      color: var(--color-accent);
+    }
   }
 
   /* Compact variant */
@@ -352,12 +349,6 @@ function getActionLinks(item: ViewItem): Array<{ label: string; url: string }> {
       padding-left: 0;
     }
 
-    .minimal-item:hover {
-      margin-left: calc(-1 * var(--space-2));
-      margin-right: calc(-1 * var(--space-2));
-      padding-left: var(--space-2);
-      padding-right: var(--space-2);
-    }
   }
 
   /* Animations */

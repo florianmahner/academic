@@ -324,10 +324,13 @@ const prependBase = (path: string) => {
     padding: var(--space-4);
     border-radius: var(--radius-md);
     transition: all var(--transition-fast);
+    border-left: 2px solid transparent;
   }
 
-  .education-item:hover {
-    background-color: var(--color-bg-alt);
+  @media (hover: hover) {
+    .education-item:hover {
+      border-left-color: var(--color-accent);
+    }
   }
 
   .education-period {

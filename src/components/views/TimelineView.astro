@@ -337,13 +337,10 @@ let globalIndex = 0;
     border-bottom: none;
   }
 
-  .timeline-view--minimal .timeline-item:hover {
-    background-color: var(--view-hover-bg);
-    margin-left: calc(-1 * var(--view-hover-offset));
-    margin-right: calc(-1 * var(--view-hover-offset));
-    padding-left: var(--view-hover-offset);
-    padding-right: var(--view-hover-offset);
-    border-radius: var(--view-hover-radius);
+  @media (hover: hover) {
+    .timeline-view--minimal .timeline-item:hover .item-title {
+      color: var(--color-accent);
+    }
   }
 
   .date-col {

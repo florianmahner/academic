@@ -352,13 +352,10 @@ function truncate(text: string, limit: number): string {
     border-bottom: none;
   }
 
-  .showcase-item:hover {
-    background-color: var(--view-hover-bg);
-    margin-left: calc(-1 * var(--view-hover-offset));
-    margin-right: calc(-1 * var(--view-hover-offset));
-    padding-left: var(--view-hover-offset);
-    padding-right: var(--view-hover-offset);
-    border-radius: var(--view-hover-radius);
+  @media (hover: hover) {
+    .showcase-item:hover .item-title {
+      color: var(--color-accent);
+    }
   }
 
   .item-main {
@@ -450,13 +447,6 @@ function truncate(text: string, limit: number): string {
       flex-direction: column;
       align-items: flex-start;
       gap: var(--space-2);
-    }
-
-    .showcase-item:hover {
-      margin-left: calc(-1 * var(--space-2));
-      margin-right: calc(-1 * var(--space-2));
-      padding-left: var(--space-2);
-      padding-right: var(--space-2);
     }
   }
 
