@@ -27,8 +27,7 @@ interface Props {
 
 const { type, status, size = 'md', class: className } = Astro.props;
 
-// Determine which attribute to use for styling
-const dataAttr = status ? `data-status="${status}"` : type ? `data-type="${type}"` : '';
+// Styling is determined via data attributes in the template
 ---
 
 <span
