@@ -1,12 +1,12 @@
 ---
 /**
  * Projects Index Page
- * Reads layout configuration from collection-pages/projects.md frontmatter
+ * Uses the unified view system for consistent, customizable display
  */
 import { getCollection, getEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { config } from '../../config';
-import LayoutDispatcher from '../../components/layouts/LayoutDispatcher.astro';
+import ViewDispatcher from '../../components/views/ViewDispatcher.astro';
 
 // Get page configuration from frontmatter
 const pageConfig = await getEntry('collection-pages', 'projects');
@@ -14,7 +14,7 @@ if (!pageConfig) {
   throw new Error('Missing collection-pages/projects.md - please create this file with layout configuration');
 }
 
-const { title, description, pageLayout, layoutConfig, sortBy, sortOrder } = pageConfig.data;
+const { title, description, view, viewConfig, sortBy, sortOrder } = pageConfig.data;
 
 // Get all projects
 const projects = await getCollection('projects');
@@ -34,20 +34,43 @@ const sortedEntries = projects.sort((a, b) => {
   return sortOrder === 'asc' ? valA - valB : valB - valA;
 });
 
+// Transform entries for view components
+const viewItems = sortedEntries.map(entry => ({
+  title: entry.data.title,
+  slug: entry.slug,
+  description: entry.data.description,
+  date: entry.data.startDate || entry.data.date,
+  tags: entry.data.tags || entry.data.technologies,
+  status: entry.data.status,
+  featured: entry.data.featured,
+  // Links
+  github: entry.data.github,
+  url: entry.data.url || entry.data.website,
+  demo: entry.data.demo,
+  documentation: entry.data.documentation,
+  pypi: entry.data.pypi,
+}));
+
 const pageTitle = `${title} | ${config.site.title}`;
 ---
 
 <BaseLayout title={pageTitle} description={description}>
   <article class="collection-page">
     <div class="container">
-      <LayoutDispatcher
+      <ViewDispatcher
+        view={view || 'showcase'}
+        items={viewItems}
+        config={viewConfig}
         collection="projects"
-        entries={sortedEntries}
         title={title}
         description={description}
-        layoutOverride={pageLayout}
-        configOverride={layoutConfig}
       />
+
+      {viewItems.length === 0 && (
+        <div class="empty-state" data-animate="fade-up">
+          <p>No projects to display yet. Check back soon!</p>
+        </div>
+      )}
     </div>
   </article>
 </BaseLayout>
@@ -55,5 +78,11 @@ const pageTitle = `${title} | ${config.site.title}`;
 <style>
   .collection-page {
     /* Vertical padding handled by article in global.css */
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: var(--space-12) var(--space-4);
+    color: var(--color-text-muted);
   }
 </style>

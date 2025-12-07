@@ -1,0 +1,499 @@
+---
+/**
+ * ShowcaseView Component
+ *
+ * Featured item hero with supporting list.
+ * Best for: Projects, portfolio items, featured content.
+ *
+ * Features:
+ * - Featured item gets prominent treatment
+ * - Remaining items in clean list format
+ * - Status indicators as colored dots
+ * - Action links with icons (GitHub, Demo, Docs)
+ * - Tags as subtle metadata
+ *
+ * Frontmatter Configuration:
+ * ```yaml
+ * view: "showcase"
+ * viewConfig:
+ *   showFeatured: true        # Show featured item prominently
+ *   featuredCount: 1          # Number of featured items
+ *   showStatus: true          # Show status dot
+ *   showDate: true            # Show date
+ *   dateFormat: "month-year"  # Date format
+ *   showDescription: true     # Show description
+ *   descriptionLimit: 200     # Max chars for description
+ *   showTags: true            # Show tags
+ *   tagLimit: 5               # Max tags to show
+ *   showLinks: ["github", "demo", "docs", "website"]
+ *   linkStyle: "both"         # "icons" | "text" | "both"
+ * ```
+ */
+
+import ViewDate from '../primitives/ViewDate.astro';
+import ViewDot from '../primitives/ViewDot.astro';
+import ViewLinks from '../primitives/ViewLinks.astro';
+import ViewTags from '../primitives/ViewTags.astro';
+
+interface ViewItem {
+  title: string;
+  slug?: string;
+  description?: string;
+  date?: Date;
+  tags?: string[];
+  status?: 'active' | 'completed' | 'archived' | 'paused' | 'wip';
+  featured?: boolean;
+
+  // Links
+  url?: string;
+  github?: string;
+  demo?: string;
+  documentation?: string;
+  website?: string;
+  pypi?: string;
+}
+
+interface ViewConfig {
+  showFeatured?: boolean;
+  featuredCount?: number;
+  showStatus?: boolean;
+  showDate?: boolean;
+  dateFormat?: 'short' | 'long' | 'month-year' | 'year';
+  showDescription?: boolean;
+  descriptionLimit?: number;
+  showTags?: boolean;
+  tagLimit?: number;
+  showLinks?: string[];
+  linkStyle?: 'icons' | 'text' | 'both';
+}
+
+interface Props {
+  items: ViewItem[];
+  config?: ViewConfig;
+  collection?: string;
+  class?: string;
+}
+
+const { items, config = {}, collection = 'projects', class: className } = Astro.props;
+
+// Default config
+const {
+  showFeatured = true,
+  featuredCount = 1,
+  showStatus = true,
+  showDate = true,
+  dateFormat = 'month-year',
+  showDescription = true,
+  descriptionLimit = 200,
+  showTags = true,
+  tagLimit = 5,
+  showLinks = ['github', 'demo', 'docs', 'website'],
+  linkStyle = 'both',
+} = config;
+
+// Separate featured and regular items
+const featuredItems = showFeatured
+  ? items.filter(item => item.featured).slice(0, featuredCount)
+  : [];
+
+const regularItems = showFeatured && featuredItems.length > 0
+  ? items.filter(item => !featuredItems.includes(item))
+  : items;
+
+// Status colors
+const statusLabels: Record<string, string> = {
+  active: 'Active',
+  completed: 'Completed',
+  archived: 'Archived',
+  paused: 'Paused',
+  wip: 'In Progress',
+};
+
+// Build item link
+function getItemLink(item: ViewItem): string {
+  return `/${collection}/${item.slug}`;
+}
+
+// Build action links
+function getActionLinks(item: ViewItem): Array<{ label: string; url: string }> {
+  const links: Array<{ label: string; url: string }> = [];
+
+  if (showLinks.includes('github') && item.github) links.push({ label: 'Code', url: item.github });
+  if (showLinks.includes('website') && (item.url || item.website)) links.push({ label: 'Website', url: item.url || item.website! });
+  if (showLinks.includes('demo') && item.demo) links.push({ label: 'Demo', url: item.demo });
+  if (showLinks.includes('docs') && item.documentation) links.push({ label: 'Docs', url: item.documentation });
+  if (showLinks.includes('pypi') && item.pypi) links.push({ label: 'PyPI', url: item.pypi });
+
+  return links;
+}
+
+// Truncate description
+function truncate(text: string, limit: number): string {
+  if (text.length <= limit) return text;
+  return text.slice(0, limit).trim() + '...';
+}
+---
+
+<div class:list={['showcase-view', className]}>
+  {/* Featured Section */}
+  {featuredItems.length > 0 && (
+    <section class="showcase-featured" data-animate="fade-up">
+      {featuredItems.map(item => {
+        const actionLinks = getActionLinks(item);
+
+        return (
+          <article class="featured-item">
+            <header class="featured-header">
+              <div class="featured-meta">
+                {showStatus && item.status && (
+                  <span class="featured-status">
+                    <ViewDot status={item.status} size="lg" />
+                    <span class="status-label">{statusLabels[item.status]}</span>
+                  </span>
+                )}
+                {showDate && item.date && (
+                  <ViewDate date={item.date} format={dateFormat} />
+                )}
+              </div>
+
+              <h2 class="featured-title">
+                {item.slug ? (
+                  <a href={getItemLink(item)}>{item.title}</a>
+                ) : (
+                  item.title
+                )}
+              </h2>
+            </header>
+
+            {showDescription && item.description && (
+              <p class="featured-description">{item.description}</p>
+            )}
+
+            {showTags && item.tags && item.tags.length > 0 && (
+              <ViewTags tags={item.tags} limit={tagLimit} style="pills" class="featured-tags" />
+            )}
+
+            {actionLinks.length > 0 && (
+              <ViewLinks links={actionLinks} style={linkStyle} class="featured-links" />
+            )}
+          </article>
+        );
+      })}
+    </section>
+  )}
+
+  {/* All Items Section */}
+  {regularItems.length > 0 && (
+    <section class="showcase-list" data-animate="fade-up">
+      {featuredItems.length > 0 && (
+        <h3 class="list-header">All {collection}</h3>
+      )}
+
+      <ul class="showcase-items">
+        {regularItems.map(item => {
+          const actionLinks = getActionLinks(item);
+
+          return (
+            <li class="showcase-item view-item">
+              <div class="item-main">
+                <div class="item-indicator">
+                  {showStatus && item.status && (
+                    <ViewDot status={item.status} />
+                  )}
+                </div>
+
+                <div class="item-content">
+                  <div class="item-header">
+                    {item.slug ? (
+                      <a href={getItemLink(item)} class="item-title">{item.title}</a>
+                    ) : (
+                      <span class="item-title">{item.title}</span>
+                    )}
+
+                    {showDate && item.date && (
+                      <ViewDate date={item.date} format={dateFormat} class="item-date" />
+                    )}
+                  </div>
+
+                  {showDescription && item.description && (
+                    <p class="item-description">
+                      {truncate(item.description, 120)}
+                    </p>
+                  )}
+
+                  <div class="item-footer">
+                    {showTags && item.tags && item.tags.length > 0 && (
+                      <ViewTags tags={item.tags} limit={3} style="minimal" class="item-tags" />
+                    )}
+
+                    {actionLinks.length > 0 && (
+                      <ViewLinks links={actionLinks} style="icons" class="item-links" />
+                    )}
+                  </div>
+                </div>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  )}
+
+  {items.length === 0 && (
+    <div class="empty-state">
+      <p>No items to display.</p>
+    </div>
+  )}
+</div>
+
+<style>
+  .showcase-view {
+    max-width: 100%;
+  }
+
+  /* Featured Section */
+  .showcase-featured {
+    margin-bottom: var(--view-section-gap);
+  }
+
+  .featured-item {
+    padding: var(--view-featured-padding);
+    background: var(--view-featured-bg);
+    border: var(--view-featured-border);
+    border-radius: var(--view-featured-radius);
+  }
+
+  .featured-header {
+    margin-bottom: var(--space-4);
+  }
+
+  .featured-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    margin-bottom: var(--space-3);
+  }
+
+  .featured-status {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .status-label {
+    font-size: var(--view-meta-size);
+    color: var(--view-meta-color);
+    font-weight: var(--font-weight-medium);
+  }
+
+  .featured-title {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-semibold);
+    margin: 0;
+    line-height: var(--line-height-tight);
+  }
+
+  .featured-title a {
+    color: inherit;
+    text-decoration: none;
+    background: none;
+    transition: color var(--view-transition);
+  }
+
+  .featured-title a:hover {
+    color: var(--color-accent);
+  }
+
+  .featured-description {
+    font-size: var(--font-size-base);
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-relaxed);
+    margin: 0 0 var(--space-4) 0;
+  }
+
+  .featured-tags {
+    margin-bottom: var(--space-4);
+  }
+
+  .featured-links {
+    padding-top: var(--space-2);
+    border-top: 1px solid var(--color-border);
+  }
+
+  /* List Section */
+  .showcase-list {
+    /* No extra styling needed */
+  }
+
+  .list-header {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0 0 var(--space-4) 0;
+  }
+
+  .showcase-items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .showcase-item {
+    padding: var(--view-item-padding) 0;
+    border-bottom: 1px solid var(--color-border);
+    transition: background-color var(--view-transition);
+  }
+
+  .showcase-item:last-child {
+    border-bottom: none;
+  }
+
+  .showcase-item:hover {
+    background-color: var(--view-hover-bg);
+    margin-left: calc(-1 * var(--view-hover-offset));
+    margin-right: calc(-1 * var(--view-hover-offset));
+    padding-left: var(--view-hover-offset);
+    padding-right: var(--view-hover-offset);
+    border-radius: var(--view-hover-radius);
+  }
+
+  .item-main {
+    display: flex;
+    gap: var(--space-3);
+  }
+
+  .item-indicator {
+    padding-top: 4px;
+    flex-shrink: 0;
+  }
+
+  .item-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+
+  .item-title {
+    font-size: var(--view-title-size);
+    font-weight: var(--view-title-weight);
+    color: var(--color-text);
+    transition: color var(--view-transition);
+  }
+
+  a.item-title {
+    text-decoration: none;
+    background: none;
+  }
+
+  a.item-title:hover {
+    color: var(--color-accent);
+  }
+
+  .item-date {
+    flex-shrink: 0;
+  }
+
+  .item-description {
+    font-size: var(--view-description-size);
+    color: var(--view-description-color);
+    margin: var(--space-1) 0 0 0;
+    line-height: var(--line-height-relaxed);
+  }
+
+  .item-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-4);
+    margin-top: var(--space-2);
+    flex-wrap: wrap;
+  }
+
+  .item-tags {
+    flex: 1;
+  }
+
+  .item-links {
+    flex-shrink: 0;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: var(--space-12) var(--space-4);
+    color: var(--color-text-muted);
+  }
+
+  /* Mobile */
+  @media (max-width: 600px) {
+    .featured-item {
+      padding: var(--space-4);
+    }
+
+    .item-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-1);
+    }
+
+    .item-footer {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-2);
+    }
+
+    .showcase-item:hover {
+      margin-left: calc(-1 * var(--space-2));
+      margin-right: calc(-1 * var(--space-2));
+      padding-left: var(--space-2);
+      padding-right: var(--space-2);
+    }
+  }
+
+  /* Animations */
+  @media (prefers-reduced-motion: no-preference) {
+    .showcase-featured,
+    .showcase-list {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity var(--view-animate-duration) ease,
+                  transform var(--view-animate-duration) ease;
+    }
+
+    .showcase-featured[data-animate="visible"],
+    .showcase-list[data-animate="visible"] {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .showcase-list {
+      transition-delay: var(--view-animate-delay);
+    }
+  }
+</style>
+
+<script>
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.setAttribute('data-animate', 'visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+  );
+
+  document.querySelectorAll('[data-animate="fade-up"]').forEach((el) => {
+    observer.observe(el);
+  });
+</script>

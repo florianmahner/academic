@@ -1,0 +1,50 @@
+---
+/**
+ * ViewYearHeader Primitive
+ *
+ * Year/group section header with decorative line.
+ * Used for timeline-style grouping in views.
+ *
+ * @prop year - Year or group label to display
+ * @prop class - Additional CSS classes
+ *
+ * Usage in frontmatter:
+ *   groupBy: "year"
+ *   showGroupHeaders: true
+ */
+
+interface Props {
+  year: string | number;
+  class?: string;
+}
+
+const { year, class: className } = Astro.props;
+---
+
+<header class:list={['view-year-header', className]}>
+  <span class="view-year-label">{year}</span>
+  <span class="view-year-line"></span>
+</header>
+
+<style>
+  .view-year-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    margin-bottom: var(--view-header-margin);
+  }
+
+  .view-year-label {
+    font-family: var(--view-year-font);
+    font-size: var(--view-year-size);
+    font-weight: var(--view-year-weight);
+    color: var(--view-year-color);
+    flex-shrink: 0;
+  }
+
+  .view-year-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, var(--color-border), transparent);
+  }
+</style>

@@ -1,12 +1,12 @@
 ---
 /**
  * Talks Index Page
- * Reads layout configuration from collection-pages/talks.md frontmatter
+ * Uses the unified view system for consistent, customizable display
  */
 import { getCollection, getEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { config } from '../../config';
-import LayoutDispatcher from '../../components/layouts/LayoutDispatcher.astro';
+import ViewDispatcher from '../../components/views/ViewDispatcher.astro';
 
 // Get page configuration from frontmatter
 const pageConfig = await getEntry('collection-pages', 'talks');
@@ -14,7 +14,7 @@ if (!pageConfig) {
   throw new Error('Missing collection-pages/talks.md - please create this file with layout configuration');
 }
 
-const { title, description, pageLayout, layoutConfig, sortBy, sortOrder } = pageConfig.data;
+const { title, description, view, viewConfig, sortBy, sortOrder } = pageConfig.data;
 
 // Get all talks
 const talks = await getCollection('talks');
@@ -30,20 +30,45 @@ const sortedEntries = talks.sort((a, b) => {
   return sortOrder === 'asc' ? valA - valB : valB - valA;
 });
 
+// Transform entries for view components
+const viewItems = sortedEntries.map(entry => ({
+  title: entry.data.title,
+  slug: entry.slug,
+  description: entry.data.description || entry.data.abstract,
+  date: entry.data.date,
+  tags: entry.data.tags,
+  type: 'talk' as const,
+  // Context
+  event: entry.data.event,
+  location: entry.data.location,
+  venue: entry.data.venue,
+  // Links
+  slides: entry.data.slides,
+  video: entry.data.video,
+  poster: entry.data.poster,
+  materials: entry.data.materials,
+}));
+
 const pageTitle = `${title} | ${config.site.title}`;
 ---
 
 <BaseLayout title={pageTitle} description={description}>
   <article class="collection-page">
     <div class="container">
-      <LayoutDispatcher
+      <ViewDispatcher
+        view={view || 'timeline'}
+        items={viewItems}
+        config={viewConfig}
         collection="talks"
-        entries={sortedEntries}
         title={title}
         description={description}
-        layoutOverride={pageLayout}
-        configOverride={layoutConfig}
       />
+
+      {viewItems.length === 0 && (
+        <div class="empty-state" data-animate="fade-up">
+          <p>No talks to display yet. Check back soon!</p>
+        </div>
+      )}
     </div>
   </article>
 </BaseLayout>
@@ -51,5 +76,11 @@ const pageTitle = `${title} | ${config.site.title}`;
 <style>
   .collection-page {
     /* Vertical padding handled by article in global.css */
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: var(--space-12) var(--space-4);
+    color: var(--color-text-muted);
   }
 </style>

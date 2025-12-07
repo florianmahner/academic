@@ -1,0 +1,395 @@
+---
+/**
+ * MinimalView Component
+ *
+ * Ultra-clean list with minimal chrome.
+ * Best for: Teaching, CV entries, simple lists.
+ *
+ * Features:
+ * - Clean, scannable rows
+ * - Optional year/semester grouping
+ * - Role/position emphasis
+ * - Subtle metadata display
+ *
+ * Frontmatter Configuration:
+ * ```yaml
+ * view: "minimal"
+ * viewConfig:
+ *   groupBy: "year"          # "year" | "semester" | "none"
+ *   showDate: true           # Show date column
+ *   dateFormat: "year"       # Date format
+ *   showRole: true           # Show role/position
+ *   showInstitution: true    # Show institution/organization
+ *   showDescription: false   # Show description
+ *   showLinks: ["materials", "syllabus", "website"]
+ *   compact: false           # Tighter spacing
+ * ```
+ */
+
+import ViewDate from '../primitives/ViewDate.astro';
+import ViewLinks from '../primitives/ViewLinks.astro';
+import ViewYearHeader from '../primitives/ViewYearHeader.astro';
+
+interface ViewItem {
+  title: string;
+  slug?: string;
+  date?: Date;
+  year?: number;
+  semester?: string;
+  description?: string;
+  role?: string;
+  institution?: string;
+  code?: string;
+  level?: string;
+  students?: number;
+
+  // Links
+  materials?: string;
+  syllabus?: string;
+  website?: string;
+  url?: string;
+}
+
+interface ViewConfig {
+  groupBy?: 'year' | 'semester' | 'none';
+  showDate?: boolean;
+  dateFormat?: 'short' | 'long' | 'year' | 'month-year';
+  showRole?: boolean;
+  showInstitution?: boolean;
+  showDescription?: boolean;
+  showCode?: boolean;
+  showLevel?: boolean;
+  showLinks?: string[];
+  compact?: boolean;
+}
+
+interface Props {
+  items: ViewItem[];
+  config?: ViewConfig;
+  collection?: string;
+  class?: string;
+}
+
+const { items, config = {}, collection = 'teaching', class: className } = Astro.props;
+
+// Default config
+const {
+  groupBy = 'year',
+  showDate = true,
+  dateFormat = 'year',
+  showRole = true,
+  showInstitution = true,
+  showDescription = false,
+  showCode = true,
+  showLevel = false,
+  showLinks = ['materials', 'syllabus', 'website'],
+  compact = false,
+} = config;
+
+// Group items
+function groupItems(items: ViewItem[]): Record<string, ViewItem[]> {
+  if (groupBy === 'none') {
+    return { all: items };
+  }
+
+  return items.reduce((acc, item) => {
+    let key: string;
+
+    if (groupBy === 'semester' && item.semester) {
+      key = item.semester;
+    } else if (item.year) {
+      key = item.year.toString();
+    } else if (item.date) {
+      key = item.date.getFullYear().toString();
+    } else {
+      key = 'Other';
+    }
+
+    if (!acc[key]) acc[key] = [];
+    acc[key].push(item);
+    return acc;
+  }, {} as Record<string, ViewItem[]>);
+}
+
+const grouped = groupItems(items);
+const groups = Object.keys(grouped).sort((a, b) => {
+  // Try to sort numerically (years), fall back to alphabetical
+  const numA = parseInt(a);
+  const numB = parseInt(b);
+  if (!isNaN(numA) && !isNaN(numB)) return numB - numA;
+  return b.localeCompare(a);
+});
+
+// Build item link
+function getItemLink(item: ViewItem): string | null {
+  if (!item.slug) return null;
+  return `/${collection}/${item.slug}`;
+}
+
+// Build action links
+function getActionLinks(item: ViewItem): Array<{ label: string; url: string }> {
+  const links: Array<{ label: string; url: string }> = [];
+
+  if (showLinks.includes('syllabus') && item.syllabus) links.push({ label: 'Syllabus', url: item.syllabus });
+  if (showLinks.includes('materials') && item.materials) links.push({ label: 'Materials', url: item.materials });
+  if (showLinks.includes('website') && (item.website || item.url)) links.push({ label: 'Website', url: item.website || item.url! });
+
+  return links;
+}
+---
+
+<div class:list={['minimal-view', compact && 'minimal-view--compact', className]}>
+  {groups.map(group => (
+    <section class="minimal-section" data-animate="fade-up">
+      {groupBy !== 'none' && group !== 'all' && (
+        <ViewYearHeader year={group} />
+      )}
+
+      <ul class="minimal-list">
+        {grouped[group].map(item => {
+          const link = getItemLink(item);
+          const actionLinks = getActionLinks(item);
+
+          return (
+            <li class="minimal-item view-item">
+              <div class="item-main">
+                {/* Title and code */}
+                <div class="item-header">
+                  {link ? (
+                    <a href={link} class="item-title">{item.title}</a>
+                  ) : (
+                    <span class="item-title">{item.title}</span>
+                  )}
+
+                  {showCode && item.code && (
+                    <span class="item-code">{item.code}</span>
+                  )}
+                </div>
+
+                {/* Meta row: role, institution, level */}
+                <div class="item-meta">
+                  {showRole && item.role && (
+                    <span class="meta-role">{item.role}</span>
+                  )}
+                  {showInstitution && item.institution && (
+                    <>
+                      {showRole && item.role && <span class="meta-sep">·</span>}
+                      <span class="meta-institution">{item.institution}</span>
+                    </>
+                  )}
+                  {showLevel && item.level && (
+                    <>
+                      <span class="meta-sep">·</span>
+                      <span class="meta-level">{item.level}</span>
+                    </>
+                  )}
+                  {item.semester && groupBy !== 'semester' && (
+                    <>
+                      <span class="meta-sep">·</span>
+                      <span class="meta-semester">{item.semester}</span>
+                    </>
+                  )}
+                </div>
+
+                {/* Description */}
+                {showDescription && item.description && (
+                  <p class="item-description">{item.description}</p>
+                )}
+              </div>
+
+              {/* Right side: links */}
+              {actionLinks.length > 0 && (
+                <ViewLinks links={actionLinks} style="text" class="item-links" />
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  ))}
+
+  {items.length === 0 && (
+    <div class="empty-state">
+      <p>No items to display.</p>
+    </div>
+  )}
+</div>
+
+<style>
+  .minimal-view {
+    max-width: 100%;
+  }
+
+  .minimal-section {
+    margin-bottom: var(--view-section-gap);
+  }
+
+  .minimal-section:last-child {
+    margin-bottom: 0;
+  }
+
+  .minimal-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .minimal-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-4);
+    padding: var(--space-4) 0;
+    border-bottom: 1px solid var(--color-border);
+    transition: background-color var(--view-transition);
+  }
+
+  .minimal-item:last-child {
+    border-bottom: none;
+  }
+
+  .minimal-item:hover {
+    background-color: var(--view-hover-bg);
+    margin-left: calc(-1 * var(--view-hover-offset));
+    margin-right: calc(-1 * var(--view-hover-offset));
+    padding-left: var(--view-hover-offset);
+    padding-right: var(--view-hover-offset);
+    border-radius: var(--view-hover-radius);
+  }
+
+  /* Compact variant */
+  .minimal-view--compact .minimal-item {
+    padding: var(--space-2) 0;
+  }
+
+  .item-main {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .item-header {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+  }
+
+  .item-title {
+    font-size: var(--view-title-size);
+    font-weight: var(--view-title-weight);
+    color: var(--color-text);
+    transition: color var(--view-transition);
+  }
+
+  a.item-title {
+    text-decoration: none;
+    background: none;
+  }
+
+  a.item-title:hover {
+    color: var(--color-accent);
+  }
+
+  .item-code {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    background: var(--color-bg-alt);
+    padding: 0 var(--space-1);
+    border-radius: var(--radius-sm);
+  }
+
+  .item-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: var(--space-1);
+    flex-wrap: wrap;
+  }
+
+  .meta-role {
+    font-size: var(--view-meta-size);
+    color: var(--color-text-secondary);
+    font-weight: var(--font-weight-medium);
+  }
+
+  .meta-institution,
+  .meta-level,
+  .meta-semester {
+    font-size: var(--view-meta-size);
+    color: var(--color-text-muted);
+  }
+
+  .meta-sep {
+    color: var(--color-border);
+  }
+
+  .item-description {
+    font-size: var(--view-description-size);
+    color: var(--view-description-color);
+    margin: var(--space-2) 0 0 0;
+    line-height: var(--line-height-relaxed);
+  }
+
+  .item-links {
+    flex-shrink: 0;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: var(--space-12) var(--space-4);
+    color: var(--color-text-muted);
+  }
+
+  /* Mobile */
+  @media (max-width: 600px) {
+    .minimal-item {
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .item-links {
+      padding-left: 0;
+    }
+
+    .minimal-item:hover {
+      margin-left: calc(-1 * var(--space-2));
+      margin-right: calc(-1 * var(--space-2));
+      padding-left: var(--space-2);
+      padding-right: var(--space-2);
+    }
+  }
+
+  /* Animations */
+  @media (prefers-reduced-motion: no-preference) {
+    .minimal-section {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity var(--view-animate-duration) ease,
+                  transform var(--view-animate-duration) ease;
+    }
+
+    .minimal-section[data-animate="visible"] {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+
+<script>
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.setAttribute('data-animate', 'visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+  );
+
+  document.querySelectorAll('.minimal-section[data-animate]').forEach((el) => {
+    observer.observe(el);
+  });
+</script>

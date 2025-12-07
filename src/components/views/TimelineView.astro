@@ -1,0 +1,416 @@
+---
+/**
+ * TimelineView Component
+ *
+ * Chronological list view with year groupings and type indicators.
+ * Best for: News feeds, talks, mixed content streams.
+ *
+ * Features:
+ * - Groups items by year with decorative headers
+ * - Type-colored dots for visual categorization
+ * - Compact date display aligned for scanning
+ * - Optional context line (event, venue, etc.)
+ * - Action links with icons
+ *
+ * Frontmatter Configuration:
+ * ```yaml
+ * view: "timeline"
+ * viewConfig:
+ *   groupBy: "year"           # Group items by year
+ *   showDot: true             # Show type/status indicator
+ *   dotType: "content"        # "content" | "status"
+ *   showDate: true            # Show date column
+ *   dateFormat: "short"       # "short" | "long" | "month-year"
+ *   showDescription: false    # Show description text
+ *   showContext: true         # Show context line (event/venue)
+ *   showLinks: ["slides", "video", "pdf"]
+ *   linkStyle: "text"         # "icons" | "text" | "both"
+ * ```
+ */
+
+import ViewDate from '../primitives/ViewDate.astro';
+import ViewDot from '../primitives/ViewDot.astro';
+import ViewLinks from '../primitives/ViewLinks.astro';
+import ViewTags from '../primitives/ViewTags.astro';
+import ViewYearHeader from '../primitives/ViewYearHeader.astro';
+
+interface ViewItem {
+  // Common fields
+  title: string;
+  slug?: string;
+  date: Date;
+  description?: string;
+  tags?: string[];
+
+  // Type identification
+  type?: 'blog' | 'talk' | 'publication' | 'project' | 'teaching';
+  status?: 'active' | 'completed' | 'archived' | 'paused';
+
+  // Context fields
+  event?: string;
+  location?: string;
+  venue?: string;
+  institution?: string;
+  authors?: string[];
+
+  // Link fields
+  url?: string;
+  github?: string;
+  slides?: string;
+  video?: string;
+  pdf?: string;
+  code?: string;
+  poster?: string;
+  materials?: string;
+}
+
+interface ViewConfig {
+  groupBy?: 'year' | 'none';
+  showDot?: boolean;
+  dotType?: 'content' | 'status';
+  showDate?: boolean;
+  dateFormat?: 'short' | 'long' | 'month-year' | 'year';
+  showDescription?: boolean;
+  descriptionLimit?: number;
+  showContext?: boolean;
+  showAuthors?: boolean;
+  authorLimit?: number;
+  showTags?: boolean;
+  tagLimit?: number;
+  showLinks?: string[];
+  linkStyle?: 'icons' | 'text' | 'both';
+}
+
+interface Props {
+  items: ViewItem[];
+  config?: ViewConfig;
+  collection?: string;
+  class?: string;
+}
+
+const { items, config = {}, collection, class: className } = Astro.props;
+
+// Default config
+const {
+  groupBy = 'year',
+  showDot = true,
+  dotType = 'content',
+  showDate = true,
+  dateFormat = 'short',
+  showDescription = false,
+  descriptionLimit = 150,
+  showContext = true,
+  showAuthors = false,
+  authorLimit = 3,
+  showTags = false,
+  tagLimit = 3,
+  showLinks = [],
+  linkStyle = 'text',
+} = config;
+
+// Group items by year
+function groupByYear(items: ViewItem[]): Record<string, ViewItem[]> {
+  return items.reduce((acc, item) => {
+    const year = item.date.getFullYear().toString();
+    if (!acc[year]) acc[year] = [];
+    acc[year].push(item);
+    return acc;
+  }, {} as Record<string, ViewItem[]>);
+}
+
+const grouped = groupBy === 'year' ? groupByYear(items) : { all: items };
+const years = Object.keys(grouped).sort((a, b) => parseInt(b) - parseInt(a));
+
+// Build link for item
+function getItemLink(item: ViewItem): string | null {
+  if (!item.slug) return null;
+  if (item.type === 'blog') return `/blog/${item.slug}`;
+  if (item.type === 'talk') return `/talks/${item.slug}`;
+  if (item.type === 'project') return `/projects/${item.slug}`;
+  if (item.type === 'teaching') return `/teaching/${item.slug}`;
+  if (collection) return `/${collection}/${item.slug}`;
+  return null;
+}
+
+// Build action links
+function getActionLinks(item: ViewItem): Array<{ label: string; url: string }> {
+  const links: Array<{ label: string; url: string }> = [];
+  const allowedLinks = showLinks.length > 0 ? showLinks : ['slides', 'video', 'pdf', 'code', 'github', 'materials'];
+
+  if (allowedLinks.includes('pdf') && item.pdf) links.push({ label: 'PDF', url: item.pdf });
+  if (allowedLinks.includes('slides') && item.slides) links.push({ label: 'Slides', url: item.slides });
+  if (allowedLinks.includes('video') && item.video) links.push({ label: 'Video', url: item.video });
+  if (allowedLinks.includes('code') && item.code) links.push({ label: 'Code', url: item.code });
+  if (allowedLinks.includes('github') && item.github) links.push({ label: 'GitHub', url: item.github });
+  if (allowedLinks.includes('poster') && item.poster) links.push({ label: 'Poster', url: item.poster });
+  if (allowedLinks.includes('materials') && item.materials) links.push({ label: 'Materials', url: item.materials });
+
+  return links;
+}
+
+// Truncate description
+function truncate(text: string, limit: number): string {
+  if (text.length <= limit) return text;
+  return text.slice(0, limit).trim() + '...';
+}
+---
+
+<div class:list={['timeline-view', className]}>
+  {years.map(year => (
+    <section class="timeline-section" data-animate="fade-up">
+      {groupBy === 'year' && year !== 'all' && (
+        <ViewYearHeader year={year} />
+      )}
+
+      <ul class="timeline-list">
+        {grouped[year].map(item => {
+          const link = getItemLink(item);
+          const actionLinks = getActionLinks(item);
+
+          return (
+            <li class="timeline-item view-item" data-type={item.type}>
+              {/* Date column */}
+              {showDate && (
+                <div class="item-date">
+                  <ViewDate date={item.date} format={dateFormat} />
+                </div>
+              )}
+
+              {/* Dot indicator */}
+              {showDot && (
+                <div class="item-indicator">
+                  <ViewDot
+                    type={dotType === 'content' ? item.type : undefined}
+                    status={dotType === 'status' ? item.status : undefined}
+                  />
+                </div>
+              )}
+
+              {/* Content */}
+              <div class="item-content">
+                <div class="item-header">
+                  {link ? (
+                    <a href={link} class="item-title">{item.title}</a>
+                  ) : (
+                    <span class="item-title">{item.title}</span>
+                  )}
+                </div>
+
+                {/* Context line */}
+                {showContext && (item.event || item.venue || item.institution) && (
+                  <div class="item-context">
+                    {item.event && <span class="context-primary">{item.event}</span>}
+                    {item.location && <span class="context-secondary"> · {item.location}</span>}
+                    {item.venue && <span class="context-primary">{item.venue}</span>}
+                    {item.institution && <span class="context-primary">{item.institution}</span>}
+                  </div>
+                )}
+
+                {/* Authors */}
+                {showAuthors && item.authors && item.authors.length > 0 && (
+                  <div class="item-authors">
+                    {item.authors.slice(0, authorLimit).join(', ')}
+                    {item.authors.length > authorLimit && ' et al.'}
+                  </div>
+                )}
+
+                {/* Description */}
+                {showDescription && item.description && (
+                  <p class="item-description">
+                    {truncate(item.description, descriptionLimit)}
+                  </p>
+                )}
+
+                {/* Tags */}
+                {showTags && item.tags && item.tags.length > 0 && (
+                  <ViewTags tags={item.tags} limit={tagLimit} style="minimal" class="item-tags" />
+                )}
+
+                {/* Action links */}
+                {actionLinks.length > 0 && (
+                  <ViewLinks links={actionLinks} style={linkStyle} class="item-links" />
+                )}
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  ))}
+</div>
+
+<style>
+  .timeline-view {
+    max-width: 100%;
+  }
+
+  .timeline-section {
+    margin-bottom: var(--view-section-gap);
+  }
+
+  .timeline-section:last-child {
+    margin-bottom: 0;
+  }
+
+  /* List */
+  .timeline-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .timeline-item {
+    display: grid;
+    grid-template-columns: 60px 24px 1fr;
+    gap: var(--view-gap);
+    padding: var(--view-item-padding) 0;
+    border-bottom: 1px solid var(--color-border);
+    transition: background-color var(--view-transition);
+  }
+
+  .timeline-item:last-child {
+    border-bottom: none;
+  }
+
+  .timeline-item:hover {
+    background-color: var(--view-hover-bg);
+    margin-left: calc(-1 * var(--view-hover-offset));
+    margin-right: calc(-1 * var(--view-hover-offset));
+    padding-left: var(--view-hover-offset);
+    padding-right: var(--view-hover-offset);
+    border-radius: var(--view-hover-radius);
+  }
+
+  /* Date column */
+  .item-date {
+    text-align: right;
+    padding-top: 2px;
+  }
+
+  /* Indicator column */
+  .item-indicator {
+    display: flex;
+    justify-content: center;
+    padding-top: 6px;
+  }
+
+  /* Content column */
+  .item-content {
+    min-width: 0;
+  }
+
+  .item-header {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+
+  .item-title {
+    font-size: var(--view-title-size);
+    font-weight: var(--view-title-weight);
+    color: var(--color-text);
+    line-height: var(--line-height-snug);
+    transition: color var(--view-transition);
+  }
+
+  a.item-title {
+    text-decoration: none;
+    background: none;
+  }
+
+  a.item-title:hover {
+    color: var(--color-accent);
+  }
+
+  .item-context {
+    font-size: var(--view-meta-size);
+    color: var(--view-meta-color);
+    margin-top: var(--space-1);
+  }
+
+  .context-primary {
+    color: var(--color-text-secondary);
+  }
+
+  .context-secondary {
+    color: var(--color-text-muted);
+  }
+
+  .item-authors {
+    font-size: var(--view-meta-size);
+    color: var(--color-text-muted);
+    margin-top: var(--space-1);
+  }
+
+  .item-description {
+    font-size: var(--view-description-size);
+    color: var(--view-description-color);
+    margin: var(--space-2) 0 0 0;
+    line-height: var(--line-height-relaxed);
+  }
+
+  .item-tags {
+    margin-top: var(--space-2);
+  }
+
+  .item-links {
+    margin-top: var(--space-2);
+  }
+
+  /* Mobile */
+  @media (max-width: 600px) {
+    .timeline-item {
+      grid-template-columns: 1fr;
+      gap: var(--space-1);
+    }
+
+    .item-date {
+      text-align: left;
+      order: -1;
+    }
+
+    .item-indicator {
+      display: none;
+    }
+
+    .timeline-item:hover {
+      margin-left: calc(-1 * var(--space-2));
+      margin-right: calc(-1 * var(--space-2));
+      padding-left: var(--space-2);
+      padding-right: var(--space-2);
+    }
+  }
+
+  /* Animations */
+  @media (prefers-reduced-motion: no-preference) {
+    .timeline-section {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity var(--view-animate-duration) ease,
+                  transform var(--view-animate-duration) ease;
+    }
+
+    .timeline-section[data-animate="visible"] {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+
+<script>
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.setAttribute('data-animate', 'visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+  );
+
+  document.querySelectorAll('.timeline-section[data-animate]').forEach((el) => {
+    observer.observe(el);
+  });
+</script>

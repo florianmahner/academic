@@ -1,0 +1,59 @@
+---
+/**
+ * ViewDate Primitive
+ *
+ * Consistent date display across all views.
+ * Supports multiple format options.
+ *
+ * @prop date - Date object to display
+ * @prop format - Display format: 'short' | 'long' | 'year' | 'month-year'
+ * @prop class - Additional CSS classes
+ *
+ * Usage in frontmatter:
+ *   dateFormat: "short"   # Jan 15
+ *   dateFormat: "long"    # January 15, 2024
+ *   dateFormat: "year"    # 2024
+ *   dateFormat: "month-year"  # Jan 2024
+ */
+
+interface Props {
+  date: Date;
+  format?: 'short' | 'long' | 'year' | 'month-year';
+  class?: string;
+}
+
+const { date, format = 'short', class: className } = Astro.props;
+
+function formatDate(d: Date, fmt: string): string {
+  switch (fmt) {
+    case 'short':
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    case 'long':
+      return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+    case 'year':
+      return d.getFullYear().toString();
+    case 'month-year':
+      return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    default:
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  }
+}
+
+const formatted = formatDate(date, format);
+---
+
+<time
+  class:list={['view-date', className]}
+  datetime={date.toISOString()}
+>
+  {formatted}
+</time>
+
+<style>
+  .view-date {
+    font-family: var(--view-date-font);
+    font-size: var(--view-date-size);
+    color: var(--view-date-color);
+    white-space: nowrap;
+  }
+</style>

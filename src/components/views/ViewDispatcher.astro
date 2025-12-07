@@ -1,0 +1,138 @@
+---
+/**
+ * ViewDispatcher - Routes content to appropriate view component
+ *
+ * The central hub for the unified view system. Reads configuration
+ * from collection-pages frontmatter and routes to the correct view.
+ *
+ * Supported Views:
+ * - timeline: Chronological list with year groupings (news, talks)
+ * - showcase: Featured hero + list format (projects)
+ * - grid: Card grid with optional images (blog)
+ * - minimal: Ultra-clean list (teaching, CV)
+ * - academic: Citation-style for publications (planned)
+ *
+ * Usage:
+ * ```astro
+ * <ViewDispatcher
+ *   view="timeline"
+ *   items={transformedItems}
+ *   config={pageConfig.data.viewConfig}
+ *   collection="talks"
+ * />
+ * ```
+ *
+ * The view type is typically set in collection-pages/*.md frontmatter:
+ * ```yaml
+ * view: "timeline"
+ * viewConfig:
+ *   groupBy: "year"
+ *   showDot: true
+ * ```
+ */
+
+import TimelineView from './TimelineView.astro';
+import ShowcaseView from './ShowcaseView.astro';
+import GridView from './GridView.astro';
+import MinimalView from './MinimalView.astro';
+
+// View types
+type ViewType = 'timeline' | 'showcase' | 'grid' | 'minimal' | 'academic' | 'list' | 'cards';
+
+interface Props {
+  view: ViewType;
+  items: any[];
+  config?: Record<string, any>;
+  collection?: string;
+  title?: string;
+  description?: string;
+  class?: string;
+}
+
+const {
+  view,
+  items,
+  config = {},
+  collection,
+  title,
+  description,
+  class: className,
+} = Astro.props;
+
+// Map legacy layout names to new view system
+const viewMapping: Record<string, ViewType> = {
+  list: 'timeline',      // Default list → timeline
+  cards: 'grid',         // Cards → grid
+  timeline: 'timeline',
+  showcase: 'showcase',
+  grid: 'grid',
+  minimal: 'minimal',
+  academic: 'timeline',  // Fallback until academic view is ready
+};
+
+const resolvedView = viewMapping[view] || 'timeline';
+
+// Validate view
+const validViews = ['timeline', 'showcase', 'grid', 'minimal'];
+if (!validViews.includes(resolvedView)) {
+  console.warn(`[ViewDispatcher] Unknown view '${view}'. Falling back to 'timeline'.`);
+}
+---
+
+<div class:list={['view-dispatcher', className]}>
+  {(title || description) && (
+    <header class="page-header" data-animate="fade-up">
+      {title && <h1>{title}</h1>}
+      {description && <p class="page-description">{description}</p>}
+    </header>
+  )}
+
+  <div class="view-content">
+    {resolvedView === 'timeline' && (
+      <TimelineView items={items} config={config} collection={collection} />
+    )}
+
+    {resolvedView === 'showcase' && (
+      <ShowcaseView items={items} config={config} collection={collection} />
+    )}
+
+    {resolvedView === 'grid' && (
+      <GridView items={items} config={config} collection={collection} />
+    )}
+
+    {resolvedView === 'minimal' && (
+      <MinimalView items={items} config={config} collection={collection} />
+    )}
+  </div>
+</div>
+
+<style>
+  .view-dispatcher {
+    width: 100%;
+  }
+
+  .page-header {
+    margin-bottom: var(--space-8);
+  }
+
+  .page-header h1 {
+    margin-top: 0;
+    margin-bottom: var(--space-2);
+  }
+
+  .page-description {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-base);
+    margin: 0;
+  }
+
+  .view-content {
+    width: 100%;
+  }
+
+  @media (max-width: 768px) {
+    .page-header {
+      margin-bottom: var(--space-6);
+    }
+  }
+</style>

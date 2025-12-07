@@ -1,0 +1,117 @@
+---
+/**
+ * ViewDot Primitive
+ *
+ * Status/type indicator dot with semantic colors.
+ * Used instead of text badges for minimal visual noise.
+ *
+ * @prop type - Content type: 'blog' | 'talk' | 'publication' | 'project' | 'teaching'
+ * @prop status - Status: 'active' | 'completed' | 'archived' | 'paused' | 'featured'
+ * @prop size - Dot size: 'sm' | 'md' | 'lg'
+ * @prop class - Additional CSS classes
+ *
+ * Priority: status color overrides type color if both provided.
+ *
+ * Usage in frontmatter:
+ *   showDot: true
+ *   dotType: "status"   # Use item's status field
+ *   dotType: "content"  # Use content type (blog, talk, etc.)
+ */
+
+interface Props {
+  type?: 'blog' | 'talk' | 'publication' | 'project' | 'teaching';
+  status?: 'active' | 'completed' | 'archived' | 'paused' | 'featured' | 'wip';
+  size?: 'sm' | 'md' | 'lg';
+  class?: string;
+}
+
+const { type, status, size = 'md', class: className } = Astro.props;
+
+// Determine which attribute to use for styling
+const dataAttr = status ? `data-status="${status}"` : type ? `data-type="${type}"` : '';
+---
+
+<span
+  class:list={['view-dot', `view-dot--${size}`, className]}
+  data-type={type}
+  data-status={status}
+  aria-hidden="true"
+></span>
+
+<style>
+  .view-dot {
+    display: inline-block;
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition: transform var(--view-transition);
+  }
+
+  /* Sizes */
+  .view-dot--sm {
+    width: 4px;
+    height: 4px;
+  }
+
+  .view-dot--md {
+    width: var(--view-dot-size);
+    height: var(--view-dot-size);
+  }
+
+  .view-dot--lg {
+    width: var(--view-dot-size-lg);
+    height: var(--view-dot-size-lg);
+  }
+
+  /* Default color */
+  .view-dot {
+    background: var(--color-border);
+  }
+
+  /* Content type colors */
+  .view-dot[data-type="blog"] {
+    background: var(--view-dot-blog);
+  }
+
+  .view-dot[data-type="talk"] {
+    background: var(--view-dot-talk);
+  }
+
+  .view-dot[data-type="publication"] {
+    background: var(--view-dot-publication);
+  }
+
+  .view-dot[data-type="project"] {
+    background: var(--view-dot-project);
+  }
+
+  .view-dot[data-type="teaching"] {
+    background: var(--view-dot-teaching);
+  }
+
+  /* Status colors (override type if present) */
+  .view-dot[data-status="active"] {
+    background: var(--view-dot-active);
+  }
+
+  .view-dot[data-status="completed"] {
+    background: var(--view-dot-completed);
+  }
+
+  .view-dot[data-status="archived"] {
+    background: var(--view-dot-archived);
+  }
+
+  .view-dot[data-status="paused"],
+  .view-dot[data-status="wip"] {
+    background: var(--view-dot-paused);
+  }
+
+  .view-dot[data-status="featured"] {
+    background: var(--view-dot-featured);
+  }
+
+  /* Hover effect (applied by parent) */
+  :global(.view-item:hover) .view-dot {
+    transform: scale(1.4);
+  }
+</style>

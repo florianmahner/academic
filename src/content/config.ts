@@ -5,8 +5,11 @@
 
 import { defineCollection, z } from 'astro:content';
 
-// Layout type enum
+// Layout type enum (legacy, kept for backwards compatibility)
 const LayoutTypeEnum = z.enum(['list', 'cards', 'timeline', 'node', 'masonry', 'accordion', 'minimal']);
+
+// View type enum (new unified view system)
+const ViewTypeEnum = z.enum(['timeline', 'showcase', 'grid', 'minimal', 'academic']);
 
 // Blog posts collection
 const blog = defineCollection({
@@ -132,54 +135,72 @@ const collectionPages = defineCollection({
     // Which content collection this page displays
     collection: z.enum(['blog', 'projects', 'talks', 'teaching', 'publications', 'news']),
 
-    // Layout type selection (named pageLayout to avoid Astro 5 reserved 'layout' field)
-    pageLayout: LayoutTypeEnum,
+    // NEW: View type selection (unified view system)
+    // - timeline: Chronological list with year groupings (news, talks)
+    // - showcase: Featured hero + list format (projects)
+    // - grid: Card grid with optional images (blog)
+    // - minimal: Ultra-clean list (teaching, CV)
+    // - academic: Citation-style for publications
+    view: ViewTypeEnum.optional(),
 
-    // Flexible layout-specific configuration
-    layoutConfig: z.object({
-      // List layout options
-      groupBy: z.string().optional(), // e.g., 'year', 'category', 'tag'
-      showThumbnail: z.boolean().optional(),
-      thumbnailSize: z.enum(['small', 'medium', 'large']).optional(),
-      compact: z.boolean().optional(),
-      fields: z.array(z.string()).optional(), // Which fields to display
+    // NEW: Unified view configuration
+    // All options work across views; irrelevant options are ignored
+    viewConfig: z.object({
+      // === Grouping ===
+      groupBy: z.enum(['year', 'semester', 'none']).optional(),
 
-      // Card layout options
-      style: z.enum(['default', 'bordered', 'elevated', 'minimal']).optional(),
-      columns: z.number().min(1).max(6).optional(), // Grid columns
-      aspectRatio: z.string().optional(), // e.g., '16/9', '4/3', '1/1'
+      // === Status/Type Indicators ===
+      showDot: z.boolean().optional(),           // Show status/type dot
+      dotType: z.enum(['content', 'status']).optional(), // What the dot represents
+
+      // === Date Display ===
+      showDate: z.boolean().optional(),
+      dateFormat: z.enum(['short', 'long', 'year', 'month-year']).optional(),
+
+      // === Content Display ===
       showDescription: z.boolean().optional(),
+      descriptionLimit: z.number().optional(),   // Max chars for description
+
+      // === Tags ===
       showTags: z.boolean().optional(),
+      tagLimit: z.number().optional(),           // Max tags to show
+      tagStyle: z.enum(['pills', 'inline', 'minimal']).optional(),
+
+      // === Links ===
+      showLinks: z.array(z.string()).optional(), // Which links to show
+      linkStyle: z.enum(['icons', 'text', 'both']).optional(),
+
+      // === Featured Items (ShowcaseView) ===
+      showFeatured: z.boolean().optional(),
+      featuredCount: z.number().optional(),
+
+      // === Grid Options (GridView) ===
+      columns: z.number().min(1).max(4).optional(),
+      showImage: z.boolean().optional(),
+      imageAspect: z.enum(['16:9', '4:3', '1:1', '3:2']).optional(),
+      showReadTime: z.boolean().optional(),
       gap: z.enum(['small', 'medium', 'large']).optional(),
 
-      // Timeline layout options
-      timelineStyle: z.enum(['vertical', 'horizontal', 'alternating']).optional(),
-      showThumbnails: z.boolean().optional(),
-      expandable: z.boolean().optional(),
+      // === Context Display (TimelineView) ===
+      showContext: z.boolean().optional(),       // Show event/venue/institution
+      showAuthors: z.boolean().optional(),
+      authorLimit: z.number().optional(),
 
-      // Node/Graph layout options
-      nodeSize: z.enum(['small', 'medium', 'large']).optional(),
-      linkDistance: z.number().optional(),
-      chargeStrength: z.number().optional(),
+      // === Role/Institution (MinimalView) ===
+      showRole: z.boolean().optional(),
+      showInstitution: z.boolean().optional(),
+      showCode: z.boolean().optional(),          // Course code
+      showLevel: z.boolean().optional(),         // Course level
+      compact: z.boolean().optional(),           // Tighter spacing
 
-      // Masonry layout options
-      columnWidth: z.number().optional(),
-      gutter: z.number().optional(),
-
-      // Accordion layout options
-      defaultExpanded: z.boolean().optional(),
-      allowMultiple: z.boolean().optional(),
-
-      // Minimal layout options
-      showDates: z.boolean().optional(),
-      showDescriptions: z.boolean().optional(),
-
-      // Common options for all layouts
-      itemsPerPage: z.number().optional(),
-      enableSearch: z.boolean().optional(),
-      enableFilters: z.boolean().optional(),
-      filterBy: z.array(z.string()).optional(), // Which fields can be filtered
+      // === Status Display (ShowcaseView) ===
+      showStatus: z.boolean().optional(),
     }).optional(),
+
+    // LEGACY: Layout type selection (for backwards compatibility)
+    // Will be mapped to new view system
+    pageLayout: LayoutTypeEnum.optional(),
+    layoutConfig: z.record(z.any()).optional(),
 
     // Sorting configuration
     sortBy: z.string().optional(), // Field to sort by (default: 'date')

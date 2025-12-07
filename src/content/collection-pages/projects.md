@@ -1,15 +1,24 @@
 ---
 title: "Projects"
 description: "Research projects, open-source contributions, and side experiments."
-pageLayout: "cards"
-layoutConfig:
-  style: "minimal"
-  columns: 3
-  aspectRatio: "16:9"
-  showDescription: true
-  showTags: true
-  gap: "medium"
 collection: "projects"
+
+# View System Configuration
+view: "showcase"
+viewConfig:
+  showFeatured: true
+  featuredCount: 1
+  showStatus: true
+  showDate: true
+  dateFormat: "month-year"
+  showDescription: true
+  descriptionLimit: 200
+  showTags: true
+  tagLimit: 5
+  showLinks: ["github", "demo", "docs", "website", "pypi"]
+  linkStyle: "both"
+
+# Sorting
 sortBy: "startDate"
 sortOrder: "desc"
 ---

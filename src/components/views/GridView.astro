@@ -1,0 +1,367 @@
+---
+/**
+ * GridView Component
+ *
+ * Card grid layout with optional images.
+ * Best for: Blog posts, portfolio items, visual content.
+ *
+ * Features:
+ * - Responsive grid with configurable columns
+ * - Optional image thumbnails
+ * - Reading time / date metadata
+ * - Tags as pills
+ *
+ * Frontmatter Configuration:
+ * ```yaml
+ * view: "grid"
+ * viewConfig:
+ *   columns: 3               # Grid columns (1-4)
+ *   showImage: true          # Show thumbnail image
+ *   imageAspect: "16:9"      # Image aspect ratio
+ *   showDate: true           # Show date
+ *   dateFormat: "long"       # Date format
+ *   showDescription: true    # Show excerpt
+ *   descriptionLimit: 120    # Max chars
+ *   showTags: true           # Show tags
+ *   tagLimit: 3              # Max tags
+ *   showReadTime: true       # Show reading time
+ * ```
+ */
+
+import ViewDate from '../primitives/ViewDate.astro';
+import ViewTags from '../primitives/ViewTags.astro';
+
+interface ViewItem {
+  title: string;
+  slug?: string;
+  description?: string;
+  date?: Date;
+  image?: string;
+  imageAlt?: string;
+  tags?: string[];
+  readTime?: number; // minutes
+  draft?: boolean;
+}
+
+interface ViewConfig {
+  columns?: 1 | 2 | 3 | 4;
+  showImage?: boolean;
+  imageAspect?: '16:9' | '4:3' | '1:1' | '3:2';
+  showDate?: boolean;
+  dateFormat?: 'short' | 'long' | 'month-year';
+  showDescription?: boolean;
+  descriptionLimit?: number;
+  showTags?: boolean;
+  tagLimit?: number;
+  showReadTime?: boolean;
+  gap?: 'small' | 'medium' | 'large';
+}
+
+interface Props {
+  items: ViewItem[];
+  config?: ViewConfig;
+  collection?: string;
+  class?: string;
+}
+
+const { items, config = {}, collection = 'blog', class: className } = Astro.props;
+
+// Default config
+const {
+  columns = 3,
+  showImage = true,
+  imageAspect = '16:9',
+  showDate = true,
+  dateFormat = 'long',
+  showDescription = true,
+  descriptionLimit = 120,
+  showTags = true,
+  tagLimit = 3,
+  showReadTime = false,
+  gap = 'medium',
+} = config;
+
+// Aspect ratio CSS
+const aspectRatios: Record<string, string> = {
+  '16:9': '56.25%',
+  '4:3': '75%',
+  '1:1': '100%',
+  '3:2': '66.67%',
+};
+
+// Build item link
+function getItemLink(item: ViewItem): string {
+  return `/${collection}/${item.slug}`;
+}
+
+// Truncate description
+function truncate(text: string, limit: number): string {
+  if (text.length <= limit) return text;
+  return text.slice(0, limit).trim() + '...';
+}
+
+// Filter out drafts
+const visibleItems = items.filter(item => !item.draft);
+---
+
+<div
+  class:list={['grid-view', `grid-view--cols-${columns}`, `grid-view--gap-${gap}`, className]}
+  style={`--aspect-ratio: ${aspectRatios[imageAspect]}`}
+>
+  {visibleItems.map(item => (
+    <article class="grid-card" data-animate="fade-up">
+      {showImage && item.image && (
+        <a href={getItemLink(item)} class="card-image-link">
+          <div class="card-image">
+            <img
+              src={item.image}
+              alt={item.imageAlt || item.title}
+              loading="lazy"
+            />
+          </div>
+        </a>
+      )}
+
+      <div class="card-content">
+        <header class="card-header">
+          {(showDate || showReadTime) && (
+            <div class="card-meta">
+              {showDate && item.date && (
+                <ViewDate date={item.date} format={dateFormat} />
+              )}
+              {showReadTime && item.readTime && (
+                <span class="read-time">{item.readTime} min read</span>
+              )}
+            </div>
+          )}
+
+          <h3 class="card-title">
+            <a href={getItemLink(item)}>{item.title}</a>
+          </h3>
+        </header>
+
+        {showDescription && item.description && (
+          <p class="card-description">
+            {truncate(item.description, descriptionLimit)}
+          </p>
+        )}
+
+        {showTags && item.tags && item.tags.length > 0 && (
+          <ViewTags tags={item.tags} limit={tagLimit} style="pills" class="card-tags" />
+        )}
+      </div>
+    </article>
+  ))}
+
+  {visibleItems.length === 0 && (
+    <div class="empty-state">
+      <p>No items to display.</p>
+    </div>
+  )}
+</div>
+
+<style>
+  .grid-view {
+    display: grid;
+    gap: var(--view-grid-gap);
+  }
+
+  /* Column variants */
+  .grid-view--cols-1 {
+    grid-template-columns: 1fr;
+  }
+
+  .grid-view--cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .grid-view--cols-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .grid-view--cols-4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  /* Gap variants */
+  .grid-view--gap-small {
+    gap: var(--space-4);
+  }
+
+  .grid-view--gap-medium {
+    gap: var(--space-6);
+  }
+
+  .grid-view--gap-large {
+    gap: var(--space-8);
+  }
+
+  /* Card */
+  .grid-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--view-card-radius);
+    overflow: hidden;
+    transition: transform var(--view-transition),
+                box-shadow var(--view-transition);
+  }
+
+  .grid-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--view-card-shadow);
+  }
+
+  /* Image */
+  .card-image-link {
+    display: block;
+    background: none;
+  }
+
+  .card-image {
+    position: relative;
+    padding-top: var(--aspect-ratio);
+    overflow: hidden;
+    background: var(--color-bg-alt);
+  }
+
+  .card-image img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--view-transition);
+  }
+
+  .grid-card:hover .card-image img {
+    transform: scale(1.03);
+  }
+
+  /* Content */
+  .card-content {
+    padding: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .card-header {
+    margin-bottom: var(--space-2);
+  }
+
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-2);
+  }
+
+  .read-time {
+    font-size: var(--view-meta-size);
+    color: var(--view-meta-color);
+    font-family: var(--font-mono);
+  }
+
+  .card-title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-snug);
+    margin: 0;
+  }
+
+  .card-title a {
+    color: inherit;
+    text-decoration: none;
+    background: none;
+    transition: color var(--view-transition);
+  }
+
+  .card-title a:hover {
+    color: var(--color-accent);
+  }
+
+  .card-description {
+    font-size: var(--view-description-size);
+    color: var(--view-description-color);
+    line-height: var(--line-height-relaxed);
+    margin: 0 0 var(--space-3) 0;
+    flex: 1;
+  }
+
+  .card-tags {
+    margin-top: auto;
+  }
+
+  .empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: var(--space-12) var(--space-4);
+    color: var(--color-text-muted);
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .grid-view--cols-4 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .grid-view--cols-3,
+    .grid-view--cols-4 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .grid-view--cols-2,
+    .grid-view--cols-3,
+    .grid-view--cols-4 {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Animations */
+  @media (prefers-reduced-motion: no-preference) {
+    .grid-card {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity var(--view-animate-duration) ease,
+                  transform var(--view-animate-duration) ease;
+    }
+
+    .grid-card[data-animate="visible"] {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Stagger animation */
+    .grid-card:nth-child(1) { transition-delay: 0s; }
+    .grid-card:nth-child(2) { transition-delay: 0.1s; }
+    .grid-card:nth-child(3) { transition-delay: 0.2s; }
+    .grid-card:nth-child(4) { transition-delay: 0.3s; }
+    .grid-card:nth-child(5) { transition-delay: 0.4s; }
+    .grid-card:nth-child(6) { transition-delay: 0.5s; }
+  }
+</style>
+
+<script>
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.setAttribute('data-animate', 'visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+  );
+
+  document.querySelectorAll('.grid-card[data-animate]').forEach((el) => {
+    observer.observe(el);
+  });
+</script>

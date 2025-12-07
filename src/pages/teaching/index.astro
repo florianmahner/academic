@@ -1,12 +1,12 @@
 ---
 /**
  * Teaching Index Page
- * Reads layout configuration from collection-pages/teaching.md frontmatter
+ * Uses the unified view system for consistent, customizable display
  */
 import { getCollection, getEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { config } from '../../config';
-import LayoutDispatcher from '../../components/layouts/LayoutDispatcher.astro';
+import ViewDispatcher from '../../components/views/ViewDispatcher.astro';
 
 // Get page configuration from frontmatter
 const pageConfig = await getEntry('collection-pages', 'teaching');
@@ -14,7 +14,7 @@ if (!pageConfig) {
   throw new Error('Missing collection-pages/teaching.md - please create this file with layout configuration');
 }
 
-const { title, description, pageLayout, layoutConfig, sortBy, sortOrder } = pageConfig.data;
+const { title, description, view, viewConfig, sortBy, sortOrder } = pageConfig.data;
 
 // Get all teaching entries
 const teaching = await getCollection('teaching');
@@ -31,20 +31,47 @@ const sortedEntries = teaching.sort((a, b) => {
   return sortOrder === 'asc' ? yearA - yearB : yearB - yearA;
 });
 
+// Transform entries for view components
+const viewItems = sortedEntries.map(entry => ({
+  title: entry.data.title,
+  slug: entry.slug,
+  description: entry.data.description,
+  date: entry.data.date,
+  year: entry.data.year,
+  semester: entry.data.semester,
+  type: 'teaching' as const,
+  // Role & institution
+  role: entry.data.role,
+  institution: entry.data.institution,
+  code: entry.data.code,
+  level: entry.data.level,
+  students: entry.data.students,
+  // Links
+  syllabus: entry.data.syllabus,
+  materials: entry.data.materials,
+  website: entry.data.website,
+}));
+
 const pageTitle = `${title} | ${config.site.title}`;
 ---
 
 <BaseLayout title={pageTitle} description={description}>
   <article class="collection-page">
     <div class="container">
-      <LayoutDispatcher
+      <ViewDispatcher
+        view={view || 'minimal'}
+        items={viewItems}
+        config={viewConfig}
         collection="teaching"
-        entries={sortedEntries}
         title={title}
         description={description}
-        layoutOverride={pageLayout}
-        configOverride={layoutConfig}
       />
+
+      {viewItems.length === 0 && (
+        <div class="empty-state" data-animate="fade-up">
+          <p>No teaching entries to display yet. Check back soon!</p>
+        </div>
+      )}
     </div>
   </article>
 </BaseLayout>
@@ -52,5 +79,11 @@ const pageTitle = `${title} | ${config.site.title}`;
 <style>
   .collection-page {
     /* Vertical padding handled by article in global.css */
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: var(--space-12) var(--space-4);
+    color: var(--color-text-muted);
   }
 </style>

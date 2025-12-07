@@ -1,0 +1,138 @@
+/**
+ * View System Design Tokens
+ *
+ * Shared CSS custom properties for all view components.
+ * These tokens ensure visual consistency across timeline, showcase,
+ * grid, academic, and minimal views.
+ *
+ * Usage: Import in BaseLayout or individual view components
+ */
+
+:root {
+  /* ========================================
+     Spacing & Layout
+     ======================================== */
+  --view-gap: var(--space-3);
+  --view-section-gap: var(--space-10);
+  --view-item-padding: var(--space-3);
+  --view-header-margin: var(--space-6);
+
+  /* ========================================
+     Status Indicator Dots
+     ======================================== */
+  --view-dot-size: 6px;
+  --view-dot-size-lg: 8px;
+
+  /* Status colors */
+  --view-dot-active: #10b981;      /* Emerald - active/current */
+  --view-dot-completed: #6b7280;   /* Gray - completed/past */
+  --view-dot-archived: #9ca3af;    /* Light gray - archived */
+  --view-dot-paused: #f59e0b;      /* Amber - paused/wip */
+  --view-dot-featured: var(--color-accent);
+
+  /* Content type colors */
+  --view-dot-blog: var(--color-accent);
+  --view-dot-talk: #0891b2;        /* Cyan */
+  --view-dot-publication: #059669; /* Emerald */
+  --view-dot-project: #8b5cf6;     /* Violet */
+  --view-dot-teaching: #ec4899;    /* Pink */
+
+  /* ========================================
+     Typography
+     ======================================== */
+  --view-date-font: var(--font-mono);
+  --view-date-size: var(--font-size-xs);
+  --view-date-color: var(--color-text-muted);
+
+  --view-title-weight: var(--font-weight-medium);
+  --view-title-size: var(--font-size-base);
+
+  --view-meta-size: var(--font-size-sm);
+  --view-meta-color: var(--color-text-secondary);
+
+  --view-description-size: var(--font-size-sm);
+  --view-description-color: var(--color-text-secondary);
+
+  /* ========================================
+     Interactive States
+     ======================================== */
+  --view-hover-bg: var(--color-bg-alt);
+  --view-hover-radius: var(--radius-sm);
+  --view-hover-offset: var(--space-3);
+
+  /* ========================================
+     Links & Actions
+     ======================================== */
+  --view-link-size: var(--font-size-xs);
+  --view-link-gap: var(--space-3);
+  --view-link-icon-size: 14px;
+
+  /* ========================================
+     Tags
+     ======================================== */
+  --view-tag-size: var(--font-size-xs);
+  --view-tag-padding: var(--space-1) var(--space-2);
+  --view-tag-radius: var(--radius-sm);
+  --view-tag-bg: var(--color-bg-alt);
+  --view-tag-color: var(--color-text-muted);
+  --view-tag-gap: var(--space-2);
+
+  /* ========================================
+     Year/Group Headers
+     ======================================== */
+  --view-year-font: var(--font-mono);
+  --view-year-size: var(--font-size-sm);
+  --view-year-weight: var(--font-weight-semibold);
+  --view-year-color: var(--color-accent);
+
+  /* ========================================
+     Featured Items
+     ======================================== */
+  --view-featured-padding: var(--space-6);
+  --view-featured-border: 1px solid var(--color-border);
+  --view-featured-radius: var(--radius-md);
+  --view-featured-bg: var(--color-bg-alt);
+
+  /* ========================================
+     Grid Layout (for GridView)
+     ======================================== */
+  --view-grid-columns: 3;
+  --view-grid-gap: var(--space-6);
+  --view-card-radius: var(--radius-md);
+  --view-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+  /* ========================================
+     Animations
+     ======================================== */
+  --view-transition: var(--transition-fast);
+  --view-animate-duration: 0.6s;
+  --view-animate-delay: 0.1s;
+}
+
+/* ========================================
+   Dark Mode Adjustments
+   ======================================== */
+[data-theme="dark"] {
+  --view-hover-bg: rgba(255, 255, 255, 0.05);
+  --view-tag-bg: rgba(255, 255, 255, 0.08);
+  --view-featured-bg: rgba(255, 255, 255, 0.03);
+  --view-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* ========================================
+   Responsive Adjustments
+   ======================================== */
+@media (max-width: 768px) {
+  :root {
+    --view-grid-columns: 2;
+    --view-featured-padding: var(--space-4);
+    --view-section-gap: var(--space-8);
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --view-grid-columns: 1;
+    --view-grid-gap: var(--space-4);
+  }
+}
