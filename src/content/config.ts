@@ -146,6 +146,10 @@ const collectionPages = defineCollection({
     // NEW: Unified view configuration
     // All options work across views; irrelevant options are ignored
     viewConfig: z.object({
+      // === Style Variant ===
+      // For timeline view: "minimal" (clean rows) | "strip" (vertical line with connected dots)
+      style: z.enum(['minimal', 'strip']).optional(),
+
       // === Grouping ===
       groupBy: z.enum(['year', 'semester', 'none']).optional(),
 

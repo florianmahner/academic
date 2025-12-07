@@ -16,6 +16,7 @@
  * ```yaml
  * view: "timeline"
  * viewConfig:
+ *   style: "minimal"          # "minimal" (clean rows) | "strip" (vertical line with connected dots)
  *   groupBy: "year"           # Group items by year
  *   showDot: true             # Show type/status indicator
  *   dotType: "content"        # "content" | "status"
@@ -65,6 +66,7 @@ interface ViewItem {
 }
 
 interface ViewConfig {
+  style?: 'minimal' | 'strip';
   groupBy?: 'year' | 'none';
   showDot?: boolean;
   dotType?: 'content' | 'status';
@@ -92,6 +94,7 @@ const { items, config = {}, collection, class: className } = Astro.props;
 
 // Default config
 const {
+  style = 'minimal',
   groupBy = 'year',
   showDot = true,
   dotType = 'content',
@@ -153,9 +156,11 @@ function truncate(text: string, limit: number): string {
   if (text.length <= limit) return text;
   return text.slice(0, limit).trim() + '...';
 }
+
+const isStrip = style === 'strip';
 ---
 
-<div class:list={['timeline-view', className]}>
+<div class:list={['timeline-view', `timeline-view--${style}`, className]}>
   {years.map(year => (
     <section class="timeline-section" data-animate="fade-up">
       {groupBy === 'year' && year !== 'all' && (
@@ -163,21 +168,29 @@ function truncate(text: string, limit: number): string {
       )}
 
       <ul class="timeline-list">
-        {grouped[year].map(item => {
+        {grouped[year].map((item, index) => {
           const link = getItemLink(item);
           const actionLinks = getActionLinks(item);
+          const isLast = index === grouped[year].length - 1;
 
           return (
-            <li class="timeline-item view-item" data-type={item.type}>
-              {/* Date column */}
-              {showDate && (
+            <li class:list={['timeline-item', 'view-item', { 'is-last': isLast }]} data-type={item.type}>
+              {/* Strip style: marker with connecting line */}
+              {isStrip && (
+                <div class="strip-marker">
+                  <span class="strip-dot" data-type={dotType === 'content' ? item.type : undefined} data-status={dotType === 'status' ? item.status : undefined}></span>
+                </div>
+              )}
+
+              {/* Minimal style: date column */}
+              {!isStrip && showDate && (
                 <div class="item-date">
                   <ViewDate date={item.date} format={dateFormat} />
                 </div>
               )}
 
-              {/* Dot indicator */}
-              {showDot && (
+              {/* Minimal style: dot indicator */}
+              {!isStrip && showDot && (
                 <div class="item-indicator">
                   <ViewDot
                     type={dotType === 'content' ? item.type : undefined}
@@ -188,6 +201,13 @@ function truncate(text: string, limit: number): string {
 
               {/* Content */}
               <div class="item-content">
+                {/* Strip style: date in header */}
+                {isStrip && showDate && (
+                  <div class="strip-date">
+                    <ViewDate date={item.date} format={dateFormat} />
+                  </div>
+                )}
+
                 <div class="item-header">
                   {link ? (
                     <a href={link} class="item-title">{item.title}</a>
@@ -259,7 +279,10 @@ function truncate(text: string, limit: number): string {
     padding: 0;
   }
 
-  .timeline-item {
+  /* ======================
+     MINIMAL STYLE (default)
+     ====================== */
+  .timeline-view--minimal .timeline-item {
     display: grid;
     grid-template-columns: 60px 24px 1fr;
     gap: var(--view-gap);
@@ -268,11 +291,11 @@ function truncate(text: string, limit: number): string {
     transition: background-color var(--view-transition);
   }
 
-  .timeline-item:last-child {
+  .timeline-view--minimal .timeline-item:last-child {
     border-bottom: none;
   }
 
-  .timeline-item:hover {
+  .timeline-view--minimal .timeline-item:hover {
     background-color: var(--view-hover-bg);
     margin-left: calc(-1 * var(--view-hover-offset));
     margin-right: calc(-1 * var(--view-hover-offset));
@@ -294,7 +317,100 @@ function truncate(text: string, limit: number): string {
     padding-top: 6px;
   }
 
-  /* Content column */
+  /* ======================
+     STRIP STYLE (vertical line)
+     ====================== */
+  .timeline-view--strip .timeline-item {
+    display: flex;
+    gap: var(--space-4);
+    padding-bottom: var(--space-6);
+    position: relative;
+  }
+
+  /* Vertical connecting line */
+  .timeline-view--strip .timeline-item:not(.is-last)::before {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 16px;
+    bottom: 0;
+    width: 2px;
+    background-color: var(--color-border);
+  }
+
+  /* Marker dot */
+  .strip-marker {
+    flex-shrink: 0;
+    width: 12px;
+    display: flex;
+    justify-content: center;
+    padding-top: 4px;
+  }
+
+  .strip-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: var(--color-accent);
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Strip dot type colors */
+  .strip-dot[data-type="blog"] {
+    background-color: var(--view-dot-blog);
+  }
+
+  .strip-dot[data-type="talk"] {
+    background-color: var(--view-dot-talk);
+  }
+
+  .strip-dot[data-type="publication"] {
+    background-color: var(--view-dot-publication);
+  }
+
+  .strip-dot[data-type="project"] {
+    background-color: var(--view-dot-project);
+  }
+
+  .strip-dot[data-type="teaching"] {
+    background-color: var(--view-dot-teaching);
+  }
+
+  /* Strip dot status colors */
+  .strip-dot[data-status="active"] {
+    background-color: var(--view-dot-active);
+  }
+
+  .strip-dot[data-status="completed"] {
+    background-color: var(--view-dot-completed);
+  }
+
+  .strip-dot[data-status="archived"] {
+    background-color: var(--view-dot-archived);
+  }
+
+  .strip-dot[data-status="paused"] {
+    background-color: var(--view-dot-paused);
+  }
+
+  /* Strip date display */
+  .strip-date {
+    font-size: var(--font-size-xs);
+    font-family: var(--font-mono);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-1);
+  }
+
+  /* Strip content */
+  .timeline-view--strip .item-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* ======================
+     SHARED STYLES
+     ====================== */
   .item-content {
     min-width: 0;
   }
@@ -357,27 +473,35 @@ function truncate(text: string, limit: number): string {
     margin-top: var(--space-2);
   }
 
-  /* Mobile */
+  /* ======================
+     MOBILE
+     ====================== */
   @media (max-width: 600px) {
-    .timeline-item {
+    /* Minimal style mobile */
+    .timeline-view--minimal .timeline-item {
       grid-template-columns: 1fr;
       gap: var(--space-1);
     }
 
-    .item-date {
+    .timeline-view--minimal .item-date {
       text-align: left;
       order: -1;
     }
 
-    .item-indicator {
+    .timeline-view--minimal .item-indicator {
       display: none;
     }
 
-    .timeline-item:hover {
+    .timeline-view--minimal .timeline-item:hover {
       margin-left: calc(-1 * var(--space-2));
       margin-right: calc(-1 * var(--space-2));
       padding-left: var(--space-2);
       padding-right: var(--space-2);
+    }
+
+    /* Strip style mobile - keep the visual */
+    .timeline-view--strip .timeline-item {
+      padding-bottom: var(--space-4);
     }
   }
 
