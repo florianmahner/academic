@@ -306,50 +306,5 @@ export function getPreset(id: string): TypographyPreset {
   return typographyPresets.find(p => p.id === id) ?? typographyPresets[0];
 }
 
-// Get all unique fonts across all presets (for preloading)
-export function getAllFonts(): string[] {
-  const fonts = new Set<string>();
-  typographyPresets.forEach(preset => {
-    Object.values(preset.fonts).forEach(font => fonts.add(font));
-  });
-  return Array.from(fonts);
-}
-
-// Generate Google Fonts URL for a preset
-export function getFontUrl(preset: TypographyPreset): string {
-  const uniqueFonts = [...new Set(Object.values(preset.fonts))];
-
-  const fontParams = uniqueFonts.map(font => {
-    const encoded = font.replace(/ /g, '+');
-    // Check for custom params
-    if (preset.fontParams?.[font]) {
-      return `family=${encoded}:${preset.fontParams[font]}`;
-    }
-    // Default: regular weights
-    return `family=${encoded}:wght@300;400;500;600;700`;
-  });
-
-  return `https://fonts.googleapis.com/css2?${fontParams.join('&')}&display=swap`;
-}
-
-// Generate Google Fonts URL for ALL presets (for dev mode preloading)
-export function getAllFontsUrl(): string {
-  const fontConfigs = new Map<string, string>();
-
-  typographyPresets.forEach(preset => {
-    Object.values(preset.fonts).forEach(font => {
-      const encoded = font.replace(/ /g, '+');
-      // Use custom params if available, otherwise default
-      const params = preset.fontParams?.[font] ?? 'wght@300;400;500;600;700';
-      // Keep the most complete params for each font
-      if (!fontConfigs.has(font) || params.includes('ital')) {
-        fontConfigs.set(font, `family=${encoded}:${params}`);
-      }
-    });
-  });
-
-  return `https://fonts.googleapis.com/css2?${Array.from(fontConfigs.values()).join('&')}&display=swap`;
-}
-
 // Type export
 export type { TypographyPreset as Preset };

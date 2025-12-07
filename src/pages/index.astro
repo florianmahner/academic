@@ -62,7 +62,7 @@ try {
     }
   }
 } catch (e) {
-  console.log('About page not found, falling back to config');
+  // About page not found, fallback to config
   // Fallback to config if about.md doesn't exist
   bioHtml = config.about?.bio || '';
   researchInterestsHtml = config.about?.researchInterests || '';
@@ -101,7 +101,7 @@ try {
     }))
   );
 } catch (e) {
-  console.log('Blog collection not available');
+  // Blog collection not available
 }
 
 // Load talks
@@ -114,7 +114,7 @@ try {
     href: prependBase(`/talks/${talk.slug}`),
   })));
 } catch (e) {
-  console.log('Talks collection not available');
+  // Talks collection not available
 }
 
 // Load standalone news items
@@ -130,7 +130,7 @@ try {
     }))
   );
 } catch (e) {
-  console.log('News collection not available');
+  // News collection not available
 }
 
 // Sort all news items by date (newest first) and limit to 5

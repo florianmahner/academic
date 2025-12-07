@@ -64,7 +64,7 @@ navigation:
   mode: sidebar
 
   # Navigation items (order matters!)
-  # Comment out or remove items you don't need
+  # Core pages - visible by default
   items:
     - id: about
       label: About
@@ -75,27 +75,28 @@ navigation:
     - id: projects
       label: Projects
       href: /projects
-    - id: blog
-      label: Blog
-      href: /blog
-    - id: news
-      label: News
-      href: /news
-    - id: talks
-      label: Talks
-      href: /talks
-    - id: teaching
-      label: Teaching
-      href: /teaching
-    - id: open-source
-      label: Open Source
-      href: /open-source
     - id: cv
       label: CV
       href: /cv
     - id: contact
       label: Contact
       href: /contact
+    # Optional pages - uncomment to enable:
+    # - id: blog
+    #   label: Blog
+    #   href: /blog
+    # - id: news
+    #   label: News
+    #   href: /news
+    # - id: talks
+    #   label: Talks
+    #   href: /talks
+    # - id: teaching
+    #   label: Teaching
+    #   href: /teaching
+    # - id: open-source
+    #   label: Open Source
+    #   href: /open-source
 
 # =============================================================================
 # THEME SYSTEM

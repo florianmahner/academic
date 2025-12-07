@@ -71,9 +71,9 @@ All modes auto-switch to hamburger menu on mobile!
 <td width="50%">
 
 ### ⚙️ Zero Config Needed
-- Edit **one file** (`config.ts`)
+- Edit **one file** (`config.yaml`)
 - No HTML/CSS knowledge required
-- Full TypeScript autocomplete
+- Simple YAML syntax
 - Instant preview with hot reload
 
 </td>
@@ -112,97 +112,85 @@ Your site is now live at **http://localhost:4321** 🎉
 
 ### Next Steps
 
-1. **Edit** `src/config.ts` with your information
-2. **Add** your publications to `src/content/publications.json`
-3. **Choose** a typography preset and navigation mode
-4. **Deploy** to GitHub Pages (see [Deployment](#-deployment))
+1. **Edit** `config.yaml` with your information
+2. **Write** your bio in `src/content/pages/about.md`
+3. **Add** your publications to `src/content/papers.bib`
+4. **Choose** a typography preset and navigation mode
+5. **Deploy** to GitHub Pages (see [Deployment](#-deployment))
+
+> 📖 **New to this?** See [QUICKSTART.md](QUICKSTART.md) for a 5-minute setup guide.
 
 ---
 
 ## ⚙️ Configuration
 
-The template is designed so you **only need to edit one file**: `src/config.ts`
+The template is designed so you **only need to edit two files**: `config.yaml` and `src/content/pages/about.md`
 
 <details>
 <summary><b>📝 View Full Config Example</b></summary>
 
-```typescript
-export const config = {
-  // ==================== PERSONAL INFO ====================
-  name: {
-    first: "Jane",
-    middle: "M",
-    last: "Smith",
-  },
-  title: "PhD Candidate in Computer Science",
-  email: "jane.smith@university.edu",
+```yaml
+# config.yaml - Main configuration file
 
-  // ==================== SOCIAL LINKS ====================
-  social: {
-    github: "janesmith",
-    scholar: "SCHOLAR_ID",
-    linkedin: "janesmith",
-    twitter: "janesmith_cs",
-    orcid: "0000-0001-2345-6789",
-    researchgate: "",  // leave empty to hide
-  },
+name:
+  first: Jane
+  middle: M
+  last: Smith
 
-  // ==================== SITE METADATA ====================
-  site: {
-    url: "https://janesmith.github.io",
-    title: "Jane Smith",
-    description: "Personal academic website of Jane Smith",
-    language: "en",
-  },
+title: PhD Candidate in Computer Science
+email: jane.smith@university.edu
 
-  // ==================== NAVIGATION ====================
-  navigation: [
-    { id: "about", label: "About", href: "/" },
-    { id: "publications", label: "Publications", href: "/publications" },
-    { id: "open-source", label: "Open Source", href: "/open-source" },
-    { id: "misc", label: "Misc", href: "/misc" },
-  ],
+institution:
+  name: University of Example
+  url: https://example.edu
 
-  // Choose: "floating" | "sidebar" | "inline"
-  navigationMode: "sidebar",
+social:
+  github: janesmith
+  scholar: SCHOLAR_ID
+  linkedin: janesmith
+  twitter: janesmith_cs
+  orcid: 0000-0001-2345-6789
 
-  // ==================== THEME ====================
-  theme: {
-    // Choose from 6 presets (see Typography Presets below)
-    defaultPreset: "editorial-newsreader",
+site:
+  url: https://janesmith.github.io
+  title: Jane Smith
+  description: Personal academic website
 
-    // Optional: Override colors
-    accentLight: undefined,  // e.g., "#c41e3a"
-    accentDark: undefined,   // e.g., "#ff4d6a"
-  },
+navigation:
+  mode: sidebar  # Options: floating, sidebar, inline
+  items:
+    - id: about
+      label: About
+      href: /
+    - id: publications
+      label: Publications
+      href: /publications
+    - id: projects
+      label: Projects
+      href: /projects
+    - id: cv
+      label: CV
+      href: /cv
 
-  // ==================== FEATURES ====================
-  features: {
-    selectedPublications: true,  // Show selected papers on homepage
-    education: true,             // Show education section on homepage
-    darkMode: true,              // Enable dark/light toggle
-    animations: true,            // Enable scroll animations
-    settingsPanel: true,         // Show settings gear icon
-  },
+theme:
+  preset: editorial-newsreader
 
-  // ==================== ABOUT PAGE ====================
-  about: {
-    bio: "I am an Assistant Professor of Computer Science at University. My research focuses on machine learning and AI.",
-    researchInterests: "My work centers on deep learning, NLP, and computer vision.",
-    affiliation: {
-      name: "AI Research Lab",
-      url: "https://ai-lab.university.edu",
-    },
-  },
+features:
+  selected_publications: true
+  education: true
+  dark_mode: true
+  animations: true
+  settings_panel: true
+```
 
-  // ==================== FOOTER ====================
-  footer: {
-    copyright: true,
-    links: [
-      { label: "Email", href: "mailto:jane.smith@university.edu" },
-    ],
-  },
-};
+**About page** (`src/content/pages/about.md`):
+
+```markdown
+I am an Assistant Professor at University. My research focuses on...
+
+## Research Interests
+
+My work centers on deep learning, NLP, and computer vision.
 ```
 
 </details>
@@ -225,10 +213,9 @@ Choose from **6 professionally designed** presets, each with unique character:
 ⭐ = Default preset
 
 **To change:**
-```typescript
-theme: {
-  defaultPreset: "brutalist-space", // Just change this line!
-}
+```yaml
+theme:
+  preset: brutalist-space  # Just change this line!
 ```
 
 **Live Switching:** The settings panel (gear icon ⚙️) lets visitors try different presets in real-time!
@@ -392,25 +379,24 @@ All files use simple JSON format - no coding required!
 
 ```
 academic-template/
+├── config.yaml                ⭐ EDIT THIS - main configuration
 ├── src/
-│   ├── config.ts              ⭐ EDIT THIS - main configuration
 │   ├── components/            Reusable UI components
-│   ├── content/               📝 Your content (JSON files)
-│   │   ├── publications.json
-│   │   ├── education.json
-│   │   ├── repositories.json
-│   │   └── misc.json
+│   ├── content/               📝 Your content
+│   │   ├── pages/about.md     ⭐ Your bio & research interests
+│   │   ├── papers.bib         📚 Publications (BibTeX)
+│   │   ├── education.json     🎓 Academic background
+│   │   ├── blog/              ✏️ Blog posts (optional)
+│   │   ├── projects/          💼 Research projects (optional)
+│   │   └── talks/             🎤 Presentations (optional)
 │   ├── layouts/
 │   │   └── BaseLayout.astro   Main layout wrapper
-│   ├── lib/
-│   │   ├── typography-presets.ts  Typography system
-│   │   └── bibtex.ts              BibTeX parser
+│   ├── lib/                   Utilities
 │   ├── pages/                 Site pages (Astro)
 │   └── styles/                Global styles
 ├── public/                    Static assets
-│   ├── favicon.jpg
 │   └── previews/              📸 Publication preview images
-└── package.json
+└── QUICKSTART.md              🚀 5-minute setup guide
 ```
 
 ---
