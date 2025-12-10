@@ -1,5 +1,4 @@
 ---
-layout: ~/layouts/ListLayout.astro
 title: "Miscellaneous"
 description: "Useful tools and resources for academic work"
 view: grid

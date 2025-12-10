@@ -1,100 +1,129 @@
 # Content Directory
 
-This directory contains your content organized in a simple structure.
+All your website content lives here. Users only edit files in this folder - no code changes needed!
 
 ## Quick Overview
 
 | Content Type | Location | How to Edit |
 |-------------|----------|-------------|
-| **Blog posts** | `src/content/blog/` | Create `.md` files |
-| **Projects** | `src/content/projects/` | Create `.md` files |
-| **Publications** | `src/content/papers.bib` | Edit BibTeX file |
-| **Talks** | `src/pages/talks.md` | Edit frontmatter items |
-| **Teaching** | `src/pages/teaching.md` | Edit frontmatter items |
-| **Misc/Tools** | `src/pages/misc.md` | Edit frontmatter items |
-| **About page** | `src/content/pages/about.md` | Edit markdown |
-| **CV data** | `src/content/cv.json` | Edit JSON |
-| **Education** | `src/content/education.json` | Edit JSON |
+| **Talks** | `talks.md` | Edit frontmatter items |
+| **Teaching** | `teaching.md` | Edit frontmatter items |
+| **Misc/Tools** | `misc.md` | Edit frontmatter items |
+| **Blog posts** | `blog/*.md` | Create markdown files |
+| **Projects** | `projects/*.md` | Create markdown files |
+| **Publications** | `papers.bib` | Edit BibTeX file |
+| **About page** | `pages/about.md` | Edit markdown |
+| **CV data** | `cv.json` | Edit JSON |
 
-## Creating Simple List Pages
+## How It Works
 
-For pages that just list items (talks, teaching, tools), use markdown files in `src/pages/` with frontmatter configuration:
+### Single File = Simple List
 
-```markdown
+Create `{name}.md` with items in frontmatter → route auto-created at `/{name}`
+
+Example `talks.md`:
+```yaml
 ---
-layout: ~/layouts/Layout.astro
-template: list
-title: "Page Title"
-description: "Page description"
+title: "Talks & Presentations"
+view: timeline
+style: alternating
+groupBy: year
 
-# View Configuration
-view: timeline    # Options: timeline, grid, minimal, showcase
-groupBy: year     # Group items by year
-showDate: true
-dateFormat: short
-
-# Your Items
 items:
-  - date: 2024-01-15
-    title: "Item Title"
-    description: "Item description"
-    # Add any other fields your view needs
+  - date: 2024-06-15
+    title: "My Keynote"
+    event: "Conference 2024"
+    location: "City, Country"
+
+  - date: 2023-11-20
+    title: "Workshop Talk"
+    event: "Workshop 2023"
 ---
 
-Optional markdown content below the list.
+Optional intro text appears below the list.
+```
+
+### Folder = Many Items
+
+Create `{name}.md` + `{name}/` folder → items loaded from folder
+
+```
+blog.md          # Config (view, title, etc.)
+blog/            # Items loaded automatically
+├── post1.md
+├── post2.md
+└── post3.md
 ```
 
 ## View Types
 
-- **timeline** - Chronological list grouped by year, great for talks/news
-- **grid** - Card layout, great for tools/resources
+Set `view:` in frontmatter:
+
+- **timeline** - Chronological with year groups (talks, teaching)
+- **grid** - Card layout (tools, resources)
 - **minimal** - Clean compact list
-- **showcase** - Featured items with status badges, great for projects
+- **showcase** - Featured items with badges (projects)
 
-## Content Collections (with detail pages)
+### Timeline Styles
 
-For content that needs individual pages (like blog posts and projects):
+Set `style:` when using timeline view:
 
-### Blog Posts (`src/content/blog/`)
+- **alternating** - Items alternate left/right (good for talks)
+- **strip** - Simple vertical line (good for teaching)
+- **classic** - Elegant gradient line
+- **minimal** - No decoration
 
-```markdown
+## Creating a New Collection
+
+Just create a file! Example `src/content/awards.md`:
+
+```yaml
 ---
-title: "Post Title"
-description: "Brief description"
-date: 2024-01-15
-tags: ["tag1", "tag2"]
-draft: false
-image: "/images/post-image.jpg"  # Optional
----
+title: "Awards & Honors"
+view: timeline
+style: classic
+groupBy: year
 
-Your blog post content here...
+items:
+  - date: 2024-05-01
+    title: "Best Paper Award"
+    event: "Conference 2024"
+---
 ```
 
-### Projects (`src/content/projects/`)
+Route `/awards` is automatically created!
 
-```markdown
+## Content With Detail Pages
+
+For content needing individual pages (blog, projects), add files to the folder:
+
+### Blog Post (`blog/my-post.md`)
+```yaml
+---
+title: "Post Title"
+date: 2024-01-15
+tags: ["research", "tutorial"]
+---
+
+Your blog post content...
+```
+
+### Project (`projects/my-project.md`)
+```yaml
 ---
 title: "Project Name"
 description: "What it does"
 technologies: ["Python", "React"]
 github: "https://github.com/user/repo"
-status: active  # active, completed, archived, wip
-featured: true
+status: active
 ---
 
-Detailed project description...
+Project details...
 ```
 
-## JSON Data Files
+## Data Files
 
-- `cv.json` - Professional experience for the CV page
-- `education.json` - Academic background shown on homepage
-- `repositories.json` - GitHub repos for Open Source page
-
-## Publications (`papers.bib`)
-
-Add publications in BibTeX format. Special fields:
-- `selected = true` - Show on homepage
-- `abbr` - Conference abbreviation badge
-- `preview` - Thumbnail image path
-- `pdf`, `code`, `html` - Resource links
+- `papers.bib` - Publications (BibTeX format)
+- `cv.json` - Professional experience
+- `education.json` - Academic background
+- `repositories.json` - GitHub repos

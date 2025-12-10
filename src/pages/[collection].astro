@@ -1,0 +1,166 @@
+---
+/**
+ * Dynamic Collection Route
+ *
+ * Automatically creates routes for any .md file in src/content/
+ *
+ * Rules:
+ * - {name}.md alone → /name with items from frontmatter
+ * - {name}.md + {name}/ folder → /name with items from folder
+ *
+ * Example:
+ * - src/content/talks.md → /talks (items in frontmatter)
+ * - src/content/blog.md + src/content/blog/ → /blog (items from folder)
+ */
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ViewDispatcher from '../components/views/ViewDispatcher.astro';
+import { config } from '../lib/config';
+
+export async function getStaticPaths() {
+  // Reserved collections handled by other routes + system files
+  const RESERVED = ['pages', 'blog', 'projects', 'README', 'config'];
+
+  // Import all entry point markdown files from content root
+  const entryFiles = import.meta.glob('/src/content/*.md', { eager: true });
+
+  // Import all item files from content subfolders
+  const itemFiles = import.meta.glob('/src/content/*/*.md', { eager: true });
+
+  const paths = [];
+
+  for (const [filePath, module] of Object.entries(entryFiles)) {
+    // Extract collection name from path: /src/content/talks.md → talks
+    const match = filePath.match(/\/src\/content\/([^/]+)\.md$/);
+    if (!match) continue;
+
+    const collectionName = match[1];
+
+    // Skip reserved collections
+    if (RESERVED.includes(collectionName)) continue;
+
+    const entry = module as any;
+    const frontmatter = entry.frontmatter || {};
+
+    // Check if there's a matching folder with items
+    const folderPattern = `/src/content/${collectionName}/`;
+    const folderItems = Object.entries(itemFiles)
+      .filter(([p]) => p.startsWith(folderPattern))
+      .map(([p, m]) => {
+        const itemModule = m as any;
+        const slug = p.replace(folderPattern, '').replace('.md', '');
+        return {
+          ...itemModule.frontmatter,
+          slug,
+          Content: itemModule.Content,
+          body: itemModule.compiledContent ? itemModule.compiledContent() : '',
+        };
+      });
+
+    // Use folder items if they exist, otherwise use frontmatter items
+    const items = folderItems.length > 0 ? folderItems : (frontmatter.items || []);
+
+    paths.push({
+      params: { collection: collectionName },
+      props: {
+        frontmatter,
+        items,
+        Content: entry.Content,
+        hasFolder: folderItems.length > 0,
+      },
+    });
+  }
+
+  return paths;
+}
+
+interface Props {
+  frontmatter: {
+    title: string;
+    description?: string;
+    view?: string;
+    style?: string;
+    groupBy?: string;
+    showDate?: boolean;
+    dateFormat?: string;
+    showLinks?: string[];
+    showRole?: boolean;
+    showInstitution?: boolean;
+    showDescription?: boolean;
+    itemType?: string;
+    items?: any[];
+    [key: string]: any;
+  };
+  items: any[];
+  Content: any;
+  hasFolder: boolean;
+}
+
+const { collection } = Astro.params;
+const { frontmatter, items, Content, hasFolder } = Astro.props;
+
+const {
+  title = collection,
+  description,
+  view = 'timeline',
+} = frontmatter;
+
+const pageTitle = `${title} | ${config.site.title}`;
+
+// Build view config from frontmatter
+const viewConfig = {
+  style: frontmatter.style,
+  groupBy: frontmatter.groupBy,
+  showDate: frontmatter.showDate,
+  dateFormat: frontmatter.dateFormat,
+  showLinks: frontmatter.showLinks,
+  showRole: frontmatter.showRole,
+  showInstitution: frontmatter.showInstitution,
+  showDescription: frontmatter.showDescription,
+};
+
+// Transform items for ViewDispatcher
+const transformedItems = items.map((item: any, index: number) => ({
+  ...item,
+  date: item.date ? new Date(item.date) : undefined,
+  type: frontmatter.itemType || 'item',
+  slug: item.slug || `item-${index}`,
+}));
+---
+
+<BaseLayout title={pageTitle} description={description}>
+  <article class="collection-page">
+    <div class="container">
+      <ViewDispatcher
+        view={view}
+        items={transformedItems}
+        config={viewConfig}
+        collection={collection}
+        title={title}
+        description={description}
+      />
+
+      <div class="page-content">
+        <Content />
+      </div>
+
+      {transformedItems.length === 0 && (
+        <div class="empty-state">
+          <p>No items yet. {hasFolder ? `Add .md files to src/content/${collection}/` : `Add items to frontmatter in src/content/${collection}.md`}</p>
+        </div>
+      )}
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .page-content:not(:empty) {
+    margin-top: var(--space-8);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: var(--space-12) var(--space-4);
+    color: var(--color-text-muted);
+  }
+</style>

@@ -1,5 +1,4 @@
 ---
-layout: ~/layouts/ListLayout.astro
 title: "Talks & Presentations"
 description: "Conference talks, keynotes, and workshops"
 view: timeline

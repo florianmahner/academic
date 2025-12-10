@@ -73,11 +73,13 @@ Push to GitHub and enable GitHub Pages:
 |--------------|----------|--------|
 | Blog posts | `src/content/blog/*.md` | Markdown files |
 | Projects | `src/content/projects/*.md` | Markdown files |
-| Talks | `src/pages/talks.md` | YAML list in frontmatter |
-| Teaching | `src/pages/teaching.md` | YAML list in frontmatter |
-| Misc/Tools | `src/pages/misc.md` | YAML list in frontmatter |
+| Talks | `src/content/talks.md` | YAML list in frontmatter |
+| Teaching | `src/content/teaching.md` | YAML list in frontmatter |
+| Misc/Tools | `src/content/misc.md` | YAML list in frontmatter |
 
 **Adding talks/teaching:** Just copy an existing item block in the frontmatter and edit!
+
+**Creating a new collection:** Just create `src/content/{name}.md` with a frontmatter config - route is auto-created!
 
 ## Need Help?
 

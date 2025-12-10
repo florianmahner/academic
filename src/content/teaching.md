@@ -1,5 +1,4 @@
 ---
-layout: ~/layouts/ListLayout.astro
 title: "Teaching"
 description: "Courses and educational activities"
 view: timeline
