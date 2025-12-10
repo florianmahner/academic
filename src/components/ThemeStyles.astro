@@ -20,6 +20,10 @@ const defaultPreset = getPreset(presetId);
 const accentLight = config.theme?.accentLight || defaultPreset.colors.accentLight;
 const accentDark = config.theme?.accentDark || defaultPreset.colors.accentDark;
 
+// Design scale factors from config
+const typographyScale = config.design?.typographyScale ?? 1.0;
+const spacingScale = config.design?.spacingScale ?? 1.0;
+
 // Only load fonts for the default preset (other fonts loaded on-demand)
 const fontsUrl = getDefaultFontUrl(presetId);
 ---
@@ -41,8 +45,14 @@ const fontsUrl = getDefaultFontUrl(presetId);
   bodyWeight: defaultPreset.styles.bodyWeight,
   accentLight: accentLight,
   accentDark: accentDark,
+  typographyScale: typographyScale,
+  spacingScale: spacingScale,
 }}>
   :root {
+    /* Design scale factors from config.yaml */
+    --typography-scale: var(--typographyScale);
+    --spacing-scale: var(--spacingScale);
+
     /* Fonts from config (can be overridden by theme selector) */
     --font-body: var(--fontBody), Georgia, serif;
     --font-heading: var(--fontHeading), Georgia, serif;

@@ -4,7 +4,18 @@
    ========================================================================== */
 
 :root {
+  /* ==========================================================================
+     DESIGN SCALE SYSTEM
+     Scale factors are injected from config.yaml via ThemeStyles.astro
+     --typography-scale: multiplier for all font sizes (default: 1)
+     --spacing-scale: multiplier for all spacing values (default: 1)
+     ========================================================================== */
+
+  /* Base font size - scaled by typography factor */
+  font-size: calc(16px * var(--typography-scale, 1));
+
   /* Typography Scale - optimized for 900px width with serif fonts */
+  /* These use rem, so they automatically scale with the root font-size */
   --font-size-xs: clamp(0.8rem, 0.75rem + 0.25vw, 0.9rem);
   --font-size-sm: clamp(0.95rem, 0.9rem + 0.3vw, 1.1rem);
   --font-size-base: clamp(1.1rem, 1.05rem + 0.4vw, 1.25rem);
@@ -85,19 +96,19 @@
   --letter-spacing-normal-mobile: 0.005em;
   --letter-spacing-wide-mobile: 0.03em;
 
-  /* Spacing Scale */
-  --space-1: 0.25rem;
-  --space-2: 0.5rem;
-  --space-3: 0.75rem;
-  --space-4: 1rem;
-  --space-5: 1.25rem;
-  --space-6: 1.5rem;
-  --space-8: 2rem;
-  --space-10: 2.5rem;
-  --space-12: 3rem;
-  --space-16: 4rem;
-  --space-20: 5rem;
-  --space-24: 6rem;
+  /* Spacing Scale - multiplied by spacing-scale factor */
+  --space-1: calc(0.25rem * var(--spacing-scale, 1));
+  --space-2: calc(0.5rem * var(--spacing-scale, 1));
+  --space-3: calc(0.75rem * var(--spacing-scale, 1));
+  --space-4: calc(1rem * var(--spacing-scale, 1));
+  --space-5: calc(1.25rem * var(--spacing-scale, 1));
+  --space-6: calc(1.5rem * var(--spacing-scale, 1));
+  --space-8: calc(2rem * var(--spacing-scale, 1));
+  --space-10: calc(2.5rem * var(--spacing-scale, 1));
+  --space-12: calc(3rem * var(--spacing-scale, 1));
+  --space-16: calc(4rem * var(--spacing-scale, 1));
+  --space-20: calc(5rem * var(--spacing-scale, 1));
+  --space-24: calc(6rem * var(--spacing-scale, 1));
 
   /* Content Top Alignment - Single source of truth */
   --content-top-padding: 5rem;
