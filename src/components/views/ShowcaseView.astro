@@ -62,9 +62,7 @@ interface ViewConfig {
   showDescription?: boolean;
   descriptionLimit?: number;
   showTags?: boolean;
-  tagLimit?: number;
   showLinks?: string[];
-  linkStyle?: 'icons' | 'text' | 'both';
 }
 
 interface Props {
@@ -88,9 +86,7 @@ const {
   dateFormat = 'month-year',
   showDescription = true,
   showTags = true,
-  tagLimit = 5,
   showLinks = ['github', 'demo', 'docs', 'website'],
-  linkStyle = 'both',
 } = config;
 
 // Separate featured and regular items
