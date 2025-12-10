@@ -583,7 +583,7 @@ let globalIndex = 0;
 
   /* Align text properly for left items */
   .timeline-view--alternating .timeline-item[data-position="left"] .item-header {
-    justify-content: flex-end;
+    text-align: right;
   }
 
   .timeline-view--alternating .timeline-item[data-position="left"] .item-context {
@@ -652,10 +652,7 @@ let globalIndex = 0;
   }
 
   .item-header {
-    display: flex;
-    align-items: baseline;
-    gap: var(--space-2);
-    flex-wrap: wrap;
+    display: inline;
   }
 
   .item-title {
@@ -705,13 +702,19 @@ let globalIndex = 0;
     margin-top: var(--space-2);
   }
 
-  /* Inline links - compact, same line as title */
+  /* Inline links - compact, flows with title text */
   .item-links-inline {
-    display: inline-flex;
-    align-items: baseline;
-    gap: var(--space-3);
-    margin-left: var(--space-3);
-    flex-shrink: 0;
+    display: inline;
+    margin-left: var(--space-2);
+    white-space: nowrap;
+  }
+
+  .item-links-inline :global(.action-link) {
+    margin-right: var(--space-3);
+  }
+
+  .item-links-inline :global(.action-link:last-child) {
+    margin-right: 0;
   }
 
   /* ======================
@@ -777,7 +780,7 @@ let globalIndex = 0;
 
     .timeline-view--alternating .timeline-item[data-position="left"] .item-header,
     .timeline-view--alternating .timeline-item[data-position="right"] .item-header {
-      justify-content: flex-start;
+      text-align: left;
     }
 
     .timeline-view--alternating .timeline-item[data-position="left"] .item-context,
