@@ -775,34 +775,32 @@ const socialIcons: Record<string, string> = {
       }
 
       .footer-row {
-        display: flex;
-        align-items: center;
+        display: inline-flex;
+        align-items: baseline;
         justify-content: center;
-        gap: var(--space-4);
+        gap: var(--space-3);
         flex-wrap: wrap;
-        line-height: 1;
+        font-size: var(--font-size-xs);
+        color: var(--color-text-muted);
       }
 
       .footer-copy {
-        font-size: var(--font-size-xs);
-        color: var(--color-text-muted);
-        line-height: 1;
+        color: inherit;
       }
 
       .footer-icons {
-        display: flex;
+        display: inline-flex;
         gap: var(--space-2);
-        align-items: center;
+        align-items: baseline;
       }
 
       .social-icon {
-        display: flex;
+        display: inline-flex;
         align-items: center;
         justify-content: center;
         color: var(--color-text-muted);
         background: none;
         transition: color 0.15s ease;
-        padding: 2px;
       }
 
       .social-icon:hover {
@@ -811,21 +809,19 @@ const socialIcons: Record<string, string> = {
 
       .social-icon svg {
         display: block;
-        width: 16px;
-        height: 16px;
+        width: 12px;
+        height: 12px;
+        transform: translateY(1px);
       }
 
       .footer-credit {
-        font-size: var(--font-size-xs);
-        color: var(--color-text-muted);
-        line-height: 1;
+        color: inherit;
       }
 
       .footer-credit a {
-        color: var(--color-text-muted);
+        color: inherit;
         text-decoration: none;
         background: none;
-        font-weight: 500;
         transition: color 0.15s ease;
       }
 
