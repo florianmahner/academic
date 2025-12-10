@@ -111,28 +111,6 @@ theme:
   accent_dark: ""   # e.g., "#818cf8"
 
 # =============================================================================
-# DESIGN SCALE
-# =============================================================================
-# Control the overall size of typography and spacing independently.
-# Values are multipliers: 1.0 = default, 1.25 = 25% larger, 1.5 = 50% larger
-#
-# typography_scale: Affects all font sizes (headings, body, meta text)
-#   - 1.0: Default browser-like sizing
-#   - 1.15: Slightly larger, better for reading
-#   - 1.25: Comfortable reading size (recommended for academic content)
-#   - 1.5: Large, presentation-like
-#
-# spacing_scale: Affects all margins, padding, and gaps
-#   - 1.0: Default compact spacing
-#   - 1.15: Slightly more breathing room
-#   - 1.25: Generous spacing (recommended for readability)
-#   - 1.5: Very spacious layout
-
-design:
-  typography_scale: 1.25
-  spacing_scale: 1.15
-
-# =============================================================================
 # FEATURES
 # =============================================================================
 
