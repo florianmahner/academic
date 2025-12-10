@@ -30,7 +30,6 @@
 
 import ViewDate from '../primitives/ViewDate.astro';
 import ViewDot from '../primitives/ViewDot.astro';
-import ViewLinks from '../primitives/ViewLinks.astro';
 import ViewTags from '../primitives/ViewTags.astro';
 
 interface ViewItem {
@@ -71,7 +70,6 @@ interface ViewConfig {
   showTags?: boolean;
   tagLimit?: number;
   showLinks?: string[];
-  linkStyle?: 'icons' | 'text' | 'both';
 }
 
 interface Props {
@@ -101,7 +99,6 @@ const {
   showTags = false,
   tagLimit = 3,
   showLinks = [],
-  linkStyle = 'text',
 } = config;
 
 function groupByYear(items: ViewItem[]): Record<string, ViewItem[]> {
@@ -229,6 +226,17 @@ let globalIndex = 0;
                   ) : (
                     <span class="item-title">{item.title}</span>
                   )}
+                  {/* Inline links for compact timeline display */}
+                  {actionLinks.length > 0 && (
+                    <span class="item-links-inline">
+                      {actionLinks.map((actionLink, i) => (
+                        <>
+                          <a href={actionLink.url} class="inline-link" target="_blank" rel="noopener noreferrer">{actionLink.label}</a>
+                          {i < actionLinks.length - 1 && <span class="link-sep">·</span>}
+                        </>
+                      ))}
+                    </span>
+                  )}
                 </div>
 
                 {showContext && (item.event || item.venue || item.institution) && (
@@ -255,10 +263,6 @@ let globalIndex = 0;
 
                 {showTags && item.tags && item.tags.length > 0 && (
                   <ViewTags tags={item.tags} limit={tagLimit} style="minimal" class="item-tags" />
-                )}
-
-                {actionLinks.length > 0 && (
-                  <ViewLinks links={actionLinks} style={linkStyle} class="item-links" />
                 )}
               </div>
             </li>
@@ -647,8 +651,9 @@ let globalIndex = 0;
 
   .item-header {
     display: flex;
-    align-items: flex-start;
+    align-items: baseline;
     gap: var(--space-2);
+    flex-wrap: wrap;
   }
 
   .item-title {
@@ -698,8 +703,31 @@ let globalIndex = 0;
     margin-top: var(--space-2);
   }
 
-  .item-links {
-    margin-top: var(--space-3);
+  /* Inline links - compact, same line as title */
+  .item-links-inline {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    margin-left: var(--space-3);
+    flex-shrink: 0;
+  }
+
+  .inline-link {
+    font-size: var(--font-size-xs);
+    font-family: var(--font-body);
+    color: var(--color-text-muted);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .inline-link:hover {
+    color: var(--color-accent);
+  }
+
+  .link-sep {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    opacity: 0.5;
   }
 
   /* ======================
