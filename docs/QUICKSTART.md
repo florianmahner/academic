@@ -69,17 +69,18 @@ Push to GitHub and enable GitHub Pages:
 
 ## Optional: Add More Content
 
-| Content Type | Location |
-|--------------|----------|
-| Blog posts | `src/content/blog/` |
-| Projects | `src/content/projects/` |
-| Talks | `src/content/talks/` |
-| Teaching | `src/content/teaching/` |
-| News items | `src/content/news/` |
+| Content Type | Location | Format |
+|--------------|----------|--------|
+| Blog posts | `src/content/blog/*.md` | Markdown files |
+| Projects | `src/content/projects/*.md` | Markdown files |
+| Talks | `src/pages/talks.md` | YAML list in frontmatter |
+| Teaching | `src/pages/teaching.md` | YAML list in frontmatter |
+| Misc/Tools | `src/pages/misc.md` | YAML list in frontmatter |
 
-To show these in navigation, uncomment the relevant items in `config.yaml`.
+**Adding talks/teaching:** Just copy an existing item block in the frontmatter and edit!
 
 ## Need Help?
 
-- See [README.md](README.md) for full documentation
+- See [CONFIG.md](CONFIG.md) for full configuration options
+- See [USER-GUIDE.md](USER-GUIDE.md) for complete documentation
 - Check example content files for formatting
