@@ -171,13 +171,16 @@ function truncate(text: string, limit: number): string {
               <p class="featured-description">{item.description}</p>
             )}
 
-            {showTags && item.tags && item.tags.length > 0 && (
-              <ViewTags tags={item.tags} limit={tagLimit} style="pills" class="featured-tags" />
-            )}
-
-            {actionLinks.length > 0 && (
-              <ViewLinks links={actionLinks} style={linkStyle} class="featured-links" />
-            )}
+            {(showTags && item.tags && item.tags.length > 0) || actionLinks.length > 0 ? (
+              <div class="featured-footer">
+                {showTags && item.tags && item.tags.length > 0 && (
+                  <ViewTags tags={item.tags} class="featured-tags" />
+                )}
+                {actionLinks.length > 0 && (
+                  <ViewLinks links={actionLinks} style="icons" class="featured-links" />
+                )}
+              </div>
+            ) : null}
           </article>
         );
       })}
@@ -225,7 +228,7 @@ function truncate(text: string, limit: number): string {
 
                   <div class="item-footer">
                     {showTags && item.tags && item.tags.length > 0 && (
-                      <ViewTags tags={item.tags} limit={3} style="minimal" class="item-tags" />
+                      <ViewTags tags={item.tags} class="item-tags" />
                     )}
 
                     {actionLinks.length > 0 && (
@@ -313,13 +316,22 @@ function truncate(text: string, limit: number): string {
     margin: 0 0 var(--space-4) 0;
   }
 
+  .featured-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-border);
+  }
+
   .featured-tags {
-    margin-bottom: var(--space-4);
+    flex: 1;
   }
 
   .featured-links {
-    padding-top: var(--space-2);
-    border-top: 1px solid var(--color-border);
+    flex-shrink: 0;
   }
 
   /* List Section */

@@ -2,28 +2,21 @@
 /**
  * ViewTags Primitive
  *
- * Tag display component with consistent styling.
- * Supports limiting visible tags and custom styling.
+ * Minimal tag pills - subtle but clearly tags.
  *
  * @prop tags - Array of tag strings
  * @prop limit - Maximum tags to show (rest shown as "+N more")
- * @prop style - Display style: 'pills' | 'inline' | 'minimal'
  * @prop class - Additional CSS classes
- *
- * Usage in frontmatter:
- *   showTags: true
- *   tagLimit: 3
- *   tagStyle: "pills"  # or "inline", "minimal"
  */
 
 interface Props {
   tags: string[];
   limit?: number;
-  style?: 'pills' | 'inline' | 'minimal';
+  style?: string; // kept for backwards compat, ignored
   class?: string;
 }
 
-const { tags, limit, style = 'pills', class: className } = Astro.props;
+const { tags, limit, class: className } = Astro.props;
 
 // Limit tags if specified
 const visibleTags = limit ? tags.slice(0, limit) : tags;
@@ -31,7 +24,7 @@ const hiddenCount = limit ? Math.max(0, tags.length - limit) : 0;
 ---
 
 {tags.length > 0 && (
-  <div class:list={['view-tags', `view-tags--${style}`, className]}>
+  <div class:list={['view-tags', className]}>
     {visibleTags.map(tag => (
       <span class="view-tag">{tag}</span>
     ))}
@@ -43,64 +36,24 @@ const hiddenCount = limit ? Math.max(0, tags.length - limit) : 0;
 
 <style>
   .view-tags {
-    display: flex;
+    display: inline-flex;
     flex-wrap: wrap;
-    gap: var(--view-tag-gap);
-  }
-
-  .view-tag {
-    font-size: var(--view-tag-size);
-    color: var(--view-tag-color);
-    white-space: nowrap;
-  }
-
-  /* Pills style (default) */
-  .view-tags--pills .view-tag {
-    padding: var(--view-tag-padding);
-    background: var(--view-tag-bg);
-    border-radius: var(--view-tag-radius);
-  }
-
-  .view-tags--pills .view-tag--more {
-    color: var(--color-text-muted);
-    font-style: italic;
-  }
-
-  /* Inline style (comma-separated) */
-  .view-tags--inline {
-    gap: 0;
-  }
-
-  .view-tags--inline .view-tag {
-    padding: 0;
-    background: none;
-  }
-
-  .view-tags--inline .view-tag:not(:last-child)::after {
-    content: ', ';
-  }
-
-  .view-tags--inline .view-tag--more::before {
-    content: ' ';
-  }
-
-  /* Minimal style (just text, subtle) */
-  .view-tags--minimal {
     gap: var(--space-2);
   }
 
-  .view-tags--minimal .view-tag {
-    padding: 0;
-    background: none;
-    opacity: 0.7;
+  .view-tag {
+    display: inline-block;
+    font-size: var(--font-size-xs);
+    font-family: var(--font-body);
+    color: var(--color-text-muted);
+    background: var(--color-bg-alt);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-full);
+    white-space: nowrap;
   }
 
-  .view-tags--minimal .view-tag::before {
-    content: '#';
-    opacity: 0.5;
-  }
-
-  .view-tags--minimal .view-tag--more::before {
-    content: '';
+  .view-tag--more {
+    font-style: italic;
+    background: transparent;
   }
 </style>

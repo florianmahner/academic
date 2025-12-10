@@ -46,7 +46,7 @@
      ======================================== */
 
   /* Tier 3: Meta/Date */
-  --view-date-font: var(--font-mono);
+  --view-date-font: var(--font-body);
   --view-date-size: var(--font-size-xs);
   --view-date-color: var(--color-text-muted);
 
@@ -77,22 +77,22 @@
   --view-link-icon-size: 14px;
 
   /* ========================================
-     Tags
+     Tags - Simple, minimal design
      ======================================== */
   --view-tag-size: var(--font-size-xs);
-  --view-tag-padding: var(--space-1) var(--space-2);
-  --view-tag-radius: var(--radius-sm);
-  --view-tag-bg: var(--color-bg-alt);
+  --view-tag-padding: 0;
+  --view-tag-radius: 0;
+  --view-tag-bg: transparent;
   --view-tag-color: var(--color-text-muted);
-  --view-tag-gap: var(--space-2);
+  --view-tag-gap: var(--space-3);
 
   /* ========================================
      Year/Group Headers
      ======================================== */
-  --view-year-font: var(--font-mono);
+  --view-year-font: var(--font-body);
   --view-year-size: var(--font-size-sm);
   --view-year-weight: var(--font-weight-semibold);
-  --view-year-color: var(--color-accent);
+  --view-year-color: var(--color-text-muted);
 
   /* ========================================
      Featured Items
