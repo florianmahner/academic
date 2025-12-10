@@ -54,7 +54,8 @@ p, h1, h2, h3, h4, h5, h6 {
 
 /* Article wrapper - vertical spacing only */
 article {
-  padding: var(--content-top-padding) 0;
+  padding-top: var(--content-top-padding);
+  padding-bottom: var(--space-8);
 }
 
 /* Container - the ONE source of truth for content width */
