@@ -780,16 +780,18 @@ const socialIcons: Record<string, string> = {
         justify-content: center;
         gap: var(--space-4);
         flex-wrap: wrap;
+        line-height: 1;
       }
 
       .footer-copy {
         font-size: var(--font-size-xs);
         color: var(--color-text-muted);
+        line-height: 1;
       }
 
       .footer-icons {
         display: flex;
-        gap: var(--space-3);
+        gap: var(--space-2);
         align-items: center;
       }
 
@@ -800,6 +802,7 @@ const socialIcons: Record<string, string> = {
         color: var(--color-text-muted);
         background: none;
         transition: color 0.15s ease;
+        padding: 2px;
       }
 
       .social-icon:hover {
@@ -808,11 +811,14 @@ const socialIcons: Record<string, string> = {
 
       .social-icon svg {
         display: block;
+        width: 16px;
+        height: 16px;
       }
 
       .footer-credit {
         font-size: var(--font-size-xs);
         color: var(--color-text-muted);
+        line-height: 1;
       }
 
       .footer-credit a {
