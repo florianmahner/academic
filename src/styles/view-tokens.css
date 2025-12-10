@@ -106,7 +106,7 @@
      Grid Layout (for GridView)
      ======================================== */
   --view-grid-columns: 3;
-  --view-grid-gap: var(--space-6);
+  --view-grid-gap: var(--space-3);
   --view-card-radius: var(--radius-md);
   --view-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 
@@ -142,6 +142,6 @@
 @media (max-width: 480px) {
   :root {
     --view-grid-columns: 1;
-    --view-grid-gap: var(--space-4);
+    --view-grid-gap: var(--space-3);
   }
 }

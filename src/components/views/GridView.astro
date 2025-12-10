@@ -167,6 +167,7 @@ const visibleItems = items.filter(item => !item.draft);
   .grid-view {
     display: grid;
     gap: var(--view-grid-gap);
+    align-items: start;
   }
 
   /* Column variants */
@@ -188,15 +189,15 @@ const visibleItems = items.filter(item => !item.draft);
 
   /* Gap variants */
   .grid-view--gap-small {
-    gap: var(--space-4);
+    gap: var(--space-2);
   }
 
   .grid-view--gap-medium {
-    gap: var(--space-6);
+    gap: var(--space-3);
   }
 
   .grid-view--gap-large {
-    gap: var(--space-8);
+    gap: var(--space-4);
   }
 
   /* Card */
@@ -208,6 +209,7 @@ const visibleItems = items.filter(item => !item.draft);
     overflow: hidden;
     transition: all var(--view-transition);
     border-left: 2px solid transparent;
+    padding: 0; /* Override global article padding */
   }
 
   @media (hover: hover) {
@@ -240,10 +242,7 @@ const visibleItems = items.filter(item => !item.draft);
 
   /* Content */
   .card-content {
-    padding: var(--space-4);
-    display: flex;
-    flex-direction: column;
-    flex: 1;
+    padding: var(--space-3);
   }
 
   .card-header {
@@ -285,12 +284,11 @@ const visibleItems = items.filter(item => !item.draft);
     font-size: var(--view-description-size);
     color: var(--view-description-color);
     line-height: var(--line-height-relaxed);
-    margin: 0 0 var(--space-3) 0;
-    flex: 1;
+    margin: 0 0 var(--space-2) 0;
   }
 
   .card-tags {
-    margin-top: auto;
+    margin-top: 0;
   }
 
   .empty-state {
