@@ -4,6 +4,7 @@
  * Display academic publication with preview, metadata, and links
  */
 import Picture from '../ui/Picture.astro';
+import ActionLink from '../primitives/ActionLink.astro';
 
 interface Props {
   title: string;
@@ -66,35 +67,9 @@ const primaryLink = pdf || html;
       ))}
     </p>
     <div class="paper-links">
-      {pdf && (
-        <a href={pdf} class="paper-link" target="_blank" rel="noopener noreferrer">
-          <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-            <polyline points="7 10 12 15 17 10"></polyline>
-            <line x1="12" y1="15" x2="12" y2="3"></line>
-          </svg>
-          PDF
-        </a>
-      )}
-      {html && (
-        <a href={html} class="paper-link" target="_blank" rel="noopener noreferrer">
-          <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="2" y1="12" x2="22" y2="12"></line>
-            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-          </svg>
-          Web
-        </a>
-      )}
-      {code && (
-        <a href={code} class="paper-link" target="_blank" rel="noopener noreferrer">
-          <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="16 18 22 12 16 6"></polyline>
-            <polyline points="8 6 2 12 8 18"></polyline>
-          </svg>
-          Code
-        </a>
-      )}
+      {pdf && <ActionLink href={pdf} label="PDF" icon="external" />}
+      {html && <ActionLink href={html} label="Web" icon="globe" />}
+      {code && <ActionLink href={code} label="Code" icon="code" />}
     </div>
   </div>
 </article>
@@ -200,26 +175,6 @@ const primaryLink = pdf || html;
     display: flex;
     gap: var(--space-3);
     margin-top: auto;
-  }
-
-  .paper-link {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-1);
-    font-size: var(--font-size-xs);
-    font-family: var(--font-body);
-    font-weight: var(--font-weight-medium);
-    color: var(--color-text-secondary);
-    background: none;
-    padding: var(--space-1) var(--space-2);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-full);
-    transition: all var(--transition-fast);
-  }
-
-  .paper-link:hover {
-    color: var(--color-accent);
-    border-color: var(--color-accent);
   }
 
   @media (max-width: 600px) {

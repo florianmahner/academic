@@ -6,6 +6,7 @@
 
 import { formatDate } from '../../lib/date-utils';
 import Badge from '../ui/Badge.astro';
+import ActionLink from '../primitives/ActionLink.astro';
 
 interface Props {
   type: 'blog' | 'talk' | 'publication';
@@ -123,42 +124,10 @@ const typeLabels = {
 
       {(slides || video || pdf || code) && (
         <div class="news-links">
-          {slides && (
-            <a href={slides} class="news-action-link" target="_blank" rel="noopener noreferrer">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-                <line x1="8" y1="21" x2="16" y2="21"></line>
-                <line x1="12" y1="17" x2="12" y2="21"></line>
-              </svg>
-              Slides
-            </a>
-          )}
-          {video && (
-            <a href={video} class="news-action-link" target="_blank" rel="noopener noreferrer">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polygon points="5 3 19 12 5 21 5 3"></polygon>
-              </svg>
-              Video
-            </a>
-          )}
-          {pdf && (
-            <a href={pdf} class="news-action-link" target="_blank" rel="noopener noreferrer">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-              </svg>
-              PDF
-            </a>
-          )}
-          {code && (
-            <a href={code} class="news-action-link" target="_blank" rel="noopener noreferrer">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="16 18 22 12 16 6"></polyline>
-                <polyline points="8 6 2 12 8 18"></polyline>
-              </svg>
-              Code
-            </a>
-          )}
+          {slides && <ActionLink href={slides} label="Slides" icon="slides" />}
+          {video && <ActionLink href={video} label="Video" icon="video" />}
+          {pdf && <ActionLink href={pdf} label="PDF" icon="external" />}
+          {code && <ActionLink href={code} label="Code" icon="code" />}
         </div>
       )}
     </div>
@@ -285,40 +254,9 @@ const typeLabels = {
     margin-top: var(--space-2);
   }
 
-  .news-action-link {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-1);
-    font-size: var(--font-size-xs);
-    font-family: var(--font-body);
-    font-weight: var(--font-weight-medium);
-    color: var(--color-text-secondary);
-    background: none;
-    padding: var(--space-1) var(--space-2);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-full);
-    transition: all var(--transition-fast);
-    text-decoration: none;
-  }
-
-  .news-action-link:hover {
-    color: var(--color-accent);
-    border-color: var(--color-accent);
-    background-color: rgba(196, 30, 58, 0.05);
-  }
-
-  [data-theme="dark"] .news-action-link:hover {
-    background-color: rgba(255, 77, 106, 0.1);
-  }
-
   @media (max-width: 640px) {
     .news-title {
       font-size: var(--font-size-base);
-    }
-
-    .news-links {
-      flex-direction: column;
-      gap: var(--space-2);
     }
   }
 </style>

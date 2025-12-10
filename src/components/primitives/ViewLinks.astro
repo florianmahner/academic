@@ -2,96 +2,50 @@
 /**
  * ViewLinks Primitive
  *
- * Icon-based action links for external resources.
- * Consistent link display across all views.
+ * Collection of action links for external resources.
+ * Uses ActionLink primitive for consistent styling.
  *
- * @prop links - Array of link objects with label, url, and optional icon
- * @prop show - Array of link types to show (filters available links)
- * @prop style - Display style: 'icons' | 'text' | 'both'
+ * @prop links - Array of link objects with label and url
  * @prop class - Additional CSS classes
- *
- * Built-in link types with icons:
- * - github, website, demo, docs, pdf, slides, video, code, poster, materials
- *
- * Usage in frontmatter:
- *   showLinks: ["github", "demo", "docs"]
- *   linkStyle: "icons"  # or "text", "both"
  */
+
+import ActionLink from './ActionLink.astro';
 
 interface Link {
   label: string;
   url: string;
-  icon?: string;
 }
 
 interface Props {
   links: Link[];
-  style?: 'icons' | 'text' | 'both';
+  style?: 'icons' | 'text' | 'both'; // kept for backwards compat, ignored
   class?: string;
 }
 
-const { links, style = 'both', class: className } = Astro.props;
-
-// Built-in icons (SVG paths for 24x24 viewBox)
-const builtInIcons: Record<string, string> = {
-  github: 'M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22',
-  website: 'M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71',
-  demo: 'M5 3l14 9-14 9V3z',
-  docs: 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zM14 2v6h6M16 13H8M16 17H8M10 9H8',
-  pdf: 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zM14 2v6h6M12 18v-6M9 15h6',
-  slides: 'M2 3h20v14H2zM8 21h8M12 17v4',
-  video: 'M23 7l-7 5 7 5V7zM14 5H3a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2z',
-  code: 'M16 18l6-6-6-6M8 6l-6 6 6 6',
-  poster: 'M4 3h16a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM8 7h8M8 11h8M8 15h4',
-  materials: 'M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z',
-  pypi: 'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5',
-  external: 'M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3',
-};
-
-// Get icon for a link (use built-in or fallback to external)
-function getIcon(link: Link): string {
-  if (link.icon) return link.icon;
-
-  const labelLower = link.label.toLowerCase();
-  for (const [key, icon] of Object.entries(builtInIcons)) {
-    if (labelLower.includes(key)) return icon;
-  }
-  return builtInIcons.external;
-}
+const { links, class: className } = Astro.props;
 
 // Filter out empty links
 const validLinks = links.filter(link => link.url);
+
+// Determine icon type based on label
+function getIconType(label: string): 'external' | 'globe' | 'code' | 'github' | 'slides' | 'video' {
+  const lower = label.toLowerCase();
+  if (lower.includes('code') || lower.includes('github')) return 'code';
+  if (lower.includes('slides')) return 'slides';
+  if (lower.includes('video')) return 'video';
+  if (lower.includes('web') || lower.includes('website') || lower.includes('demo')) return 'globe';
+  return 'external';
+}
 ---
 
 {validLinks.length > 0 && (
-  <div class:list={['view-links', `view-links--${style}`, className]}>
+  <div class:list={['view-links', className]}>
     {validLinks.map(link => (
-      <a
+      <ActionLink
         href={link.url}
-        class="view-link"
-        target="_blank"
-        rel="noopener noreferrer"
-        title={link.label}
-      >
-        {(style === 'icons' || style === 'both') && (
-          <svg
-            class="view-link-icon"
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d={getIcon(link)} />
-          </svg>
-        )}
-        {(style === 'text' || style === 'both') && (
-          <span class="view-link-label">{link.label}</span>
-        )}
-      </a>
+        label={link.label}
+        icon={getIconType(link.label)}
+      />
     ))}
   </div>
 )}
@@ -100,47 +54,6 @@ const validLinks = links.filter(link => link.url);
   .view-links {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-2);
-  }
-
-  .view-link {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-1);
-    font-size: var(--font-size-xs);
-    font-family: var(--font-body);
-    font-weight: var(--font-weight-medium);
-    color: var(--color-text-secondary);
-    text-decoration: none;
-    background: none;
-    padding: var(--space-1) var(--space-2);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-full);
-    transition: all var(--transition-fast);
-  }
-
-  .view-link:hover {
-    color: var(--color-accent);
-    border-color: var(--color-accent);
-  }
-
-  .view-link-icon {
-    width: 14px;
-    height: 14px;
-    flex-shrink: 0;
-  }
-
-  .view-link-label {
-    white-space: nowrap;
-  }
-
-  /* Icons-only style - still show pills */
-  .view-links--icons .view-link-label {
-    display: none;
-  }
-
-  /* Text-only style */
-  .view-links--text .view-link-icon {
-    display: none;
+    gap: var(--space-3);
   }
 </style>
