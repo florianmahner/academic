@@ -4,6 +4,8 @@
  * Display GitHub repository with stats
  */
 
+import Card from '../primitives/Card.astro';
+
 interface Props {
   name: string;
   description?: string;
@@ -41,9 +43,9 @@ const langColors: Record<string, string> = {
 const langColor = langColors[language?.toLowerCase() || 'default'] || langColors.default;
 ---
 
-<a href={url} class:list={['repo-card', className]} target="_blank" rel="noopener noreferrer">
-  <div class="repo-name">{name}</div>
-  {description && <div class="repo-desc">{description}</div>}
+<Card href={url} external class:list={['repo-card', className]}>
+  <h3 class="repo-name">{name}</h3>
+  {description && <p class="repo-desc">{description}</p>}
   <div class="repo-footer">
     {language && (
       <span class="lang">
@@ -70,28 +72,15 @@ const langColor = langColors[language?.toLowerCase() || 'default'] || langColors
       )}
     </span>
   </div>
-</a>
+</Card>
 
 <style>
-  .repo-card {
-    display: block;
-    padding: var(--space-4);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    text-decoration: none;
-    transition: border-color var(--transition-fast);
-  }
-
-  .repo-card:hover {
-    border-color: var(--color-text-muted);
-  }
-
   .repo-name {
     font-family: var(--font-body);
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-medium);
     color: var(--color-text);
-    margin-bottom: var(--space-1);
+    margin: 0 0 var(--space-1);
     transition: color var(--transition-fast);
   }
 
@@ -104,7 +93,7 @@ const langColor = langColors[language?.toLowerCase() || 'default'] || langColors
     font-family: var(--font-body);
     color: var(--color-text-muted);
     line-height: var(--line-height-normal);
-    margin-bottom: var(--space-3);
+    margin: 0 0 var(--space-3);
   }
 
   .repo-footer {
@@ -138,7 +127,6 @@ const langColor = langColors[language?.toLowerCase() || 'default'] || langColors
     display: flex;
     align-items: center;
     gap: 4px;
-    font-family: var(--font-body);
   }
 
   .stat svg {

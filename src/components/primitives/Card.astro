@@ -1,0 +1,51 @@
+---
+/**
+ * Card Primitive
+ *
+ * Base card container with consistent styling.
+ * Used by PaperCard, ProjectCard, RepoCard, etc.
+ *
+ * @prop href - Optional link URL (makes card clickable)
+ * @prop external - Open link in new tab
+ * @prop class - Additional CSS classes
+ */
+
+interface Props {
+  href?: string;
+  external?: boolean;
+  class?: string;
+}
+
+const { href, external = false, class: className } = Astro.props;
+
+const Tag = href ? 'a' : 'div';
+const linkProps = href
+  ? {
+      href,
+      target: external ? '_blank' : undefined,
+      rel: external ? 'noopener noreferrer' : undefined,
+    }
+  : {};
+---
+
+<Tag {...linkProps} class:list={['card', className]}>
+  <slot />
+</Tag>
+
+<style>
+  .card {
+    display: block;
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    color: inherit;
+    transition: border-left-color var(--transition-fast);
+    border-left: 2px solid transparent;
+  }
+
+  @media (hover: hover) {
+    a.card:hover {
+      border-left-color: var(--color-accent);
+    }
+  }
+</style>

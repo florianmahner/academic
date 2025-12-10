@@ -4,6 +4,7 @@
  * Display project with image, description, and links
  */
 
+import Card from '../primitives/Card.astro';
 import Badge from '../ui/Badge.astro';
 
 interface Props {
@@ -25,16 +26,9 @@ const {
   featured = false,
   class: className,
 } = Astro.props;
-
-const Tag = url ? 'a' : 'div';
 ---
 
-<Tag
-  href={url}
-  target={url ? '_blank' : undefined}
-  rel={url ? 'noopener noreferrer' : undefined}
-  class:list={['project-card', featured && 'featured', className]}
->
+<Card href={url} external={!!url} class:list={['project-card', { featured }, className]}>
   {image && (
     <div class="project-image">
       <img src={image} alt={title} loading="lazy" decoding="async" />
@@ -51,29 +45,11 @@ const Tag = url ? 'a' : 'div';
       </div>
     )}
   </div>
-</Tag>
+</Card>
 
 <style>
-  .project-card {
-    display: block;
-    padding: var(--space-4);
-    border-radius: var(--radius-md);
-    text-decoration: none;
-    color: inherit;
-    transition: all var(--transition-fast);
-    background-color: var(--color-bg);
-    border-left: 2px solid transparent;
-  }
-
-  @media (hover: hover) {
-    a.project-card:hover {
-      border-left-color: var(--color-accent);
-    }
-  }
-
   .project-card.featured {
-    border-color: var(--color-accent);
-    border-width: 2px;
+    border-left-color: var(--color-accent);
   }
 
   .project-image {
@@ -103,7 +79,7 @@ const Tag = url ? 'a' : 'div';
     transition: color var(--transition-fast);
   }
 
-  a.project-card:hover .project-title {
+  .project-card:hover .project-title {
     color: var(--color-accent);
   }
 
