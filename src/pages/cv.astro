@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import ActionLink from '../components/primitives/ActionLink.astro';
 import { config } from '../lib/config';
 import cvData from '../content/cv.json';
 
@@ -42,15 +43,7 @@ const displayName = cvData.basics?.name || `${config.name.first} ${config.name.l
           <h1>{displayName}</h1>
           {cvData.basics?.label && <p class="cv-label">{cvData.basics.label}</p>}
         </div>
-        {pdfPath && <a href={prependBase(pdfPath)} class="cv-download" target="_blank" rel="noopener">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-            <polyline points="14 2 14 8 20 8"></polyline>
-            <line x1="16" y1="13" x2="8" y2="13"></line>
-            <line x1="16" y1="17" x2="8" y2="17"></line>
-          </svg>
-          PDF
-        </a>}
+        {pdfPath && <ActionLink href={prependBase(pdfPath)} label="PDF" icon="external" />}
       </header>
 
       {/* Summary */}
@@ -226,27 +219,6 @@ const displayName = cvData.basics?.name || `${config.name.first} ${config.name.l
     font-size: var(--font-size-base);
     color: var(--color-text-secondary);
     font-style: italic;
-  }
-
-  .cv-download {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    font-size: var(--font-size-sm);
-    font-family: var(--font-mono);
-    color: var(--color-text-muted);
-    text-decoration: none;
-    padding: var(--space-2) var(--space-3);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-full);
-    transition: all var(--transition-fast);
-    background: none;
-    flex-shrink: 0;
-  }
-
-  .cv-download:hover {
-    color: var(--color-accent);
-    border-color: var(--color-accent);
   }
 
   /* Summary */
@@ -473,10 +445,6 @@ const displayName = cvData.basics?.name || `${config.name.first} ${config.name.l
 
   /* Print */
   @media print {
-    .cv-download {
-      display: none;
-    }
-
     .cv-page {
       padding: 0;
     }
