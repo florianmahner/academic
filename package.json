@@ -26,15 +26,9 @@
   },
   "devDependencies": {
     "@typescript-eslint/parser": "^8.48.1",
-    "canvas": "^3.2.0",
     "eslint": "^9.39.1",
     "eslint-plugin-astro": "^1.5.0",
-    "gif-encoder-2": "^1.0.5",
     "husky": "^9.1.7",
-    "jsonresume-theme-elegant": "^1.16.1",
-    "jsonresume-theme-even": "^0.26.1",
-    "jsonresume-theme-stackoverflow": "^2.1.0",
-    "resume-cli": "^3.0.8",
     "sharp": "^0.34.5"
   }
 }

@@ -3,24 +3,13 @@
  * Auto-generates navigation from pages and config
  *
  * IMPORTANT: Navigation items are defined in config.yaml, NOT in page frontmatter.
- * The `nav: true` frontmatter option is NOT currently used by the system.
  *
  * To add a page to navigation:
  * 1. Add it to config.yaml under navigation.items
  * 2. Ensure the page exists in src/pages/ or src/content/pages/
- *
- * Navigation Configuration Example:
- * ```yaml
- * navigation:
- *   items:
- *     - id: cv
- *       label: CV
- *       href: /cv
- * ```
  */
 
-import { getCollection } from 'astro:content';
-import { config } from '../config';
+import { config } from './config';
 
 export interface NavItem {
   id: string;
@@ -31,23 +20,11 @@ export interface NavItem {
   active?: boolean;
 }
 
-interface PageFrontmatter {
-  nav?: boolean;
-  nav_label?: string;
-  nav_order?: number;
-  title?: string;
-}
-
 /**
- * Get all navigation items from:
- * 1. Pages with nav: true in frontmatter
- * 2. Config navigation overrides
- * 3. Default items for enabled features
+ * Get all navigation items from config
  */
 export async function getNavigation(): Promise<NavItem[]> {
-  const items: NavItem[] = [];
-
-  // Start with config navigation items (these take precedence)
+  // Get navigation items from config
   const configItems = config.navigation.map((item, index) => ({
     id: item.id || item.label.toLowerCase().replace(/\s+/g, '-'),
     label: item.label,
@@ -56,16 +33,10 @@ export async function getNavigation(): Promise<NavItem[]> {
     external: item.href.startsWith('http'),
   }));
 
-  items.push(...configItems);
-
-  // TODO: In future, scan for pages with nav: true frontmatter
-  // This would require dynamic page scanning at build time
-  // For now, we rely on config.navigation
-
   // Sort by order
-  items.sort((a, b) => a.order - b.order);
+  configItems.sort((a, b) => a.order - b.order);
 
-  return items;
+  return configItems;
 }
 
 /**
@@ -125,59 +96,4 @@ export function applyBasePath(items: NavItem[], base: string): NavItem[] {
     ...item,
     href: item.external ? item.href : `${normalizedBase}${item.href}`,
   }));
-}
-
-/**
- * Get breadcrumb trail for current page
- * Useful for showing navigation hierarchy
- */
-export async function getBreadcrumbs(currentPath: string): Promise<NavItem[]> {
-  const items = await getNavigation();
-  const breadcrumbs: NavItem[] = [];
-
-  // Find the current page in navigation
-  const currentItem = items.find(item => isPathActive(currentPath, item.href));
-
-  if (currentItem) {
-    breadcrumbs.push(currentItem);
-  }
-
-  return breadcrumbs;
-}
-
-/**
- * Configuration for dynamic navigation generation
- * This would be used if we implement page scanning in the future
- */
-export const navigationConfig = {
-  // Pages to exclude from auto-generation
-  excludePaths: [
-    '/404',
-    '/robots.txt',
-    '/sitemap.xml',
-  ],
-
-  // Default order for pages without explicit nav_order
-  defaultOrder: 999,
-
-  // Whether to include pages without nav: true
-  autoInclude: false,
-};
-
-/**
- * Future: Scan Astro pages for navigation metadata
- * This would enable automatic navigation generation from page frontmatter
- *
- * Example usage in a page:
- * ---
- * title: "About Me"
- * nav: true
- * nav_label: "About"  // Optional: override title
- * nav_order: 1         // Optional: explicit ordering
- * ---
- */
-export async function scanPagesForNavigation(): Promise<NavItem[]> {
-  // This is a placeholder for future implementation
-  // Would require build-time page scanning with Vite or Astro API
-  return [];
 }

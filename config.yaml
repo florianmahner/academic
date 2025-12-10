@@ -64,7 +64,6 @@ navigation:
   mode: sidebar
 
   # Navigation items (order matters!)
-  # Comment out or remove items you don't need
   items:
     - id: about
       label: About
@@ -72,6 +71,9 @@ navigation:
     - id: publications
       label: Publications
       href: /publications
+    - id: cv
+      label: CV
+      href: /cv
     - id: projects
       label: Projects
       href: /projects
@@ -90,9 +92,6 @@ navigation:
     - id: open-source
       label: Open Source
       href: /open-source
-    - id: cv
-      label: CV
-      href: /cv
     - id: contact
       label: Contact
       href: /contact

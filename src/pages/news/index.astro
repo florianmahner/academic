@@ -4,24 +4,22 @@
  * Aggregates recent items from blog, talks, and publications
  * Uses the unified view system for consistent, customizable display
  */
-import { getCollection, getEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { config } from '../../config';
+import { config } from '../../lib/config';
 import ViewDispatcher from '../../components/views/ViewDispatcher.astro';
 import { loadPublications } from '../../lib/bibtex';
 import path from 'node:path';
 
-// Get page configuration from frontmatter
-const pageConfig = await getEntry('collection-pages', 'news');
-if (!pageConfig) {
-  throw new Error('Missing collection-pages/news.md - please create this file with layout configuration');
-}
+// Page configuration (inline - no external config file needed)
+const title = 'News & Updates';
+const description = 'Recent announcements, publications, and academic activities';
+const view = 'timeline';
+const viewConfig = { groupBy: 'year', showDate: true, dateFormat: 'short' };
+const sortOrder = 'desc';
 
-const { title, description, view, viewConfig, sortOrder } = pageConfig.data;
-
-// Fetch all content collections
+// Fetch blog posts
 const blogPosts = await getCollection('blog', ({ data }) => !data.draft);
-const talks = await getCollection('talks');
 
 // Load publications from BibTeX
 const contentDir = path.join(process.cwd(), 'src', 'content');
@@ -48,20 +46,6 @@ const newsItems = [
       image: image,
     };
   }),
-
-  // Talks
-  ...talks.map(talk => ({
-    type: 'talk' as const,
-    date: talk.data.date,
-    title: talk.data.title,
-    description: talk.data.description || talk.data.abstract,
-    slug: talk.slug,
-    tags: talk.data.tags,
-    event: talk.data.event,
-    location: talk.data.location,
-    slides: talk.data.slides,
-    video: talk.data.video,
-  })),
 
   // Publications (limit to recent ones)
   ...publications.slice(0, 10).map(pub => ({

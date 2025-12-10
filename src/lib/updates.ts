@@ -35,7 +35,7 @@ export async function getAllUpdates(): Promise<UpdateItem[]> {
       url: `/publications/${pub.slug}`,
       description: pub.data.abstract,
     }));
-  } catch (e) {
+  } catch {
     // Collection doesn't exist, skip
   }
 
@@ -52,7 +52,7 @@ export async function getAllUpdates(): Promise<UpdateItem[]> {
       url: `/talks/${talk.slug}`,
       description: talk.data.abstract,
     }));
-  } catch (e) {
+  } catch {
     // Collection doesn't exist, skip
   }
 
@@ -77,7 +77,7 @@ export async function getAllUpdates(): Promise<UpdateItem[]> {
       url: `/teaching/${course.slug}`,
       description: course.data.description,
     }));
-  } catch (e) {
+  } catch {
     // Collection doesn't exist, skip
   }
 
@@ -93,7 +93,7 @@ export async function getAllUpdates(): Promise<UpdateItem[]> {
       description: project.data.description,
       tags: project.data.tags,
     }));
-  } catch (e) {
+  } catch {
     // Collection doesn't exist, skip
   }
 
@@ -105,45 +105,6 @@ export async function getAllUpdates(): Promise<UpdateItem[]> {
     ...teachingUpdates,
     ...projectUpdates,
   ].sort((a, b) => b.date.getTime() - a.date.getTime());
-}
-
-/**
- * Get recent updates with limit
- */
-export async function getRecentUpdates(limit: number = 5): Promise<UpdateItem[]> {
-  const allUpdates = await getAllUpdates();
-  return allUpdates.slice(0, limit);
-}
-
-/**
- * Get updates filtered by type
- */
-export async function getUpdatesByType(
-  types: UpdateItem['type'][]
-): Promise<UpdateItem[]> {
-  const allUpdates = await getAllUpdates();
-  return allUpdates.filter(update => types.includes(update.type));
-}
-
-/**
- * Get updates for a specific year
- */
-export async function getUpdatesByYear(year: number): Promise<UpdateItem[]> {
-  const allUpdates = await getAllUpdates();
-  return allUpdates.filter(update => update.date.getFullYear() === year);
-}
-
-/**
- * Get updates within a date range
- */
-export async function getUpdatesInRange(
-  startDate: Date,
-  endDate: Date
-): Promise<UpdateItem[]> {
-  const allUpdates = await getAllUpdates();
-  return allUpdates.filter(
-    update => update.date >= startDate && update.date <= endDate
-  );
 }
 
 /**
@@ -160,27 +121,6 @@ export function groupUpdatesByYear(
       grouped.set(year, []);
     }
     grouped.get(year)!.push(update);
-  });
-
-  return grouped;
-}
-
-/**
- * Group updates by month (YYYY-MM format)
- */
-export function groupUpdatesByMonth(
-  updates: UpdateItem[]
-): Map<string, UpdateItem[]> {
-  const grouped = new Map<string, UpdateItem[]>();
-
-  updates.forEach(update => {
-    const monthKey = `${update.date.getFullYear()}-${String(
-      update.date.getMonth() + 1
-    ).padStart(2, '0')}`;
-    if (!grouped.has(monthKey)) {
-      grouped.set(monthKey, []);
-    }
-    grouped.get(monthKey)!.push(update);
   });
 
   return grouped;

@@ -1,0 +1,105 @@
+---
+/**
+ * List Layout - For pages that display a list of items
+ *
+ * Usage in markdown:
+ * ---
+ * layout: ~/layouts/ListLayout.astro
+ * title: "Talks"
+ * view: timeline
+ * items:
+ *   - title: "My Talk"
+ *     date: 2024-01-15
+ * ---
+ */
+
+import BaseLayout from './BaseLayout.astro';
+import ViewDispatcher from '../components/views/ViewDispatcher.astro';
+import { config } from '../lib/config';
+
+interface Props {
+  frontmatter: {
+    title: string;
+    description?: string;
+    view?: string;
+    viewConfig?: Record<string, any>;
+    items?: any[];
+    groupBy?: string;
+    showDate?: boolean;
+    dateFormat?: string;
+    showLinks?: string[];
+    collection?: string;
+    itemType?: string;
+    [key: string]: any;
+  };
+}
+
+const { frontmatter } = Astro.props;
+const {
+  title,
+  description,
+  view = 'timeline',
+  viewConfig = {},
+  items = [],
+} = frontmatter;
+
+const pageTitle = `${title} | ${config.site.title}`;
+
+// Build viewConfig from frontmatter properties
+const resolvedViewConfig = {
+  ...viewConfig,
+  style: frontmatter.style ?? viewConfig.style,
+  groupBy: frontmatter.groupBy ?? viewConfig.groupBy,
+  showDate: frontmatter.showDate ?? viewConfig.showDate,
+  dateFormat: frontmatter.dateFormat ?? viewConfig.dateFormat,
+  showLinks: frontmatter.showLinks ?? viewConfig.showLinks,
+  showRole: frontmatter.showRole ?? viewConfig.showRole,
+  showInstitution: frontmatter.showInstitution ?? viewConfig.showInstitution,
+  showDescription: frontmatter.showDescription ?? viewConfig.showDescription,
+};
+
+// Transform items for ViewDispatcher
+const transformedItems = items.map((item: any, index: number) => ({
+  ...item,
+  date: item.date ? new Date(item.date) : undefined,
+  type: frontmatter.itemType || 'item',
+  slug: item.slug || `item-${index}`,
+}));
+---
+
+<BaseLayout title={pageTitle} description={description}>
+  <article class="collection-page">
+    <div class="container">
+      <ViewDispatcher
+        view={view}
+        items={transformedItems}
+        config={resolvedViewConfig}
+        collection={frontmatter.collection || 'items'}
+        title={title}
+        description={description}
+      />
+
+      <div class="page-content">
+        <slot />
+      </div>
+
+      {transformedItems.length === 0 && (
+        <div class="empty-state">
+          <p>No items to display yet.</p>
+        </div>
+      )}
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .page-content:not(:empty) {
+    margin-top: var(--space-8);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: var(--space-12) var(--space-4);
+    color: var(--color-text-muted);
+  }
+</style>

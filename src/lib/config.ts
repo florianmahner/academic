@@ -74,9 +74,9 @@ const FeaturesSchema = z.object({
 });
 
 const AboutSchema = z.object({
-  bio: z.string(),
-  research_interests: z.string(),
-});
+  bio: z.string().default(""),
+  research_interests: z.string().default(""),
+}).optional();
 
 const FooterLinkSchema = z.object({
   label: z.string(),
@@ -123,7 +123,7 @@ const ConfigSchema = z.object({
   navigation: NavigationSchema,
   theme: ThemeSchema,
   features: FeaturesSchema,
-  about: AboutSchema,
+  about: AboutSchema.optional(),
   footer: FooterSchema,
   publications: PublicationsSchema,
   cv: CVSchema,
@@ -244,15 +244,15 @@ function transformConfig(yamlConfig: ConfigType) {
 
     // NOTE: Layout configuration has moved to frontmatter in src/content/collection-pages/
 
-    // About page content
-    about: {
-      bio: yamlConfig.about.bio,
-      researchInterests: yamlConfig.about.research_interests,
+    // About page content (optional - can be in markdown instead)
+    about: yamlConfig.about ? {
+      bio: yamlConfig.about.bio || "",
+      researchInterests: yamlConfig.about.research_interests || "",
       affiliation: yamlConfig.institution ? {
         name: yamlConfig.institution.name,
         url: yamlConfig.institution.url,
       } : undefined,
-    },
+    } : undefined,
 
     // Footer
     footer: {

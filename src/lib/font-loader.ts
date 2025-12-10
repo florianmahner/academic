@@ -45,12 +45,6 @@ const PRESET_FONT_URLS: Record<string, string> = {
  *
  * @param presetId - The ID of the typography preset
  * @returns Promise that resolves when fonts are loaded
- *
- * @example
- * ```typescript
- * // Load fonts when user switches preset
- * await loadPresetFonts('modern-geist');
- * ```
  */
 export async function loadPresetFonts(presetId: string): Promise<void> {
   // Skip if already loaded
@@ -88,51 +82,7 @@ export async function loadPresetFonts(presetId: string): Promise<void> {
  *
  * @param presetId - The ID of the default typography preset
  * @returns Google Fonts URL for the default preset
- *
- * @example
- * ```astro
- * ---
- * const fontUrl = getDefaultFontUrl('editorial-newsreader');
- * ---
- * <link href={fontUrl} rel="stylesheet" />
- * ```
  */
 export function getDefaultFontUrl(presetId: string = 'editorial-newsreader'): string {
   return PRESET_FONT_URLS[presetId] || PRESET_FONT_URLS['editorial-newsreader'];
-}
-
-/**
- * Preload fonts for a preset (optional optimization)
- * This creates a preload hint but doesn't block rendering
- *
- * @param presetId - The ID of the typography preset
- */
-export function preloadPresetFonts(presetId: string): void {
-  const url = PRESET_FONT_URLS[presetId];
-  if (!url || loadedFonts.has(presetId)) {
-    return;
-  }
-
-  const link = document.createElement('link');
-  link.rel = 'preload';
-  link.as = 'style';
-  link.href = url;
-  document.head.appendChild(link);
-}
-
-/**
- * Check if fonts for a preset are already loaded
- *
- * @param presetId - The ID of the typography preset
- * @returns true if fonts are loaded, false otherwise
- */
-export function arePresetFontsLoaded(presetId: string): boolean {
-  return loadedFonts.has(presetId);
-}
-
-/**
- * Clear the loaded fonts cache (useful for testing)
- */
-export function clearFontCache(): void {
-  loadedFonts.clear();
 }
