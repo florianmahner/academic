@@ -60,7 +60,8 @@ const socialLinks = [
   config.social.researchgate && { label: 'ResearchGate', href: `https://www.researchgate.net/profile/${config.social.researchgate}`, icon: 'researchgate' },
 ].filter(Boolean) as { label: string; href: string; icon: string }[];
 
-const footerLinks = config.footer.links;
+// Add email as a social link with icon
+const emailLink = config.email ? { label: 'Email', href: `mailto:${config.email}`, icon: 'email' } : null;
 
 // SVG icons for social links
 const socialIcons: Record<string, string> = {
@@ -264,13 +265,23 @@ const socialIcons: Record<string, string> = {
       <!-- Footer -->
       <footer class="site-footer">
         <div class="container footer-content">
-          {config.footer.copyright && (
-            <span class="footer-copy">&copy; {new Date().getFullYear()} {fullName}</span>
-          )}
+          <div class="footer-row">
+            {config.footer.copyright && (
+              <span class="footer-copy">&copy; {new Date().getFullYear()} {fullName}</span>
+            )}
 
-          {/* Social icons */}
-          {socialLinks.length > 0 && (
-            <div class="footer-social">
+            {/* All icons in one row: email + social */}
+            <div class="footer-icons">
+              {emailLink && (
+                <a
+                  href={emailLink.href}
+                  class="social-icon"
+                  title={emailLink.label}
+                  aria-label={emailLink.label}
+                >
+                  <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18" set:html={socialIcons[emailLink.icon]} />
+                </a>
+              )}
               {socialLinks.map(link => (
                 <a
                   href={link.href}
@@ -284,29 +295,11 @@ const socialIcons: Record<string, string> = {
                 </a>
               ))}
             </div>
-          )}
 
-          {/* Footer links (email, etc) */}
-          {footerLinks.length > 0 && (
-            <div class="footer-links">
-              {footerLinks.map(link => (
-                <a
-                  href={link.href}
-                  target={link.href.startsWith('mailto:') ? undefined : '_blank'}
-                  rel={link.href.startsWith('mailto:') ? undefined : 'noopener noreferrer'}
-                >
-                  {link.label}
-                </a>
-              ))}
-            </div>
-          )}
-
-          {/* Theme credit */}
-          <div class="footer-credit">
-            <span>Built with</span>
-            <a href="https://github.com/florianmahner/academic-template" target="_blank" rel="noopener noreferrer">
-              Prism
-            </a>
+            {/* Theme credit */}
+            <span class="footer-credit">
+              Built with <a href="https://github.com/florianmahner/academic-template" target="_blank" rel="noopener noreferrer">Prism</a>
+            </span>
           </div>
         </div>
       </footer>
@@ -778,11 +771,15 @@ const socialIcons: Record<string, string> = {
       }
 
       .footer-content {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: var(--space-3);
         text-align: center;
+      }
+
+      .footer-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--space-4);
+        flex-wrap: wrap;
       }
 
       .footer-copy {
@@ -790,29 +787,10 @@ const socialIcons: Record<string, string> = {
         color: var(--color-text-muted);
       }
 
-      .footer-links {
-        display: flex;
-        gap: var(--space-4);
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-
-      .footer-links a {
-        font-size: var(--font-size-xs);
-        color: var(--color-text-muted);
-        text-decoration: none;
-        background: none;
-        transition: color 0.15s ease;
-      }
-
-      .footer-links a:hover {
-        color: var(--color-text);
-      }
-
-      .footer-social {
+      .footer-icons {
         display: flex;
         gap: var(--space-3);
-        justify-content: center;
+        align-items: center;
       }
 
       .social-icon {
@@ -835,9 +813,6 @@ const socialIcons: Record<string, string> = {
       .footer-credit {
         font-size: var(--font-size-xs);
         color: var(--color-text-muted);
-        display: flex;
-        gap: var(--space-1);
-        align-items: center;
       }
 
       .footer-credit a {
