@@ -4,7 +4,7 @@
  */
 
 import { getCollection, type CollectionEntry } from 'astro:content';
-import { config } from '../config';
+import { config } from './config';
 
 export type BlogPost = CollectionEntry<'blog'>;
 

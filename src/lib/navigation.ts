@@ -9,7 +9,7 @@
  * 2. Ensure the page exists in src/pages/ or src/content/pages/
  */
 
-import { config } from '../config';
+import { config } from './config';
 
 export interface NavItem {
   id: string;

@@ -3,7 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import RepoCard from '../components/blocks/RepoCard.astro';
 import reposData from '../content/repositories.json';
 import { loadRepositories } from '../lib/github';
-import { config } from '../config';
+import { config } from '../lib/config';
 
 const title = `Open Source | ${config.site.title}`;
 

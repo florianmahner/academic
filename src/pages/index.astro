@@ -4,7 +4,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { PaperCard } from '../components/blocks';
 import NewsTimeline from '../components/blocks/NewsTimeline.astro';
 import ProfilePicture from '../components/blocks/ProfilePicture.astro';
-import { config } from '../config';
+import { config } from '../lib/config';
 import educationData from '../content/education.json';
 import { loadPublications, getSelectedPublications } from '../lib/bibtex';
 import path from 'node:path';
@@ -76,9 +76,9 @@ if (config.features.selectedPublications) {
 
 // Featured projects section removed per user request
 
-// Load recent items for news timeline (blog posts + talks + standalone news)
+// Load recent items for news timeline (blog posts + publications)
 interface NewsItem {
-  type: 'blog' | 'talk' | 'publication' | 'project' | 'news';
+  type: 'blog' | 'publication';
   title: string;
   date: Date;
   href?: string;
@@ -100,35 +100,6 @@ try {
   );
 } catch {
   // Blog collection not available
-}
-
-// Load talks
-try {
-  const allTalks = await getCollection('talks');
-  newsItems.push(...allTalks.map(talk => ({
-    type: 'talk' as const,
-    title: talk.data.title,
-    date: talk.data.date,
-    href: prependBase(`/talks/${talk.slug}`),
-  })));
-} catch {
-  // Talks collection not available
-}
-
-// Load standalone news items
-try {
-  const allNews = await getCollection('news');
-  newsItems.push(...allNews
-    .filter(item => !item.data.draft)
-    .map(item => ({
-      type: 'news' as const,
-      title: item.data.title,
-      date: item.data.date,
-      href: item.data.link, // Optional external link
-    }))
-  );
-} catch {
-  // News collection not available
 }
 
 // Sort all news items by date (newest first) and limit to 5

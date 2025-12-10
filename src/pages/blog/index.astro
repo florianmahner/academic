@@ -3,18 +3,18 @@
  * Blog Index Page
  * Uses the unified view system for consistent, customizable display
  */
-import { getCollection, getEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { config } from '../../config';
+import { config } from '../../lib/config';
 import ViewDispatcher from '../../components/views/ViewDispatcher.astro';
 
-// Get page configuration from frontmatter
-const pageConfig = await getEntry('collection-pages', 'blog');
-if (!pageConfig) {
-  throw new Error('Missing collection-pages/blog.md - please create this file with layout configuration');
-}
-
-const { title, description, view, viewConfig, sortBy, sortOrder } = pageConfig.data;
+// Page configuration (inline)
+const title = 'Blog';
+const description = 'Thoughts on research, technology, and academia';
+const view = 'grid';
+const viewConfig = { columns: 2, showImage: true, showTags: true, showDate: true };
+const sortBy = 'date';
+const sortOrder = 'desc';
 
 // Get all blog posts, excluding drafts
 const posts = await getCollection('blog', ({ data }) => !data.draft);

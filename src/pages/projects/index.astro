@@ -3,18 +3,18 @@
  * Projects Index Page
  * Uses the unified view system for consistent, customizable display
  */
-import { getCollection, getEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { config } from '../../config';
+import { config } from '../../lib/config';
 import ViewDispatcher from '../../components/views/ViewDispatcher.astro';
 
-// Get page configuration from frontmatter
-const pageConfig = await getEntry('collection-pages', 'projects');
-if (!pageConfig) {
-  throw new Error('Missing collection-pages/projects.md - please create this file with layout configuration');
-}
-
-const { title, description, view, viewConfig, sortBy, sortOrder } = pageConfig.data;
+// Page configuration (inline)
+const title = 'Projects';
+const description = 'Research projects, tools, and open source contributions';
+const view = 'showcase';
+const viewConfig = { showFeatured: true, showStatus: true, showLinks: ['github', 'demo', 'documentation'] };
+const sortBy = 'startDate';
+const sortOrder = 'desc';
 
 // Get all projects
 const projects = await getCollection('projects');
