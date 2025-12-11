@@ -51,7 +51,7 @@
   --view-date-color: var(--color-text-muted);
 
   /* Tier 1: Titles */
-  --view-title-weight: var(--font-weight-semibold);
+  --view-title-weight: var(--font-weight-medium);
   --view-title-size: var(--font-size-base);
 
   /* Tier 3: Meta labels */

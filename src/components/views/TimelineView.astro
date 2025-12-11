@@ -205,10 +205,10 @@ let globalIndex = 0;
               {/* Minimal: Dot indicator */}
               {isMinimal && showDot && (
                 <div class="dot-col">
-                  <ViewDot
+                  <span class="dot-baseline">&#8203;<ViewDot
                     type={dotType === 'content' ? item.type : undefined}
                     status={dotType === 'status' ? item.status : undefined}
-                  />
+                  /></span>
                 </div>
               )}
 
@@ -332,8 +332,9 @@ let globalIndex = 0;
      ====================== */
   .timeline-view--minimal .timeline-item {
     display: grid;
-    grid-template-columns: 60px 24px 1fr;
+    grid-template-columns: 60px 16px 1fr;
     gap: var(--view-gap);
+    align-items: baseline;
     padding: var(--view-item-padding) 0;
     border-bottom: 1px solid var(--color-border);
     transition: background-color var(--view-transition);
@@ -351,13 +352,19 @@ let globalIndex = 0;
 
   .date-col {
     text-align: right;
-    padding-top: 2px;
   }
 
   .dot-col {
-    display: flex;
-    justify-content: center;
-    padding-top: 6px;
+    text-align: center;
+  }
+
+  .dot-baseline {
+    font-size: var(--view-title-size);
+    line-height: var(--line-height-snug);
+  }
+
+  .dot-baseline :global(.view-dot) {
+    vertical-align: middle;
   }
 
   /* ======================
