@@ -3,7 +3,7 @@ title: "Collaborative Research Project"
 description: "A template for showcasing collaborative work. Highlight partnerships, funding, and impact!"
 date: 2023-05-10
 tags: ["collaboration", "research", "interdisciplinary"]
-featured: true
+featured: false
 status: "active"
 github: "#"  # If applicable
 url: "#"  # Project website

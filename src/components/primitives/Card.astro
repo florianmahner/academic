@@ -5,6 +5,9 @@
  * Base card container with consistent styling.
  * Used by PaperCard, ProjectCard, RepoCard, etc.
  *
+ * Uses a div wrapper with an overlay link for proper HTML semantics.
+ * This allows block-level content while keeping the entire card clickable.
+ *
  * @prop href - Optional link URL (makes card clickable)
  * @prop external - Open link in new tab
  * @prop class - Additional CSS classes
@@ -17,23 +20,25 @@ interface Props {
 }
 
 const { href, external = false, class: className } = Astro.props;
-
-const Tag = href ? 'a' : 'div';
-const linkProps = href
-  ? {
-      href,
-      target: external ? '_blank' : undefined,
-      rel: external ? 'noopener noreferrer' : undefined,
-    }
-  : {};
 ---
 
-<Tag {...linkProps} class:list={['card', className]}>
+<div class:list={['card', { 'card--link': !!href }, className]}>
+  {href && (
+    <a
+      href={href}
+      target={external ? '_blank' : undefined}
+      rel={external ? 'noopener noreferrer' : undefined}
+      class="card-link"
+      aria-hidden="true"
+      tabindex="-1"
+    />
+  )}
   <slot />
-</Tag>
+</div>
 
 <style>
   .card {
+    position: relative;
     display: block;
     padding: var(--space-4);
     border-radius: var(--radius-md);
@@ -43,8 +48,21 @@ const linkProps = href
     border-left: 2px solid transparent;
   }
 
+  .card-link {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  /* Allow nested interactive elements to be clickable */
+  .card :global(a),
+  .card :global(button) {
+    position: relative;
+    z-index: 2;
+  }
+
   @media (hover: hover) {
-    a.card:hover {
+    .card--link:hover {
       border-left-color: var(--color-accent);
     }
   }

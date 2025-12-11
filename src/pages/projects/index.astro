@@ -1,72 +1,129 @@
 ---
 /**
  * Projects Index Page
- * Uses the unified view system for consistent, customizable display
+ * Card-based grid layout similar to Open Source page
  */
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { config } from '../../lib/config';
-import ViewDispatcher from '../../components/views/ViewDispatcher.astro';
+import Card from '../../components/primitives/Card.astro';
+import ViewDot from '../../components/primitives/ViewDot.astro';
+import ViewTags from '../../components/primitives/ViewTags.astro';
+import ActionLink from '../../components/primitives/ActionLink.astro';
 
-// Page configuration (inline)
+// Page configuration
 const title = 'Projects';
 const description = 'Research projects, tools, and open source contributions';
-const view = 'showcase';
-const viewConfig = { showFeatured: true, showStatus: true, showLinks: ['github', 'demo', 'documentation'] };
-const sortBy = 'startDate';
-const sortOrder = 'desc';
 
 // Get all projects
 const projects = await getCollection('projects');
 
-// Sort entries based on frontmatter config (with featured items first)
-const sortedEntries = projects.sort((a, b) => {
-  // Featured items always come first
+// Sort: featured first, then by date
+const sortedProjects = projects.sort((a, b) => {
   if (a.data.featured && !b.data.featured) return -1;
   if (!a.data.featured && b.data.featured) return 1;
-
-  const fieldA = (a.data as any)[sortBy || 'startDate'];
-  const fieldB = (b.data as any)[sortBy || 'startDate'];
-
-  const valA = fieldA?.valueOf?.() ?? fieldA ?? 0;
-  const valB = fieldB?.valueOf?.() ?? fieldB ?? 0;
-
-  return sortOrder === 'asc' ? valA - valB : valB - valA;
+  const dateA = a.data.date?.valueOf() ?? 0;
+  const dateB = b.data.date?.valueOf() ?? 0;
+  return dateB - dateA;
 });
 
-// Transform entries for view components
-const viewItems = sortedEntries.map(entry => ({
-  title: entry.data.title,
-  slug: entry.slug,
-  description: entry.data.description,
-  date: entry.data.startDate || entry.data.date,
-  tags: entry.data.tags || entry.data.technologies,
-  status: entry.data.status,
-  featured: entry.data.featured,
-  // Links
-  github: entry.data.github,
-  url: entry.data.url || entry.data.website,
-  demo: entry.data.demo,
-  documentation: entry.data.documentation,
-  pypi: entry.data.pypi,
-}));
+// Separate featured and regular projects
+const featuredProjects = sortedProjects.filter(p => p.data.featured);
+const regularProjects = sortedProjects.filter(p => !p.data.featured);
+
+// Get base URL
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 const pageTitle = `${title} | ${config.site.title}`;
+
+// Status labels
+const statusLabels: Record<string, string> = {
+  active: 'Active',
+  completed: 'Completed',
+  archived: 'Archived',
+  paused: 'Paused',
+  wip: 'In Progress',
+};
 ---
 
 <BaseLayout title={pageTitle} description={description}>
-  <article class="collection-page">
+  <article class="projects-page">
     <div class="container">
-      <ViewDispatcher
-        view={view || 'showcase'}
-        items={viewItems}
-        config={viewConfig}
-        collection="projects"
-        title={title}
-        description={description}
-      />
+      <header class="page-header" data-animate="fade-up">
+        <h1>Projects</h1>
+        <p class="page-description">{description}</p>
+      </header>
 
-      {viewItems.length === 0 && (
+      {/* Featured Projects */}
+      {featuredProjects.length > 0 && (
+        <section class="featured-section" data-animate="stagger">
+          {featuredProjects.map(project => (
+            <Card href={`${base}/projects/${project.slug}`} class="project-card featured">
+              <div class="project-meta">
+                {project.data.status && (
+                  <span class="project-status">
+                    <ViewDot status={project.data.status} size="md" />
+                    <span class="status-label">{statusLabels[project.data.status]}</span>
+                  </span>
+                )}
+              </div>
+              <h2 class="project-name">{project.data.title}</h2>
+              {project.data.description && (
+                <p class="project-desc">{project.data.description}</p>
+              )}
+              <div class="project-footer">
+                {project.data.tags && project.data.tags.length > 0 && (
+                  <ViewTags tags={project.data.tags.slice(0, 3)} />
+                )}
+                <span class="project-links">
+                  {project.data.github && (
+                    <ActionLink href={project.data.github} label="Code" icon="external" />
+                  )}
+                </span>
+              </div>
+            </Card>
+          ))}
+        </section>
+      )}
+
+      {/* Regular Projects */}
+      {regularProjects.length > 0 && (
+        <section class="projects-section" data-animate="stagger">
+          {featuredProjects.length > 0 && (
+            <h3 class="section-header">All Projects</h3>
+          )}
+          <div class="projects-grid">
+            {regularProjects.map(project => (
+              <Card href={`${base}/projects/${project.slug}`} class="project-card">
+                <div class="project-meta">
+                  {project.data.status && (
+                    <span class="project-status">
+                      <ViewDot status={project.data.status} size="sm" />
+                      <span class="status-label">{statusLabels[project.data.status]}</span>
+                    </span>
+                  )}
+                </div>
+                <h3 class="project-name">{project.data.title}</h3>
+                {project.data.description && (
+                  <p class="project-desc">{project.data.description}</p>
+                )}
+                <div class="project-footer">
+                  {project.data.tags && project.data.tags.length > 0 && (
+                    <ViewTags tags={project.data.tags.slice(0, 3)} />
+                  )}
+                  <span class="project-links">
+                    {project.data.github && (
+                      <ActionLink href={project.data.github} label="Code" icon="external" />
+                    )}
+                  </span>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {sortedProjects.length === 0 && (
         <div class="empty-state" data-animate="fade-up">
           <p>No projects to display yet. Check back soon!</p>
         </div>
@@ -76,8 +133,111 @@ const pageTitle = `${title} | ${config.site.title}`;
 </BaseLayout>
 
 <style>
-  .collection-page {
-    /* Vertical padding handled by article in global.css */
+  .page-header {
+    margin-bottom: var(--space-8);
+  }
+
+  .page-header h1 {
+    margin-top: 0;
+    margin-bottom: var(--space-2);
+  }
+
+  .page-description {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-base);
+    margin: 0;
+  }
+
+  /* Featured Section - full width cards */
+  .featured-section {
+    margin-bottom: var(--space-10);
+  }
+
+  .featured-section .project-card {
+    margin-bottom: var(--space-4);
+  }
+
+  .featured-section .project-card:last-child {
+    margin-bottom: 0;
+  }
+
+  .project-card.featured {
+    border-left-color: var(--color-accent);
+  }
+
+  /* Section Header */
+  .section-header {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0 0 var(--space-4) 0;
+  }
+
+  /* Projects Grid - 2x2 like Open Source */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+  }
+
+  @media (max-width: 600px) {
+    .projects-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Project Card Styling */
+  .project-meta {
+    margin-bottom: var(--space-2);
+  }
+
+  .project-status {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .status-label {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    font-weight: var(--font-weight-medium);
+  }
+
+  .project-name {
+    font-family: var(--font-body);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text);
+    margin: 0 0 var(--space-1);
+    transition: color var(--transition-fast);
+  }
+
+  .card--link:hover .project-name {
+    color: var(--color-accent);
+  }
+
+  .project-desc {
+    font-size: var(--font-size-sm);
+    font-family: var(--font-body);
+    color: var(--color-text-muted);
+    line-height: var(--line-height-normal);
+    margin: 0 0 var(--space-3);
+  }
+
+  .project-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+
+  .project-links {
+    display: flex;
+    gap: var(--space-2);
+    flex-shrink: 0;
   }
 
   .empty-state {

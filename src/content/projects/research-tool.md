@@ -3,7 +3,7 @@ title: "Research Tool or Dataset"
 description: "A template for showcasing research tools, datasets, or resources you've created. Share your work with the community!"
 date: 2023-09-20
 tags: ["research", "tool", "dataset", "resource"]
-featured: true
+featured: false
 status: "active"
 github: "#"  # If the code is open source
 documentation: "#"  # Link to docs
