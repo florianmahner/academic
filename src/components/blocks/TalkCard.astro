@@ -31,13 +31,13 @@ const {
 } = Astro.props;
 ---
 
-<article class:list={['talk-card', className]} data-animate="fade-up">
+<article class:list={['talk-card', 'hover-item', className]} data-animate="fade-up">
   <div class="talk-header">
     <div class="talk-meta">
       <time class="talk-date">{date}</time>
       {type && <Badge size="sm" variant="outline">{type}</Badge>}
     </div>
-    <h3 class="talk-title">{title}</h3>
+    <h3 class="talk-title hover-title">{title}</h3>
     <div class="talk-event">
       {event}
       {location && <span class="talk-location"> · {location}</span>}
@@ -74,16 +74,7 @@ const {
 
 <style>
   .talk-card {
-    padding: var(--space-4);
-    border-radius: var(--radius-md);
-    transition: all var(--transition-fast);
-    border-left: 2px solid transparent;
-  }
-
-  @media (hover: hover) {
-    .talk-card:hover {
-      border-left-color: var(--color-accent);
-    }
+    /* Padding, border-left, and hover handled by global .hover-item */
   }
 
   .talk-header {

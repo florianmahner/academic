@@ -44,7 +44,7 @@ const langColor = langColors[language?.toLowerCase() || 'default'] || langColors
 ---
 
 <Card href={url} external class:list={['repo-card', className]}>
-  <h3 class="repo-name">{name}</h3>
+  <h3 class="repo-name hover-title">{name}</h3>
   {description && <p class="repo-desc">{description}</p>}
   <div class="repo-footer">
     {language && (
@@ -84,10 +84,7 @@ const langColor = langColors[language?.toLowerCase() || 'default'] || langColors
     transition: color var(--transition-fast);
   }
 
-  .repo-card:hover .repo-name,
-  .card--link:hover .repo-name {
-    color: var(--color-accent);
-  }
+  /* Hover title color handled by global .hover-item:hover .hover-title */
 
   .repo-desc {
     font-size: var(--font-size-sm);

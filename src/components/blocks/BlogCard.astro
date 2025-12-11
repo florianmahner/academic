@@ -30,7 +30,7 @@ const {
 const href = `/blog/${slug}`;
 ---
 
-<article class:list={['blog-card', className]} data-animate="fade-up">
+<article class:list={['blog-card', 'hover-item', className]} data-animate="fade-up">
   <a href={href} class="blog-link">
     {image && (
       <div class="blog-image">
@@ -41,7 +41,7 @@ const href = `/blog/${slug}`;
       <div class="blog-meta">
         <time datetime={date.toISOString()}>{formatDate(date)}</time>
       </div>
-      <h3 class="blog-title">{title}</h3>
+      <h3 class="blog-title hover-title">{title}</h3>
       {description && <p class="blog-description">{description}</p>}
       {tags.length > 0 && (
         <div class="blog-tags">
@@ -56,15 +56,7 @@ const href = `/blog/${slug}`;
 
 <style>
   .blog-card {
-    border-radius: var(--radius-md);
-    transition: all var(--transition-fast);
-    border-left: 2px solid transparent;
-  }
-
-  @media (hover: hover) {
-    .blog-card:hover {
-      border-left-color: var(--color-accent);
-    }
+    /* Padding, border-left, and hover handled by global .hover-item */
   }
 
   .blog-link {
@@ -110,9 +102,7 @@ const href = `/blog/${slug}`;
     transition: color var(--transition-fast);
   }
 
-  .blog-card:hover .blog-title {
-    color: var(--color-accent);
-  }
+  /* Hover title color handled by global .hover-item:hover .hover-title */
 
   .blog-description {
     font-size: var(--font-size-sm);

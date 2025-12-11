@@ -67,7 +67,7 @@ const statusLabels: Record<string, string> = {
                   </span>
                 )}
               </div>
-              <h2 class="project-name">{project.data.title}</h2>
+              <h2 class="project-name hover-title">{project.data.title}</h2>
               {project.data.description && (
                 <p class="project-desc">{project.data.description}</p>
               )}
@@ -103,7 +103,7 @@ const statusLabels: Record<string, string> = {
                     </span>
                   )}
                 </div>
-                <h3 class="project-name">{project.data.title}</h3>
+                <h3 class="project-name hover-title">{project.data.title}</h3>
                 {project.data.description && (
                   <p class="project-desc">{project.data.description}</p>
                 )}
@@ -211,11 +211,7 @@ const statusLabels: Record<string, string> = {
     font-weight: var(--font-weight-medium);
     color: var(--color-text);
     margin: 0 0 var(--space-1);
-    transition: color var(--transition-fast);
-  }
-
-  .card--link:hover .project-name {
-    color: var(--color-accent);
+    /* Hover title color handled by global .hover-item:hover .hover-title */
   }
 
   .project-desc {

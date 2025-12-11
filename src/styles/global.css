@@ -143,18 +143,37 @@ article {
   margin-bottom: var(--space-4);
 }
 
-/* List items with hover - for publications, repos, etc */
+/* ==========================================================================
+   Unified Card Hover Effect
+   Used by: Card, PaperCard, RepoCard, ProjectCard, BlogCard, TalkCard, etc.
+   Apply via class="hover-item" or use the mixin properties directly
+   ========================================================================== */
+
+/* Base hover item styling */
 .hover-item {
+  position: relative;
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-md);
   border-left: 2px solid transparent;
-  transition: border-color var(--transition-fast);
+  transition: border-left-color var(--transition-fast);
 }
 
 @media (hover: hover) {
   .hover-item:hover {
     border-left-color: var(--color-accent);
   }
+}
+
+/* Title color change on hover - universal pattern */
+@media (hover: hover) {
+  .hover-item:hover .hover-title {
+    color: var(--color-accent);
+  }
+}
+
+/* Hover title base - apply to any title that should change color */
+.hover-title {
+  transition: color var(--transition-fast);
 }
 
 /* View all link - consistent CTA style */

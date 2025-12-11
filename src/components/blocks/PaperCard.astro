@@ -37,7 +37,7 @@ const {
 const primaryLink = pdf || html;
 ---
 
-<article class:list={['paper-card', { 'paper-card--compact': compact }, className]}>
+<article class:list={['paper-card', 'hover-item', { 'paper-card--compact': compact }, className]}>
   {preview && (
     <div class="paper-preview">
       <Picture src={preview} alt={title} width={140} height={90} loading="lazy" />
@@ -49,7 +49,7 @@ const primaryLink = pdf || html;
       {venue && year && <span class="paper-sep">·</span>}
       {year && <span class="paper-year">{year}</span>}
     </div>
-    <h3 class="paper-title">
+    <h3 class="paper-title hover-title">
       {primaryLink ? (
         <a href={primaryLink} target="_blank" rel="noopener noreferrer">{title}</a>
       ) : (
@@ -79,15 +79,7 @@ const primaryLink = pdf || html;
     display: grid;
     grid-template-columns: 140px 1fr;
     gap: var(--space-5);
-    padding: var(--space-4);
-    transition: border-left-color var(--transition-fast);
-    border-left: 2px solid transparent;
-  }
-
-  @media (hover: hover) {
-    .paper-card:hover {
-      border-left-color: var(--color-accent);
-    }
+    /* Padding, border-left, and hover handled by global .hover-item */
   }
 
   .paper-preview {
