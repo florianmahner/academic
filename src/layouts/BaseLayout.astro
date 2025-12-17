@@ -139,6 +139,9 @@ const socialIcons: Record<string, string> = {
             const colors = JSON.parse(colorsStr);
             html.style.setProperty('--color-accent-light', colors.accentLight);
             html.style.setProperty('--color-accent-dark', colors.accentDark);
+            // Set --color-accent directly to prevent FOUC
+            const accentColor = theme === 'dark' ? colors.accentDark : colors.accentLight;
+            html.style.setProperty('--color-accent', accentColor);
           }
 
           // Restore typography styles

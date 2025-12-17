@@ -658,6 +658,9 @@ const navModes = [
       if (colorLight && colorDark) {
         html.style.setProperty('--color-accent-light', colorLight);
         html.style.setProperty('--color-accent-dark', colorDark);
+        // Set --color-accent directly to prevent FOUC
+        const currentTheme = html.getAttribute('data-theme') || 'light';
+        html.style.setProperty('--color-accent', currentTheme === 'dark' ? colorDark : colorLight);
         localStorage.setItem('accent-color', colorId || '');
         localStorage.setItem('accent-color-light', colorLight);
         localStorage.setItem('accent-color-dark', colorDark);
@@ -693,6 +696,9 @@ const navModes = [
       if (!storedColor && !skipColorOverride) {
         html.style.setProperty('--color-accent-light', colors.accentLight);
         html.style.setProperty('--color-accent-dark', colors.accentDark);
+        // Set --color-accent directly to prevent FOUC
+        const currentTheme = html.getAttribute('data-theme') || 'light';
+        html.style.setProperty('--color-accent', currentTheme === 'dark' ? colors.accentDark : colors.accentLight);
       }
 
       localStorage.setItem('typography-preset', presetId || '');
@@ -712,6 +718,11 @@ const navModes = [
     const applyTheme = (theme: string) => {
       html.setAttribute('data-theme', theme);
       localStorage.setItem('theme', theme);
+
+      // Update --color-accent directly to prevent FOUC on theme toggle
+      const accentLight = getComputedStyle(html).getPropertyValue('--color-accent-light').trim();
+      const accentDark = getComputedStyle(html).getPropertyValue('--color-accent-dark').trim();
+      html.style.setProperty('--color-accent', theme === 'dark' ? accentDark : accentLight);
 
       themeOptions.forEach(opt => {
         const optTheme = (opt as HTMLElement).dataset.theme;
