@@ -7,6 +7,8 @@ import ProfilePicture from '../components/blocks/ProfilePicture.astro';
 import { config } from '../lib/config';
 import educationData from '../content/education.json';
 import { loadPublications, getSelectedPublications } from '../lib/bibtex';
+import type { Publication } from '../lib/bibtex';
+import { convertMd } from '../lib/markdown';
 import path from 'node:path';
 
 const title = config.site.title;
@@ -30,32 +32,10 @@ try {
       // Parse research interests (everything after the heading)
       const researchMd = rawBody.substring(splitIndex + splitMarker.length).trim();
 
-      // Simple markdown to HTML conversion for these short sections
-      // Convert links: [text](url) -> <a href="url">text</a>
-      const convertMd = (md: string) => {
-        return md
-          // Convert links
-          .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
-          // Convert inline code
-          .replace(/`([^`]+)`/g, '<code>$1</code>')
-          // Convert paragraphs (double newlines)
-          .split(/\n\n+/)
-          .map(p => `<p>${p.replace(/\n/g, ' ')}</p>`)
-          .join('\n');
-      };
-
       bioHtml = convertMd(bioMd);
       researchInterestsHtml = convertMd(researchMd);
     } else {
       // No split marker, use entire content as bio
-      const convertMd = (md: string) => {
-        return md
-          .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
-          .replace(/`([^`]+)`/g, '<code>$1</code>')
-          .split(/\n\n+/)
-          .map(p => `<p>${p.replace(/\n/g, ' ')}</p>`)
-          .join('\n');
-      };
       bioHtml = convertMd(rawBody);
     }
   }
@@ -67,7 +47,7 @@ try {
 }
 
 // Load selected publications from BibTeX file
-let selectedPublications: any[] = [];
+let selectedPublications: Publication[] = [];
 if (config.features.selectedPublications) {
   const contentDir = path.join(process.cwd(), 'src', 'content');
   const allPublications = loadPublications(contentDir);

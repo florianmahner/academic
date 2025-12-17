@@ -39,10 +39,13 @@ const projects = defineCollection({
     documentation: z.string().optional(),
     pypi: z.string().optional(),
     image: z.string().optional(),
+    imageAlt: z.string().optional(),
     featured: z.boolean().default(false),
     status: z.enum(['active', 'completed', 'archived', 'wip']).default('active'),
     startDate: z.coerce.date().optional(),
     endDate: z.coerce.date().optional(),
+    partners: z.array(z.string()).optional(),
+    funding: z.string().optional(),
   }),
 });
 

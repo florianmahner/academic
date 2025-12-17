@@ -36,6 +36,33 @@
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+
+  /* Status Colors */
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+
+  /* Language Colors (GitHub-style) */
+  --lang-python: #3572A5;
+  --lang-javascript: #f1e05a;
+  --lang-typescript: #3178c6;
+  --lang-rust: #dea584;
+  --lang-go: #00ADD8;
+  --lang-java: #b07219;
+  --lang-html: #e34c26;
+  --lang-css: #563d7c;
+  --lang-shell: #89e051;
+  --lang-default: #8b949e;
+
+  /* Settings Panel Colors */
+  --settings-bg: #ffffff;
+  --settings-bg-hover: #f4f4f5;
+  --settings-bg-active: #ffffff;
+  --settings-border: #e4e4e7;
+  --settings-text: #18181b;
+  --settings-text-muted: #71717a;
+  --settings-toggle-bg: #f4f4f5;
+  --settings-drag-handle: #d1d5db;
 }
 
 /* Dark Mode */
@@ -59,6 +86,21 @@
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+
+  /* Status Colors (Dark Mode) */
+  --color-success: #059669;
+  --color-warning: #d97706;
+  --color-error: #dc2626;
+
+  /* Settings Panel Colors (Dark Mode) */
+  --settings-bg: #1c1c1e;
+  --settings-bg-hover: #3f3f46;
+  --settings-bg-active: #3f3f46;
+  --settings-border: #3f3f46;
+  --settings-text: #fafafa;
+  --settings-text-muted: #71717a;
+  --settings-toggle-bg: #27272a;
+  --settings-drag-handle: #52525b;
 }
 
 /* System preference detection (fallback) */

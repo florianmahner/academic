@@ -5,8 +5,8 @@ date: 2023-05-10
 tags: ["collaboration", "research", "interdisciplinary"]
 featured: false
 status: "active"
-github: "#"  # If applicable
-url: "#"  # Project website
+# github: ""  # Placeholder - add your GitHub repo URL
+# website: ""  # Placeholder - add project website URL
 partners: ["Partner Institution 1", "Partner Institution 2"]
 funding: "Funding Agency Grant #12345"
 ---

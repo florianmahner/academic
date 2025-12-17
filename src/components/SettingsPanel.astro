@@ -57,8 +57,8 @@ const navModes = [
       <!-- Theme Toggle -->
       <div class="setting-row">
         <span class="setting-label">Theme</span>
-        <div class="toggle-group" role="radiogroup" aria-label="Color Theme">
-          <button class="toggle-item" data-theme="light" aria-pressed="false">
+        <div class="toggle-group" role="group" aria-label="Color Theme">
+          <button class="toggle-item" data-theme="light" aria-pressed="false" aria-label="Light theme">
             <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="12" cy="12" r="5"></circle>
               <line x1="12" y1="1" x2="12" y2="3"></line>
@@ -71,7 +71,7 @@ const navModes = [
               <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
             </svg>
           </button>
-          <button class="toggle-item" data-theme="dark" aria-pressed="false">
+          <button class="toggle-item" data-theme="dark" aria-pressed="false" aria-label="Dark theme">
             <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
             </svg>
@@ -82,9 +82,9 @@ const navModes = [
       <!-- Layout Toggle -->
       <div class="setting-row">
         <span class="setting-label">Layout</span>
-        <div class="toggle-group toggle-group--text" role="radiogroup" aria-label="Navigation Style">
+        <div class="toggle-group toggle-group--text" role="group" aria-label="Navigation Style">
           {navModes.map(mode => (
-            <button class="toggle-item nav-option" data-nav-mode={mode.id} aria-pressed="false">
+            <button class="toggle-item nav-option" data-nav-mode={mode.id} aria-pressed="false" aria-label={`${mode.name} navigation`}>
               {mode.name}
             </button>
           ))}
@@ -94,7 +94,7 @@ const navModes = [
       <!-- Accent Colors -->
       <div class="setting-section">
         <span class="setting-label">Accent Color</span>
-        <div class="color-grid" role="radiogroup" aria-label="Accent Color">
+        <div class="color-grid" role="group" aria-label="Accent Color">
           {accentColors.map(color => (
             <button
               class="color-option"
@@ -102,7 +102,7 @@ const navModes = [
               data-color-light={color.light}
               data-color-dark={color.dark}
               title={color.name}
-              aria-label={color.name}
+              aria-label={`${color.name} accent color`}
               aria-pressed="false"
             >
               <span class="color-dot" style={`--dot-color: ${color.light}`}></span>
@@ -114,7 +114,7 @@ const navModes = [
       <!-- Typography -->
       <div class="setting-section">
         <span class="setting-label">Typography</span>
-        <div class="typography-grid" role="radiogroup" aria-label="Typography Style">
+        <div class="typography-grid" role="group" aria-label="Typography Style">
           {typographyPresets.map(preset => (
             <button
               class="typo-option"
@@ -123,6 +123,7 @@ const navModes = [
               data-colors={JSON.stringify(preset.colors)}
               data-styles={JSON.stringify(preset.styles)}
               aria-pressed="false"
+              aria-label={`${preset.name} typography preset`}
             >
               <span class="typo-name">{preset.name}</span>
             </button>
@@ -191,10 +192,10 @@ const navModes = [
     right: 0;
     width: 320px;
     max-width: calc(100vw - 32px);
-    background: #ffffff;
+    background: var(--settings-bg);
     border-radius: 16px;
     box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);
-    border: 1px solid #e4e4e7;
+    border: 1px solid var(--settings-border);
     transform-origin: bottom right;
     animation: dropdownIn 0.2s ease;
   }
@@ -211,8 +212,8 @@ const navModes = [
   }
 
   [data-theme="dark"] .dropdown {
-    background: #1c1c1e;
-    border-color: #3f3f46;
+    background: var(--settings-bg);
+    border-color: var(--settings-border);
   }
 
   .dropdown[hidden] {
@@ -230,21 +231,21 @@ const navModes = [
     align-items: center;
     justify-content: space-between;
     padding: 16px 20px 12px;
-    border-bottom: 1px solid #e4e4e7;
+    border-bottom: 1px solid var(--settings-border);
   }
 
   [data-theme="dark"] .dropdown-header {
-    border-color: #3f3f46;
+    border-color: var(--settings-border);
   }
 
   .dropdown-title {
     font-weight: 600;
     font-size: 15px;
-    color: #18181b;
+    color: var(--settings-text);
   }
 
   [data-theme="dark"] .dropdown-title {
-    color: #fafafa;
+    color: var(--settings-text);
   }
 
   .close-btn {
@@ -253,7 +254,7 @@ const navModes = [
     background: none;
     border: none;
     cursor: pointer;
-    color: #71717a;
+    color: var(--settings-text-muted);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -262,13 +263,13 @@ const navModes = [
   }
 
   .close-btn:hover {
-    background: #f4f4f5;
-    color: #18181b;
+    background: var(--settings-bg-hover);
+    color: var(--settings-text);
   }
 
   [data-theme="dark"] .close-btn:hover {
-    background: #3f3f46;
-    color: #fafafa;
+    background: var(--settings-bg-hover);
+    color: var(--settings-text);
   }
 
   /* Body */
@@ -296,21 +297,21 @@ const navModes = [
   .setting-label {
     font-size: 13px;
     font-weight: 500;
-    color: #71717a;
+    color: var(--settings-text-muted);
     flex-shrink: 0;
   }
 
   /* Toggle group - segmented control style */
   .toggle-group {
     display: flex;
-    background: #f4f4f5;
+    background: var(--settings-toggle-bg);
     border-radius: 10px;
     padding: 3px;
     gap: 2px;
   }
 
   [data-theme="dark"] .toggle-group {
-    background: #27272a;
+    background: var(--settings-toggle-bg);
   }
 
   .toggle-item {
@@ -322,7 +323,7 @@ const navModes = [
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    color: #71717a;
+    color: var(--settings-text-muted);
     font-size: 13px;
     font-weight: 500;
     transition: all 0.15s;
@@ -334,22 +335,22 @@ const navModes = [
   }
 
   .toggle-item:hover {
-    color: #18181b;
+    color: var(--settings-text);
   }
 
   [data-theme="dark"] .toggle-item:hover {
-    color: #fafafa;
+    color: var(--settings-text);
   }
 
   .toggle-item.active {
-    background: #ffffff;
-    color: #18181b;
+    background: var(--settings-bg-active);
+    color: var(--settings-text);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
 
   [data-theme="dark"] .toggle-item.active {
-    background: #3f3f46;
-    color: #fafafa;
+    background: var(--settings-bg-active);
+    color: var(--settings-text);
   }
 
   /* Color grid */
@@ -375,6 +376,11 @@ const navModes = [
 
   .color-option:hover {
     transform: scale(1.1);
+  }
+
+  .color-option:focus-visible {
+    outline: 3px solid var(--color-accent);
+    outline-offset: 3px;
   }
 
   .color-option.active {
@@ -403,7 +409,7 @@ const navModes = [
 
   .typo-option {
     padding: 10px 12px;
-    background: #f4f4f5;
+    background: var(--settings-toggle-bg);
     border: 2px solid transparent;
     border-radius: 10px;
     cursor: pointer;
@@ -412,34 +418,34 @@ const navModes = [
   }
 
   .typo-option:hover {
-    background: #e4e4e7;
+    background: var(--settings-border);
   }
 
   [data-theme="dark"] .typo-option {
-    background: #27272a;
+    background: var(--settings-toggle-bg);
   }
 
   [data-theme="dark"] .typo-option:hover {
-    background: #3f3f46;
+    background: var(--settings-bg-hover);
   }
 
   .typo-option.active {
     border-color: var(--color-accent, #2563eb);
-    background: #ffffff;
+    background: var(--settings-bg-active);
   }
 
   [data-theme="dark"] .typo-option.active {
-    background: #1c1c1e;
+    background: var(--settings-bg);
   }
 
   .typo-name {
     font-size: 12px;
     font-weight: 500;
-    color: #18181b;
+    color: var(--settings-text);
   }
 
   [data-theme="dark"] .typo-name {
-    color: #fafafa;
+    color: var(--settings-text);
   }
 
   /* ==========================================
@@ -486,12 +492,12 @@ const navModes = [
     .drag-handle span {
       width: 36px;
       height: 4px;
-      background: #d1d5db;
+      background: var(--settings-drag-handle);
       border-radius: 2px;
     }
 
     [data-theme="dark"] .drag-handle span {
-      background: #52525b;
+      background: var(--settings-drag-handle);
     }
 
     .dropdown-header {

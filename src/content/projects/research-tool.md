@@ -5,9 +5,9 @@ date: 2023-09-20
 tags: ["research", "tool", "dataset", "resource"]
 featured: false
 status: "active"
-github: "#"  # If the code is open source
-documentation: "#"  # Link to docs
-# pypi: "#"  # If published as a package
+# github: ""  # Placeholder - add if the code is open source
+# documentation: ""  # Placeholder - add link to docs
+# pypi: ""  # Placeholder - add if published as a package
 ---
 
 # Research Tool or Dataset

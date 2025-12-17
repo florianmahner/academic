@@ -846,14 +846,22 @@ const socialIcons: Record<string, string> = {
         menu?.classList.add('open');
         menu?.setAttribute('aria-hidden', 'false');
         toggle?.setAttribute('aria-expanded', 'true');
+        toggle?.setAttribute('aria-label', 'Close menu');
         document.body.style.overflow = 'hidden';
+
+        // Focus trap setup
+        setupFocusTrap();
       }
 
       function closeMobileNav() {
         menu?.classList.remove('open');
         menu?.setAttribute('aria-hidden', 'true');
         toggle?.setAttribute('aria-expanded', 'false');
+        toggle?.setAttribute('aria-label', 'Open menu');
         document.body.style.overflow = '';
+
+        // Return focus to toggle button
+        toggle?.focus();
       }
 
       function toggleMobileNav() {
@@ -871,6 +879,52 @@ const socialIcons: Record<string, string> = {
       navLinks.forEach(link => {
         link.addEventListener('click', closeMobileNav);
       });
+
+      // Focus trap for mobile menu
+      function setupFocusTrap() {
+        if (!menu) return;
+
+        const focusableElements = menu.querySelectorAll(
+          'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        );
+
+        if (focusableElements.length === 0) return;
+
+        const firstElement = focusableElements[0] as HTMLElement;
+        const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+
+        // Focus first element when menu opens
+        firstElement.focus();
+
+        // Trap focus within menu
+        const trapFocus = (e: KeyboardEvent) => {
+          if (e.key !== 'Tab') return;
+
+          if (e.shiftKey) {
+            // Shift + Tab: going backwards
+            if (document.activeElement === firstElement || document.activeElement === toggle) {
+              e.preventDefault();
+              lastElement.focus();
+            }
+          } else {
+            // Tab: going forwards
+            if (document.activeElement === lastElement) {
+              e.preventDefault();
+              toggle?.focus();
+            } else if (document.activeElement === toggle) {
+              e.preventDefault();
+              firstElement.focus();
+            }
+          }
+        };
+
+        // Add listener only when menu is open
+        const menuOpenCheck = () => menu?.classList.contains('open');
+
+        document.addEventListener('keydown', (e) => {
+          if (menuOpenCheck()) trapFocus(e);
+        });
+      }
 
       // Close on escape
       document.addEventListener('keydown', (e) => {

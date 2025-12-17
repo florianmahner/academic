@@ -35,8 +35,14 @@ export async function getAllUpdates(): Promise<UpdateItem[]> {
       url: `/publications/${pub.slug}`,
       description: pub.data.abstract,
     }));
-  } catch {
-    // Collection doesn't exist, skip
+  } catch (error) {
+    // Collection doesn't exist or other error - only log unexpected errors
+    if (error && typeof error === 'object' && 'message' in error) {
+      const message = String(error.message);
+      if (!message.includes('does not exist') && !message.includes('Unknown collection')) {
+        console.error('Error loading publications:', error);
+      }
+    }
   }
 
   // Get talks (if collection exists)
@@ -52,8 +58,14 @@ export async function getAllUpdates(): Promise<UpdateItem[]> {
       url: `/talks/${talk.slug}`,
       description: talk.data.abstract,
     }));
-  } catch {
-    // Collection doesn't exist, skip
+  } catch (error) {
+    // Collection doesn't exist or other error - only log unexpected errors
+    if (error && typeof error === 'object' && 'message' in error) {
+      const message = String(error.message);
+      if (!message.includes('does not exist') && !message.includes('Unknown collection')) {
+        console.error('Error loading talks:', error);
+      }
+    }
   }
 
   // Get teaching (if collection exists)
@@ -77,8 +89,14 @@ export async function getAllUpdates(): Promise<UpdateItem[]> {
       url: `/teaching/${course.slug}`,
       description: course.data.description,
     }));
-  } catch {
-    // Collection doesn't exist, skip
+  } catch (error) {
+    // Collection doesn't exist or other error - only log unexpected errors
+    if (error && typeof error === 'object' && 'message' in error) {
+      const message = String(error.message);
+      if (!message.includes('does not exist') && !message.includes('Unknown collection')) {
+        console.error('Error loading teaching:', error);
+      }
+    }
   }
 
   // Get projects (if collection exists)
@@ -93,8 +111,14 @@ export async function getAllUpdates(): Promise<UpdateItem[]> {
       description: project.data.description,
       tags: project.data.tags,
     }));
-  } catch {
-    // Collection doesn't exist, skip
+  } catch (error) {
+    // Collection doesn't exist or other error - only log unexpected errors
+    if (error && typeof error === 'object' && 'message' in error) {
+      const message = String(error.message);
+      if (!message.includes('does not exist') && !message.includes('Unknown collection')) {
+        console.error('Error loading projects:', error);
+      }
+    }
   }
 
   // Combine and sort by date (newest first)

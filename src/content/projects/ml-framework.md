@@ -5,9 +5,9 @@ date: 2024-01-15
 tags: ["open-source", "software", "your-field"]
 featured: true
 status: "active"
-github: "#"  # Replace with your actual GitHub repo URL
-# url: "#"  # Project website if you have one
-# documentation: "#"  # Link to docs
+# github: ""  # Placeholder - add your actual GitHub repo URL
+# website: ""  # Placeholder - add project website if you have one
+# documentation: ""  # Placeholder - add link to docs
 ---
 
 # Your Open Source Project

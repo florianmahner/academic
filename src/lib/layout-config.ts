@@ -368,7 +368,7 @@ export function mergeLayoutConfig<T extends LayoutConfig>(
  */
 export function validateLayoutConfig(
   layout: LayoutType,
-  config: any
+  config: unknown
 ): config is LayoutConfig {
   // Define validation schemas for each layout type
   const schemas: Record<LayoutType, z.ZodSchema> = {

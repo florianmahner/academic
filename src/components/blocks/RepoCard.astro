@@ -26,21 +26,21 @@ const {
   class: className,
 } = Astro.props;
 
-// Language colors
-const langColors: Record<string, string> = {
-  python: '#3572A5',
-  javascript: '#f1e05a',
-  typescript: '#3178c6',
-  rust: '#dea584',
-  go: '#00ADD8',
-  java: '#b07219',
-  html: '#e34c26',
-  css: '#563d7c',
-  shell: '#89e051',
-  default: '#8b949e',
+// Language colors - mapped to CSS variables
+const langVars: Record<string, string> = {
+  python: 'var(--lang-python)',
+  javascript: 'var(--lang-javascript)',
+  typescript: 'var(--lang-typescript)',
+  rust: 'var(--lang-rust)',
+  go: 'var(--lang-go)',
+  java: 'var(--lang-java)',
+  html: 'var(--lang-html)',
+  css: 'var(--lang-css)',
+  shell: 'var(--lang-shell)',
+  default: 'var(--lang-default)',
 };
 
-const langColor = langColors[language?.toLowerCase() || 'default'] || langColors.default;
+const langColor = langVars[language?.toLowerCase() || 'default'] || langVars.default;
 ---
 
 <Card href={url} external class:list={['repo-card', className]}>

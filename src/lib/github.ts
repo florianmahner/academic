@@ -15,6 +15,20 @@ export interface GitHubRepo {
 }
 
 /**
+ * Input repository data that may come from JSON or partial data
+ */
+export interface RepoInput {
+  owner: string;
+  name: string;
+  description?: string;
+  url?: string;
+  language?: string | null;
+  stars?: number;
+  forks?: number;
+  topics?: string[];
+}
+
+/**
  * Fetch repository data from GitHub API
  */
 export async function fetchRepoData(owner: string, repo: string): Promise<GitHubRepo | null> {
@@ -56,7 +70,7 @@ export async function fetchRepoData(owner: string, repo: string): Promise<GitHub
  * Load repositories - fetch from GitHub API if only owner/name provided,
  * otherwise use the full data from JSON
  */
-export async function loadRepositories(repos: Array<{ owner: string; name: string; [key: string]: any }>): Promise<GitHubRepo[]> {
+export async function loadRepositories(repos: RepoInput[]): Promise<GitHubRepo[]> {
   const results = await Promise.all(
     repos.map(async (repo) => {
       // If repo has all data already, use it

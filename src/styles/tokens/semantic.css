@@ -13,8 +13,8 @@
      ------------------------------------------------------------------------- */
 
   /* Content area sizing */
-  --content-width: 55%;
-  --content-max-width: var(--content-width-base);
+  --content-width: 70%;
+  --content-max-width: 900px;
   --container-padding: var(--space-6);
 
   /* Tufte-style margins (for sidenotes) */
@@ -161,11 +161,25 @@
   }
 }
 
+@media (max-width: 768px) {
+  :root {
+    --container-padding: var(--container-padding-mobile);
+    --content-top-padding: var(--content-top-padding-mobile);
+  }
+}
+
 @media (max-width: 640px) {
   :root {
     --content-width: 100%;
     --container-padding: var(--space-4);
     --space-section: var(--space-10);
     --card-padding: var(--space-3);
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --container-padding: var(--space-4);
+    --content-top-padding: var(--space-8);
   }
 }

@@ -4,7 +4,7 @@
    ========================================================================== */
 
 /* Import design system */
-@import './variables.css';
+@import './tokens/index.css';
 @import './colors.css';
 @import './typography.css';
 

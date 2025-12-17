@@ -29,18 +29,16 @@
 
   /* -------------------------------------------------------------------------
      TYPOGRAPHY SCALE
-     Fluid type scale using clamp() for responsive sizing
-     Base: 1rem, Ratio: ~1.25 (Major Third)
+     Tufte-inspired scale optimized for 900px width with serif fonts
      ------------------------------------------------------------------------- */
-  --font-size-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
-  --font-size-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
-  --font-size-base: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
-  --font-size-lg: clamp(1.125rem, 1rem + 0.6vw, 1.25rem);
-  --font-size-xl: clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem);
-  --font-size-2xl: clamp(1.5rem, 1.3rem + 1vw, 2rem);
-  --font-size-3xl: clamp(2rem, 1.7rem + 1.5vw, 2.5rem);
-  --font-size-4xl: clamp(2.5rem, 2rem + 2.5vw, 3.5rem);
-  --font-size-5xl: clamp(3rem, 2.5rem + 3vw, 4.5rem);
+  --font-size-xs: clamp(0.8rem, 0.75rem + 0.25vw, 0.9rem);
+  --font-size-sm: clamp(0.95rem, 0.9rem + 0.3vw, 1.1rem);
+  --font-size-base: clamp(1.1rem, 1.05rem + 0.4vw, 1.25rem);
+  --font-size-lg: clamp(1.25rem, 1.15rem + 0.5vw, 1.4rem);
+  --font-size-xl: clamp(1.4rem, 1.25rem + 0.7vw, 1.65rem);
+  --font-size-2xl: clamp(1.65rem, 1.45rem + 1vw, 2.15rem);
+  --font-size-3xl: clamp(2.15rem, 1.85rem + 1.5vw, 2.75rem);
+  --font-size-4xl: clamp(2.75rem, 2.25rem + 2.5vw, 3.8rem);
 
   /* Font Weights */
   --font-weight-light: 300;
@@ -59,12 +57,35 @@
   --line-height-loose: 1.8;
 
   /* Letter Spacing */
-  --letter-spacing-tighter: -0.05em;
-  --letter-spacing-tight: -0.025em;
+  --letter-spacing-tighter: -0.03em;
+  --letter-spacing-tight: -0.02em;
   --letter-spacing-normal: 0;
   --letter-spacing-wide: 0.025em;
   --letter-spacing-wider: 0.05em;
-  --letter-spacing-widest: 0.1em;
+
+  /* Word Spacing */
+  --word-spacing-tight: -0.02em;
+  --word-spacing-normal: 0;
+  --word-spacing-wide: 0.05em;
+
+  /* -------------------------------------------------------------------------
+     MOBILE TYPOGRAPHY
+     Principled approach for optimal mobile reading
+     1. Optical sizing: smaller text needs more spacing
+     2. Reading distance: phones held closer
+     3. Line length: narrower columns need adjusted line-height
+     ------------------------------------------------------------------------- */
+
+  /* Mobile-specific line heights */
+  --line-height-tight-mobile: 1.25;
+  --line-height-snug-mobile: 1.4;
+  --line-height-normal-mobile: 1.55;
+  --line-height-relaxed-mobile: 1.7;
+
+  /* Mobile letter spacing (looser for smaller screens) */
+  --letter-spacing-tight-mobile: -0.01em;
+  --letter-spacing-normal-mobile: 0.005em;
+  --letter-spacing-wide-mobile: 0.03em;
 
   /* -------------------------------------------------------------------------
      BORDER RADIUS
@@ -139,9 +160,25 @@
   --content-width-base: 750px;
   --content-width-wide: 900px;
   --content-width-full: 1200px;
+  --content-max-width-wide: 1050px;
 
   /* Sidebar widths */
   --sidebar-width-narrow: 200px;
   --sidebar-width-base: 280px;
   --sidebar-width-wide: 320px;
+
+  /* -------------------------------------------------------------------------
+     LAYOUT & SPACING
+     Content alignment and responsive padding
+     ------------------------------------------------------------------------- */
+
+  /* Content top alignment - single source of truth */
+  --content-top-padding: 5rem;
+  --content-top-padding-mobile: var(--space-10);
+
+  /* Mobile-specific spacing overrides */
+  --container-padding-mobile: var(--space-5);
+
+  /* Mobile breakpoint */
+  --breakpoint-mobile: 768px;
 }
