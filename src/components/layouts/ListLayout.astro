@@ -133,7 +133,7 @@ const shouldShowField = (field: string) => fields.includes(field as any);
   {groupBy === 'none' ? (
     <div class="list-items" data-animate="stagger">
       {grouped['all']?.map((item) => (
-        <article class="list-item" data-thumbnail-size={thumbnailSize}>
+        <article class="list-item hover-item" data-thumbnail-size={thumbnailSize}>
           {showThumbnail && item.thumbnail && (
             <div class="item-thumbnail">
               <img
@@ -249,7 +249,7 @@ const shouldShowField = (field: string) => fields.includes(field as any);
         <h2 class="group-label">{groupKey}</h2>
         <div class="list-items" data-animate="stagger">
           {grouped[groupKey].map((item) => (
-            <article class="list-item" data-thumbnail-size={thumbnailSize}>
+            <article class="list-item hover-item" data-thumbnail-size={thumbnailSize}>
               {showThumbnail && item.thumbnail && (
                 <div class="item-thumbnail">
                   <img
@@ -394,16 +394,12 @@ const shouldShowField = (field: string) => fields.includes(field as any);
     gap: var(--space-4);
   }
 
-  /* List item card */
+  /* List item card - hover effect handled by global .hover-item class */
   .list-item {
     display: grid;
     gap: var(--space-5);
-    padding: var(--space-4);
     border-radius: var(--radius-md);
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
     transition: all var(--transition-fast);
-    border-left: 2px solid transparent;
   }
 
   /* Thumbnail size variants */
@@ -420,11 +416,7 @@ const shouldShowField = (field: string) => fields.includes(field as any);
     grid-template-columns: 1fr;
   }
 
-  @media (hover: hover) {
-    .list-item:hover {
-      border-left-color: var(--color-accent);
-    }
-  }
+  /* Hover effect handled by global .hover-item class */
 
   /* Thumbnail */
   .item-thumbnail {

@@ -112,7 +112,7 @@ const visibleItems = items.filter(item => !item.draft);
   style={`--aspect-ratio: ${aspectRatios[imageAspect]}`}
 >
   {visibleItems.map(item => (
-    <article class="grid-card" data-animate="fade-up">
+    <article class="grid-card hover-item" data-animate="fade-up">
       {showImage && item.image && (
         <a href={getItemLink(item)} class="card-image-link">
           <div class="card-image">
@@ -200,7 +200,7 @@ const visibleItems = items.filter(item => !item.draft);
     gap: var(--space-4);
   }
 
-  /* Card */
+  /* Card - hover effect handled by global .hover-item class */
   .grid-card {
     display: flex;
     flex-direction: column;
@@ -209,15 +209,6 @@ const visibleItems = items.filter(item => !item.draft);
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
     overflow: hidden;
-    transition: all var(--view-transition);
-    border-left: 2px solid transparent;
-    padding: 0; /* Override global article padding */
-  }
-
-  @media (hover: hover) {
-    .grid-card:hover {
-      border-left-color: var(--color-accent);
-    }
   }
 
   /* Image */
@@ -242,9 +233,9 @@ const visibleItems = items.filter(item => !item.draft);
     object-fit: cover;
   }
 
-  /* Content */
+  /* Content - padding handled by global .hover-item */
   .card-content {
-    padding: var(--space-4);
+    /* Additional content styling if needed */
   }
 
   .card-header {

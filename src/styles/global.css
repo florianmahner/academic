@@ -149,11 +149,13 @@ article {
    Apply via class="hover-item" or use the mixin properties directly
    ========================================================================== */
 
-/* Base hover item styling */
+/* Base hover item styling - single source of truth for all card hover effects */
 .hover-item {
   position: relative;
-  padding: var(--space-3) var(--space-4);
+  padding: var(--space-4);
   border-left: 2px solid transparent;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
   transition: border-left-color var(--transition-fast);
 }
 

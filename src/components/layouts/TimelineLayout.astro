@@ -135,7 +135,7 @@ const sortedGroups = Object.entries(groupedEntries).sort(([a], [b]) => {
               </div>
 
               {/* Entry Card */}
-              <div class="timeline-card">
+              <div class="timeline-card hover-item">
                 <div class="timeline-card-inner">
                   {/* Thumbnail */}
                   {showThumbnails && entry.thumbnail && (
@@ -468,24 +468,13 @@ const sortedGroups = Object.entries(groupedEntries).sort(([a], [b]) => {
   }
 
   /* ============================================
-     Timeline Card
+     Timeline Card - hover effect handled by global .hover-item class
      ============================================ */
   .timeline-card {
     flex: 1;
     min-width: 0;
     background: var(--color-bg);
-    border-left: 2px solid transparent;
     border-radius: var(--radius-md);
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-    padding: var(--space-5);
-    transition: all var(--transition-fast);
-  }
-
-  @media (hover: hover) {
-    .timeline-card:hover {
-      border-left-color: var(--color-accent);
-    }
   }
 
   .timeline-card-inner {
