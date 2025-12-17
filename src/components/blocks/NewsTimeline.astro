@@ -127,48 +127,28 @@ const typeLabels: Record<string, string> = {
   }
 
   .news-type--blog {
-    color: #9f1239;
-    background-color: rgba(196, 30, 58, 0.12);
+    color: var(--type-blog);
+    background-color: var(--type-blog-bg);
   }
 
   .news-type--talk {
-    color: #047857;
-    background-color: rgba(5, 150, 105, 0.12);
+    color: var(--type-talk);
+    background-color: var(--type-talk-bg);
   }
 
   .news-type--publication {
-    color: #6d28d9;
-    background-color: rgba(124, 58, 237, 0.12);
+    color: var(--type-publication);
+    background-color: var(--type-publication-bg);
   }
 
   .news-type--project {
-    color: #0e7490;
-    background-color: rgba(8, 145, 178, 0.12);
+    color: var(--type-project);
+    background-color: var(--type-project-bg);
   }
 
   .news-type--news {
-    color: #b45309;
-    background-color: rgba(217, 119, 6, 0.12);
-  }
-
-  [data-theme="dark"] .news-type--blog {
-    background-color: rgba(255, 77, 106, 0.15);
-  }
-
-  [data-theme="dark"] .news-type--talk {
-    background-color: rgba(52, 211, 153, 0.15);
-  }
-
-  [data-theme="dark"] .news-type--publication {
-    background-color: rgba(167, 139, 250, 0.15);
-  }
-
-  [data-theme="dark"] .news-type--project {
-    background-color: rgba(34, 211, 238, 0.15);
-  }
-
-  [data-theme="dark"] .news-type--news {
-    background-color: rgba(251, 191, 36, 0.15);
+    color: var(--type-news);
+    background-color: var(--type-news-bg);
   }
 
   @media (max-width: 600px) {

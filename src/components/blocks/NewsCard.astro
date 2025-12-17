@@ -69,7 +69,7 @@ const typeLabels = {
 };
 ---
 
-<article class:list={['news-card', `news-card--${type}`, className]} data-animate="fade-up">
+<article class:list={['news-card', 'hover-item', `news-card--${type}`, className]} data-animate="fade-up">
   <div class="news-card-inner">
     {image && type === 'blog' && (
       <div class="news-image">
@@ -83,7 +83,7 @@ const typeLabels = {
         <Badge size="sm" variant={typeBadgeVariants[type]}>{typeLabels[type]}</Badge>
       </div>
 
-      <h3 class="news-title">
+      <h3 class="news-title hover-title">
         {href !== '#' ? (
           <a href={href} class="news-link">{title}</a>
         ) : (
@@ -136,18 +136,12 @@ const typeLabels = {
 
 <style>
   .news-card {
-    border-radius: var(--radius-md);
-    transition: background-color var(--transition-fast);
-  }
-
-  .news-card:hover {
-    background-color: var(--color-bg-alt);
+    /* Padding, border-left, and hover handled by global .hover-item */
   }
 
   .news-card-inner {
     display: flex;
     flex-direction: column;
-    padding: var(--space-4);
   }
 
   .news-image {

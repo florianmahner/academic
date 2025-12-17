@@ -31,9 +31,9 @@ const {
 const displaySemester = year ? `${semester} ${year}` : semester;
 ---
 
-<div class:list={['teaching-card', className]} data-animate="fade-up">
+<div class:list={['teaching-card', 'hover-item', className]} data-animate="fade-up">
   <div class="teaching-header">
-    <h3 class="teaching-title">{title}</h3>
+    <h3 class="teaching-title hover-title">{title}</h3>
     <span class="teaching-semester">{displaySemester}</span>
   </div>
   <div class="teaching-meta">
@@ -52,16 +52,7 @@ const displaySemester = year ? `${semester} ${year}` : semester;
 
 <style>
   .teaching-card {
-    padding: var(--space-4);
-    border-radius: var(--radius-md);
-    transition: all var(--transition-fast);
-    border-left: 2px solid transparent;
-  }
-
-  @media (hover: hover) {
-    .teaching-card:hover {
-      border-left-color: var(--color-accent);
-    }
+    /* Padding, border-left, and hover handled by global .hover-item */
   }
 
   .teaching-header {

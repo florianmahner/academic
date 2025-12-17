@@ -274,15 +274,17 @@ if (groupByMonth) {
      Update Item Card
      ============================================ */
   .update-item {
-    padding: var(--space-4);
-    border-radius: var(--radius-md);
-    transition: background-color var(--transition-fast);
+    padding: var(--space-3) var(--space-4);
+    border-left: 2px solid transparent;
+    transition: border-left-color var(--transition-fast);
     position: relative;
   }
 
-  /* Subtle hover effect */
-  .update-item:hover {
-    background-color: var(--color-bg-alt);
+  /* Hover effect - consistent with other cards */
+  @media (hover: hover) {
+    .update-item:hover {
+      border-left-color: var(--color-accent);
+    }
   }
 
   /* Highlighted/featured items */
