@@ -109,6 +109,29 @@ const socialIcons: Record<string, string> = {
       (function() {
         const html = document.documentElement;
 
+        // Font URLs for each preset (must match SettingsPanel)
+        const FONT_URLS = {
+          'crimson-classic': 'https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap',
+          'editorial-newsreader': 'https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400;1,6..72,500&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap',
+          'modern-geist': 'https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@300;400;500;600;700&display=swap',
+          'classic-playfair': 'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Lora:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap',
+          'brutalist-space': 'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap',
+          'humanist-inter': 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap',
+          'elegant-josefin': 'https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100;0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap',
+          'clean-roboto': 'https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Roboto+Mono:wght@300;400;500;600;700&display=swap',
+          'refined-jost': 'https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100;0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap',
+          'editorial-instrument': 'https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap',
+        };
+
+        // Preload user's selected font immediately (before anything else)
+        const presetId = localStorage.getItem('typography-preset');
+        if (presetId && FONT_URLS[presetId]) {
+          const link = document.createElement('link');
+          link.rel = 'stylesheet';
+          link.href = FONT_URLS[presetId];
+          document.head.appendChild(link);
+        }
+
         // Apply light/dark theme
         const theme = localStorage.getItem('theme') ||
           (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
