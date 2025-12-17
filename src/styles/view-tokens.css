@@ -30,12 +30,12 @@
   --view-dot-paused: #f59e0b;      /* Amber - paused/wip */
   --view-dot-featured: var(--color-accent);
 
-  /* Content type colors - reference centralized tokens from colors.css */
-  --view-dot-blog: var(--type-blog);
-  --view-dot-talk: var(--type-talk);
-  --view-dot-publication: var(--type-publication);
-  --view-dot-project: var(--type-project);
-  --view-dot-teaching: var(--type-teaching);
+  /* Content type colors - all use accent color for consistency */
+  --view-dot-blog: var(--color-accent);
+  --view-dot-talk: var(--color-accent);
+  --view-dot-publication: var(--color-accent);
+  --view-dot-project: var(--color-accent);
+  --view-dot-teaching: var(--color-accent);
 
   /* ========================================
      Typography - 3-Tier System
