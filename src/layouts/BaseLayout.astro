@@ -133,15 +133,21 @@ const socialIcons: Record<string, string> = {
             html.style.setProperty('--font-mono', '"' + fonts.mono + '", monospace');
           }
 
-          // Restore colors
-          const colorsStr = localStorage.getItem('typography-colors');
-          if (colorsStr) {
-            const colors = JSON.parse(colorsStr);
-            html.style.setProperty('--color-accent-light', colors.accentLight);
-            html.style.setProperty('--color-accent-dark', colors.accentDark);
-            // Set --color-accent directly to prevent FOUC
-            const accentColor = theme === 'dark' ? colors.accentDark : colors.accentLight;
-            html.style.setProperty('--color-accent', accentColor);
+          // Restore colors - check accent-color-* first (user override), then typography-colors
+          const accentLight = localStorage.getItem('accent-color-light');
+          const accentDark = localStorage.getItem('accent-color-dark');
+          if (accentLight && accentDark) {
+            html.style.setProperty('--color-accent-light', accentLight);
+            html.style.setProperty('--color-accent-dark', accentDark);
+            html.style.setProperty('--color-accent', theme === 'dark' ? accentDark : accentLight);
+          } else {
+            const colorsStr = localStorage.getItem('typography-colors');
+            if (colorsStr) {
+              const colors = JSON.parse(colorsStr);
+              html.style.setProperty('--color-accent-light', colors.accentLight);
+              html.style.setProperty('--color-accent-dark', colors.accentDark);
+              html.style.setProperty('--color-accent', theme === 'dark' ? colors.accentDark : colors.accentLight);
+            }
           }
 
           // Restore typography styles
