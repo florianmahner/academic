@@ -167,9 +167,9 @@ const navModes = [
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    background: var(--color-bg, #fff);
-    color: var(--color-text-muted, #71717a);
-    border: 1px solid var(--color-border, #e4e4e7);
+    background: var(--color-bg);
+    color: var(--color-text-muted);
+    border: 1px solid var(--color-border);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -181,12 +181,7 @@ const navModes = [
   .toggle-btn:hover {
     transform: scale(1.05);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  }
-
-  [data-theme="dark"] .toggle-btn {
-    background: #27272a;
-    border-color: #3f3f46;
-    color: #a1a1aa;
+    color: var(--color-text);
   }
 
   /* Dropdown - desktop */
