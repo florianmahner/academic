@@ -54,19 +54,19 @@
   --lang-shell: #89e051;
   --lang-default: #8b949e;
 
-  /* Content Type Colors (match view-tokens.css --view-dot-* for consistency) */
+  /* Content Type Colors - all use accent color for consistency */
   --type-blog: var(--color-accent);
   --type-blog-bg: rgba(196, 30, 58, 0.12);
-  --type-talk: #0891b2;
-  --type-talk-bg: rgba(8, 145, 178, 0.12);
-  --type-publication: #059669;
-  --type-publication-bg: rgba(5, 150, 105, 0.12);
-  --type-project: #8b5cf6;
-  --type-project-bg: rgba(139, 92, 246, 0.12);
-  --type-teaching: #ec4899;
-  --type-teaching-bg: rgba(236, 72, 153, 0.12);
-  --type-news: #f59e0b;
-  --type-news-bg: rgba(245, 158, 11, 0.12);
+  --type-talk: var(--color-accent);
+  --type-talk-bg: rgba(196, 30, 58, 0.12);
+  --type-publication: var(--color-accent);
+  --type-publication-bg: rgba(196, 30, 58, 0.12);
+  --type-project: var(--color-accent);
+  --type-project-bg: rgba(196, 30, 58, 0.12);
+  --type-teaching: var(--color-accent);
+  --type-teaching-bg: rgba(196, 30, 58, 0.12);
+  --type-news: var(--color-accent);
+  --type-news-bg: rgba(196, 30, 58, 0.12);
 
   /* Settings Panel Colors */
   --settings-bg: #ffffff;
@@ -106,13 +106,13 @@
   --color-warning: #d97706;
   --color-error: #dc2626;
 
-  /* Content Type Colors (Dark Mode - brighter backgrounds) */
+  /* Content Type Colors (Dark Mode - brighter backgrounds, all accent) */
   --type-blog-bg: rgba(255, 77, 106, 0.15);
-  --type-talk-bg: rgba(34, 211, 238, 0.15);
-  --type-publication-bg: rgba(52, 211, 153, 0.15);
-  --type-project-bg: rgba(167, 139, 250, 0.15);
-  --type-teaching-bg: rgba(244, 114, 182, 0.15);
-  --type-news-bg: rgba(251, 191, 36, 0.15);
+  --type-talk-bg: rgba(255, 77, 106, 0.15);
+  --type-publication-bg: rgba(255, 77, 106, 0.15);
+  --type-project-bg: rgba(255, 77, 106, 0.15);
+  --type-teaching-bg: rgba(255, 77, 106, 0.15);
+  --type-news-bg: rgba(255, 77, 106, 0.15);
 
   /* Settings Panel Colors (Dark Mode) */
   --settings-bg: #1c1c1e;
