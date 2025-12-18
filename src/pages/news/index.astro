@@ -4,6 +4,8 @@
  * Aggregates recent items from blog, talks, and publications
  * Uses the unified view system for consistent, customizable display
  */
+export const prerender = false; // Server-render to support URL params for preview
+
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { config } from '../../lib/config';
@@ -16,8 +18,12 @@ import { getPageOptions } from '../../lib/preview-options';
 // Page configuration (inline - no external config file needed)
 const title = 'News & Updates';
 const description = 'Recent announcements, publications, and academic activities';
-const view = 'timeline';
-const viewConfig = { groupBy: 'year', showDate: true, dateFormat: 'short' };
+// Allow URL param to override view for preview mode
+const urlView = Astro.url.searchParams.get('view');
+const view = urlView || 'timeline';
+const urlStyle = Astro.url.searchParams.get('style');
+const viewConfig = { groupBy: 'year', showDate: true, dateFormat: 'short', style: urlStyle || 'classic' };
+
 const sortOrder = 'desc';
 
 // Fetch blog posts
@@ -118,24 +124,7 @@ const pageTitle = `${title} | ${config.site.title}`;
     const { option, value, pageType } = e.detail;
     if (pageType !== 'news') return;
 
-    // For view changes, we need to reload - show message
-    if (option === 'view') {
-      const existing = document.querySelector('.preview-reload-msg');
-      if (existing) existing.remove();
-
-      const msg = document.createElement('div');
-      msg.className = 'preview-reload-msg';
-      msg.innerHTML = `View changed to "${value}". <button onclick="location.reload()">Reload to apply</button>`;
-      msg.style.cssText = 'position:fixed;bottom:80px;right:20px;background:var(--color-accent);color:white;padding:12px 16px;border-radius:8px;font-size:14px;z-index:9999;';
-      document.body.appendChild(msg);
-      setTimeout(() => msg.remove(), 5000);
-    }
-
-    // Toggle date visibility
-    if (option === 'showDate') {
-      document.querySelectorAll('.view-date, time').forEach(el => {
-        (el as HTMLElement).style.display = value ? '' : 'none';
-      });
-    }
+    // View/style changes are handled by PreviewPanel via URL params
+    // Toggle options are handled via CSS data attributes
   }) as EventListener);
 </script>

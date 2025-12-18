@@ -15,6 +15,7 @@ interface Option {
   type: 'toggle' | 'select' | 'radio';
   value: any;
   choices?: { id: string; label: string }[];
+  requiresReload?: boolean;
 }
 
 interface Props {
@@ -56,6 +57,7 @@ const { pageType, options } = Astro.props;
               class="toggle-switch"
               data-option={option.id}
               data-value={String(option.value)}
+              data-requires-reload={String(option.requiresReload || false)}
               aria-pressed={String(option.value)}
             >
               <span class="switch-track">
@@ -65,7 +67,7 @@ const { pageType, options } = Astro.props;
           )}
 
           {option.type === 'select' && option.choices && (
-            <select class="option-select" data-option={option.id}>
+            <select class="option-select" data-option={option.id} data-requires-reload={String(option.requiresReload || false)}>
               {option.choices.map(choice => (
                 <option value={choice.id} selected={choice.id === option.value}>
                   {choice.label}
@@ -75,7 +77,7 @@ const { pageType, options } = Astro.props;
           )}
 
           {option.type === 'radio' && option.choices && (
-            <div class="radio-group">
+            <div class="radio-group" data-requires-reload={String(option.requiresReload || false)}>
               {option.choices.map(choice => (
                 <button
                   class:list={['radio-option', { active: choice.id === option.value }]}
@@ -379,16 +381,26 @@ const { pageType, options } = Astro.props;
     // State
     let currentOptions: Record<string, any> = {};
 
-    // Load saved state
+    // Load state from URL params first (for view/style), then localStorage
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlView = urlParams.get('view');
+    const urlStyle = urlParams.get('style');
+
     const savedState = localStorage.getItem(`preview-${pageType}`);
     if (savedState) {
       try {
         currentOptions = JSON.parse(savedState);
-        applyAllOptions();
       } catch (e) {
         console.error('Failed to load preview state:', e);
       }
     }
+
+    // URL params override localStorage for view/style
+    if (urlView) currentOptions['view'] = urlView;
+    if (urlStyle) currentOptions['style'] = urlStyle;
+
+    // Apply all options to UI
+    applyAllOptions();
 
     // Open/close
     toggle.addEventListener('click', () => {
@@ -403,6 +415,7 @@ const { pageType, options } = Astro.props;
     sidebar.querySelectorAll('.toggle-switch').forEach(btn => {
       btn.addEventListener('click', () => {
         const option = btn.getAttribute('data-option');
+        const requiresReload = btn.getAttribute('data-requires-reload') === 'true';
         const currentValue = btn.getAttribute('data-value') === 'true';
         const newValue = !currentValue;
 
@@ -411,7 +424,7 @@ const { pageType, options } = Astro.props;
 
         if (option) {
           currentOptions[option] = newValue;
-          applyOption(option, newValue);
+          applyOption(option, newValue, requiresReload);
           saveState();
         }
       });
@@ -422,11 +435,12 @@ const { pageType, options } = Astro.props;
       select.addEventListener('change', (e) => {
         const target = e.target as HTMLSelectElement;
         const option = target.getAttribute('data-option');
+        const requiresReload = target.getAttribute('data-requires-reload') === 'true';
         const value = target.value;
 
         if (option) {
           currentOptions[option] = value;
-          applyOption(option, value);
+          applyOption(option, value, requiresReload);
           saveState();
         }
       });
@@ -437,9 +451,9 @@ const { pageType, options } = Astro.props;
       btn.addEventListener('click', () => {
         const option = btn.getAttribute('data-option');
         const value = btn.getAttribute('data-value');
+        const group = btn.closest('.radio-group');
 
         // Update UI
-        const group = btn.closest('.radio-group');
         group?.querySelectorAll('.radio-option').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
 
@@ -473,11 +487,18 @@ const { pageType, options } = Astro.props;
 
       // Also set data attribute on body for CSS-based changes
       document.body.setAttribute(`data-preview-${option}`, String(value));
+
+      // For view/style changes, reload with URL param so Astro renders the correct view
+      if (option === 'view' || option === 'style') {
+        window.location.href = window.location.pathname + '?' + option + '=' + value;
+        return;
+      }
     }
 
     function applyAllOptions() {
       Object.entries(currentOptions).forEach(([option, value]) => {
-        applyOption(option, value);
+        // Don't reload when restoring - only set data attributes
+        document.body.setAttribute(`data-preview-${option}`, String(value));
 
         // Update UI state
         const toggle = sidebar.querySelector(`[data-option="${option}"].toggle-switch`);

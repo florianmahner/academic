@@ -10,6 +10,8 @@ import StatCard from '../../components/primitives/StatCard.astro';
 import ViewDot from '../../components/primitives/ViewDot.astro';
 import ViewTags from '../../components/primitives/ViewTags.astro';
 import ActionLink from '../../components/primitives/ActionLink.astro';
+import PreviewPanel from '../../components/PreviewPanel.astro';
+import { getPageOptions } from '../../lib/preview-options';
 
 // Page configuration
 const title = 'Projects';
@@ -142,6 +144,52 @@ const statusLabels: Record<string, string> = {
   </article>
 </BaseLayout>
 
+{import.meta.env.DEV && (
+  <PreviewPanel
+    pageType="projects"
+    options={getPageOptions('projects')?.options || []}
+  />
+)}
+
+<script>
+  document.addEventListener('preview-option-change', ((e: CustomEvent) => {
+    const { option, value, pageType, requiresReload } = e.detail;
+    if (pageType !== 'projects') return;
+
+    // Auto-reload handled by PreviewPanel
+    if (requiresReload) return;
+
+    // Handle columns
+    if (option === 'columns') {
+      const grid = document.querySelector('.projects-grid');
+      if (grid) {
+        grid.setAttribute('data-columns', value);
+      }
+    }
+
+    // Handle showStatus
+    if (option === 'showStatus') {
+      document.querySelectorAll('.project-status').forEach(el => {
+        (el as HTMLElement).style.display = value ? '' : 'none';
+      });
+    }
+
+    // Handle showDescription
+    if (option === 'showDescription') {
+      document.querySelectorAll('.project-desc').forEach(el => {
+        (el as HTMLElement).style.display = value ? '' : 'none';
+      });
+    }
+
+    // Handle showTags
+    if (option === 'showTags') {
+      document.querySelectorAll('.project-footer :is(.tag-list, .tags-wrapper)').forEach(el => {
+        (el as HTMLElement).style.display = value ? '' : 'none';
+      });
+    }
+  }) as EventListener);
+</script>
+
 <style>
   .page-header {
     margin-bottom: var(--space-8);
@@ -190,6 +238,25 @@ const statusLabels: Record<string, string> = {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: var(--space-4);
+  }
+
+  /* Dynamic column support for preview mode */
+  .projects-grid[data-columns='1'] {
+    grid-template-columns: 1fr;
+  }
+
+  .projects-grid[data-columns='2'] {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .projects-grid[data-columns='3'] {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (max-width: 900px) {
+    .projects-grid[data-columns='3'] {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
 
   @media (max-width: 600px) {

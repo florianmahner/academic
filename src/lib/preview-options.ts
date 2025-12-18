@@ -1,9 +1,8 @@
 /**
  * Preview Mode Options Registry
  *
- * Defines available options for each page type.
- * These options can be toggled in the PreviewPanel
- * and exported as YAML config.
+ * Comprehensive options for all page types matching
+ * ViewConfig interfaces from view components.
  */
 
 export interface PreviewOption {
@@ -11,8 +10,9 @@ export interface PreviewOption {
   label: string;
   type: 'toggle' | 'select' | 'radio';
   value: any;
-  configPath: string; // Path in config.yaml
+  configPath: string;
   choices?: { id: string; label: string }[];
+  requiresReload?: boolean;
 }
 
 export interface PageOptions {
@@ -24,7 +24,7 @@ export interface PageOptions {
 export const pageOptionsRegistry: Record<string, PageOptions> = {
   publications: {
     pageType: 'publications',
-    title: 'Publications Options',
+    title: 'Publications',
     options: [
       {
         id: 'style',
@@ -56,31 +56,45 @@ export const pageOptionsRegistry: Record<string, PageOptions> = {
 
   news: {
     pageType: 'news',
-    title: 'News Options',
+    title: 'News & Updates',
     options: [
       {
         id: 'view',
-        label: 'View Style',
+        label: 'View Type',
         type: 'radio',
         value: 'timeline',
         configPath: 'news.view',
+        requiresReload: true,
         choices: [
           { id: 'timeline', label: 'Timeline' },
-          { id: 'grid', label: 'Cards' },
+          { id: 'grid', label: 'Grid' },
           { id: 'minimal', label: 'Minimal' },
           { id: 'editorial', label: 'Editorial' },
           { id: 'magazine', label: 'Magazine' },
         ],
       },
       {
+        id: 'style',
+        label: 'Timeline Style',
+        type: 'radio',
+        value: 'classic',
+        configPath: 'news.viewConfig.style',
+        requiresReload: true,
+        choices: [
+          { id: 'minimal', label: 'Minimal' },
+          { id: 'strip', label: 'Strip' },
+          { id: 'classic', label: 'Classic' },
+          { id: 'alternating', label: 'Alternating' },
+        ],
+      },
+      {
         id: 'groupBy',
         label: 'Group By',
-        type: 'select',
+        type: 'radio',
         value: 'year',
         configPath: 'news.viewConfig.groupBy',
         choices: [
           { id: 'year', label: 'Year' },
-          { id: 'month', label: 'Month' },
           { id: 'none', label: 'None' },
         ],
       },
@@ -91,89 +105,244 @@ export const pageOptionsRegistry: Record<string, PageOptions> = {
         value: true,
         configPath: 'news.viewConfig.showDate',
       },
-    ],
-  },
-
-  blog: {
-    pageType: 'blog',
-    title: 'Blog Options',
-    options: [
       {
-        id: 'view',
-        label: 'View Style',
-        type: 'radio',
-        value: 'grid',
-        configPath: 'blog.view',
-        choices: [
-          { id: 'grid', label: 'Cards' },
-          { id: 'timeline', label: 'List' },
-          { id: 'magazine', label: 'Magazine' },
-        ],
-      },
-      {
-        id: 'showImages',
-        label: 'Show Images',
+        id: 'showDot',
+        label: 'Show Type Dots',
         type: 'toggle',
         value: true,
-        configPath: 'blog.showImages',
+        configPath: 'news.viewConfig.showDot',
+      },
+      {
+        id: 'showDescription',
+        label: 'Show Description',
+        type: 'toggle',
+        value: false,
+        configPath: 'news.viewConfig.showDescription',
       },
       {
         id: 'showTags',
         label: 'Show Tags',
         type: 'toggle',
         value: true,
-        configPath: 'blog.showTags',
+        configPath: 'news.viewConfig.showTags',
+      },
+    ],
+  },
+
+  blog: {
+    pageType: 'blog',
+    title: 'Blog',
+    options: [
+      {
+        id: 'view',
+        label: 'View Type',
+        type: 'radio',
+        value: 'grid',
+        configPath: 'blog.view',
+        requiresReload: true,
+        choices: [
+          { id: 'grid', label: 'Grid' },
+          { id: 'timeline', label: 'Timeline' },
+          { id: 'magazine', label: 'Magazine' },
+          { id: 'minimal', label: 'Minimal' },
+        ],
+      },
+      {
+        id: 'columns',
+        label: 'Grid Columns',
+        type: 'radio',
+        value: '2',
+        configPath: 'blog.viewConfig.columns',
+        choices: [
+          { id: '1', label: '1' },
+          { id: '2', label: '2' },
+          { id: '3', label: '3' },
+        ],
+      },
+      {
+        id: 'showImage',
+        label: 'Show Images',
+        type: 'toggle',
+        value: true,
+        configPath: 'blog.viewConfig.showImage',
+      },
+      {
+        id: 'showDate',
+        label: 'Show Dates',
+        type: 'toggle',
+        value: true,
+        configPath: 'blog.viewConfig.showDate',
+      },
+      {
+        id: 'showDescription',
+        label: 'Show Description',
+        type: 'toggle',
+        value: true,
+        configPath: 'blog.viewConfig.showDescription',
+      },
+      {
+        id: 'showTags',
+        label: 'Show Tags',
+        type: 'toggle',
+        value: true,
+        configPath: 'blog.viewConfig.showTags',
+      },
+      {
+        id: 'showReadTime',
+        label: 'Show Read Time',
+        type: 'toggle',
+        value: true,
+        configPath: 'blog.viewConfig.showReadTime',
       },
     ],
   },
 
   talks: {
     pageType: 'talks',
-    title: 'Talks Options',
+    title: 'Talks',
     options: [
       {
         id: 'view',
-        label: 'View Style',
+        label: 'View Type',
         type: 'radio',
         value: 'timeline',
         configPath: 'talks.view',
+        requiresReload: true,
         choices: [
           { id: 'timeline', label: 'Timeline' },
+          { id: 'grid', label: 'Grid' },
           { id: 'minimal', label: 'Minimal' },
-          { id: 'grid', label: 'Cards' },
         ],
       },
       {
-        id: 'showLocation',
-        label: 'Show Location',
-        type: 'toggle',
-        value: true,
-        configPath: 'talks.showLocation',
+        id: 'style',
+        label: 'Timeline Style',
+        type: 'radio',
+        value: 'alternating',
+        configPath: 'talks.style',
+        requiresReload: true,
+        choices: [
+          { id: 'minimal', label: 'Minimal' },
+          { id: 'strip', label: 'Strip' },
+          { id: 'classic', label: 'Classic' },
+          { id: 'alternating', label: 'Alternating' },
+        ],
       },
       {
-        id: 'showType',
-        label: 'Show Type Badge',
+        id: 'groupBy',
+        label: 'Group By',
+        type: 'radio',
+        value: 'year',
+        configPath: 'talks.groupBy',
+        choices: [
+          { id: 'year', label: 'Year' },
+          { id: 'none', label: 'None' },
+        ],
+      },
+      {
+        id: 'showDate',
+        label: 'Show Dates',
         type: 'toggle',
         value: true,
-        configPath: 'talks.showType',
+        configPath: 'talks.showDate',
+      },
+      {
+        id: 'showDescription',
+        label: 'Show Description',
+        type: 'toggle',
+        value: true,
+        configPath: 'talks.showDescription',
+      },
+      {
+        id: 'showContext',
+        label: 'Show Event/Location',
+        type: 'toggle',
+        value: true,
+        configPath: 'talks.viewConfig.showContext',
+      },
+      {
+        id: 'showTags',
+        label: 'Show Tags',
+        type: 'toggle',
+        value: true,
+        configPath: 'talks.viewConfig.showTags',
+      },
+    ],
+  },
+
+  teaching: {
+    pageType: 'teaching',
+    title: 'Teaching',
+    options: [
+      {
+        id: 'view',
+        label: 'View Type',
+        type: 'radio',
+        value: 'timeline',
+        configPath: 'teaching.view',
+        requiresReload: true,
+        choices: [
+          { id: 'timeline', label: 'Timeline' },
+          { id: 'minimal', label: 'Minimal' },
+          { id: 'grid', label: 'Grid' },
+        ],
+      },
+      {
+        id: 'groupBy',
+        label: 'Group By',
+        type: 'radio',
+        value: 'year',
+        configPath: 'teaching.groupBy',
+        choices: [
+          { id: 'year', label: 'Year' },
+          { id: 'none', label: 'None' },
+        ],
+      },
+      {
+        id: 'showDate',
+        label: 'Show Dates',
+        type: 'toggle',
+        value: true,
+        configPath: 'teaching.showDate',
+      },
+      {
+        id: 'showRole',
+        label: 'Show Role',
+        type: 'toggle',
+        value: true,
+        configPath: 'teaching.viewConfig.showRole',
+      },
+      {
+        id: 'showInstitution',
+        label: 'Show Institution',
+        type: 'toggle',
+        value: true,
+        configPath: 'teaching.viewConfig.showInstitution',
+      },
+      {
+        id: 'showDescription',
+        label: 'Show Description',
+        type: 'toggle',
+        value: true,
+        configPath: 'teaching.viewConfig.showDescription',
       },
     ],
   },
 
   projects: {
     pageType: 'projects',
-    title: 'Projects Options',
+    title: 'Projects',
     options: [
       {
-        id: 'view',
-        label: 'View Style',
+        id: 'columns',
+        label: 'Grid Columns',
         type: 'radio',
-        value: 'showcase',
-        configPath: 'projects.view',
+        value: '2',
+        configPath: 'projects.columns',
         choices: [
-          { id: 'showcase', label: 'Featured + Grid' },
-          { id: 'grid', label: 'All Grid' },
-          { id: 'timeline', label: 'Timeline' },
+          { id: '1', label: '1' },
+          { id: '2', label: '2' },
+          { id: '3', label: '3' },
         ],
       },
       {
@@ -183,12 +352,26 @@ export const pageOptionsRegistry: Record<string, PageOptions> = {
         value: true,
         configPath: 'projects.showStatus',
       },
+      {
+        id: 'showDescription',
+        label: 'Show Description',
+        type: 'toggle',
+        value: true,
+        configPath: 'projects.showDescription',
+      },
+      {
+        id: 'showTags',
+        label: 'Show Tags',
+        type: 'toggle',
+        value: true,
+        configPath: 'projects.showTags',
+      },
     ],
   },
 
   'open-source': {
     pageType: 'open-source',
-    title: 'Open Source Options',
+    title: 'Open Source',
     options: [
       {
         id: 'columns',
@@ -197,9 +380,9 @@ export const pageOptionsRegistry: Record<string, PageOptions> = {
         value: '2',
         configPath: 'openSource.columns',
         choices: [
-          { id: '1', label: '1 Column' },
-          { id: '2', label: '2 Columns' },
-          { id: '3', label: '3 Columns' },
+          { id: '1', label: '1' },
+          { id: '2', label: '2' },
+          { id: '3', label: '3' },
         ],
       },
       {
@@ -215,6 +398,13 @@ export const pageOptionsRegistry: Record<string, PageOptions> = {
         type: 'toggle',
         value: true,
         configPath: 'openSource.showLanguage',
+      },
+      {
+        id: 'showDescription',
+        label: 'Show Description',
+        type: 'toggle',
+        value: true,
+        configPath: 'openSource.showDescription',
       },
     ],
   },

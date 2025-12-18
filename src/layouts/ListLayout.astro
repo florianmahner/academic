@@ -15,7 +15,9 @@
 
 import BaseLayout from './BaseLayout.astro';
 import ViewDispatcher from '../components/views/ViewDispatcher.astro';
+import PreviewPanel from '../components/PreviewPanel.astro';
 import { config } from '../lib/config';
+import { getPageOptions } from '../lib/preview-options';
 
 interface Props {
   frontmatter: {
@@ -38,17 +40,27 @@ const { frontmatter } = Astro.props;
 const {
   title,
   description,
-  view = 'timeline',
+  view: defaultView = 'timeline',
   viewConfig = {},
   items = [],
 } = frontmatter;
 
+// Allow URL param to override view/style for preview mode
+const urlView = Astro.url.searchParams.get('view');
+const urlStyle = Astro.url.searchParams.get('style');
+const view = urlView || defaultView;
+
 const pageTitle = `${title} | ${config.site.title}`;
 
-// Build viewConfig from frontmatter properties
+// Determine page type for preview panel
+const pageType = frontmatter.itemType === 'talk' ? 'talks' :
+                 frontmatter.collection === 'teaching' ? 'teaching' :
+                 frontmatter.collection || 'items';
+
+// Build viewConfig from frontmatter properties (URL params override)
 const resolvedViewConfig = {
   ...viewConfig,
-  style: frontmatter.style ?? viewConfig.style,
+  style: urlStyle ?? frontmatter.style ?? viewConfig.style,
   groupBy: frontmatter.groupBy ?? viewConfig.groupBy,
   showDate: frontmatter.showDate ?? viewConfig.showDate,
   dateFormat: frontmatter.dateFormat ?? viewConfig.dateFormat,
@@ -90,6 +102,13 @@ const transformedItems = items.map((item: any, index: number) => ({
       )}
     </div>
   </article>
+
+  {import.meta.env.DEV && (
+    <PreviewPanel
+      pageType={pageType}
+      options={getPageOptions(pageType)?.options || []}
+    />
+  )}
 </BaseLayout>
 
 <style>
@@ -103,3 +122,72 @@ const transformedItems = items.map((item: any, index: number) => ({
     color: var(--color-text-muted);
   }
 </style>
+
+<script>
+  document.addEventListener('preview-option-change', ((e: CustomEvent) => {
+    const { option, value, pageType, requiresReload } = e.detail;
+
+    // Only handle talks/teaching pages
+    if (pageType !== 'talks' && pageType !== 'teaching') return;
+
+    // Auto-reload is handled by PreviewPanel for requiresReload options
+    if (requiresReload) return;
+
+    // Toggle date visibility
+    if (option === 'showDate') {
+      document.querySelectorAll('.view-date, time, .item-date').forEach(el => {
+        (el as HTMLElement).style.display = value ? '' : 'none';
+      });
+    }
+
+    // Toggle description visibility
+    if (option === 'showDescription') {
+      document.querySelectorAll('.item-description, .view-description').forEach(el => {
+        (el as HTMLElement).style.display = value ? '' : 'none';
+      });
+    }
+
+    // Toggle context (event/location) visibility
+    if (option === 'showContext') {
+      document.querySelectorAll('.item-context, .view-context').forEach(el => {
+        (el as HTMLElement).style.display = value ? '' : 'none';
+      });
+    }
+
+    // Toggle role visibility
+    if (option === 'showRole') {
+      document.querySelectorAll('.item-role').forEach(el => {
+        (el as HTMLElement).style.display = value ? '' : 'none';
+      });
+    }
+
+    // Toggle institution visibility
+    if (option === 'showInstitution') {
+      document.querySelectorAll('.item-institution').forEach(el => {
+        (el as HTMLElement).style.display = value ? '' : 'none';
+      });
+    }
+
+    // Toggle tags visibility
+    if (option === 'showTags') {
+      document.querySelectorAll('.item-tags, .view-tags').forEach(el => {
+        (el as HTMLElement).style.display = value ? '' : 'none';
+      });
+    }
+
+    // Toggle type dots visibility
+    if (option === 'showDot') {
+      document.querySelectorAll('.view-dot, .type-dot').forEach(el => {
+        (el as HTMLElement).style.display = value ? '' : 'none';
+      });
+    }
+
+    // Group by changes
+    if (option === 'groupBy') {
+      const yearHeaders = document.querySelectorAll('.year-header, .timeline-year');
+      yearHeaders.forEach(h => {
+        (h as HTMLElement).style.display = value === 'year' ? '' : 'none';
+      });
+    }
+  }) as EventListener);
+</script>

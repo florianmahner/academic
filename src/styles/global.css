@@ -865,61 +865,135 @@ img:not([loading="lazy"]) {
    CSS-based reactivity for PreviewPanel option changes
    ========================================================================== */
 
+/* Date visibility */
+body[data-preview-showDate="false"] .view-date,
+body[data-preview-showDate="false"] time:not(.sr-only),
+body[data-preview-showDate="false"] .item-date {
+  display: none !important;
+}
+
+/* Description visibility */
+body[data-preview-showDescription="false"] .view-description,
+body[data-preview-showDescription="false"] .item-description,
+body[data-preview-showDescription="false"] .project-description,
+body[data-preview-showDescription="false"] .card-description {
+  display: none !important;
+}
+
+/* Tags visibility */
+body[data-preview-showTags="false"] .view-tags,
+body[data-preview-showTags="false"] .item-tags,
+body[data-preview-showTags="false"] .project-tags,
+body[data-preview-showTags="false"] .card-tags,
+body[data-preview-showTags="false"] .tag-list,
+body[data-preview-showTags="false"] .blog-tags {
+  display: none !important;
+}
+
+/* Type dots visibility */
+body[data-preview-showDot="false"] .view-dot,
+body[data-preview-showDot="false"] .type-dot {
+  display: none !important;
+}
+
+/* Image visibility */
+body[data-preview-showImage="false"] .view-image,
+body[data-preview-showImage="false"] .card-image,
+body[data-preview-showImage="false"] .grid-image,
+body[data-preview-showImage="false"] .blog-image,
+body[data-preview-showImages="false"] .blog-image,
+body[data-preview-showImages="false"] .media-card-image {
+  display: none !important;
+}
+
+/* Read time visibility */
+body[data-preview-showReadTime="false"] .read-time,
+body[data-preview-showReadTime="false"] .reading-time {
+  display: none !important;
+}
+
+/* Context (event/location) visibility */
+body[data-preview-showContext="false"] .view-context,
+body[data-preview-showContext="false"] .item-context,
+body[data-preview-showContext="false"] .talk-location,
+body[data-preview-showLocation="false"] .talk-location {
+  display: none !important;
+}
+
+/* Role visibility (teaching) */
+body[data-preview-showRole="false"] .item-role {
+  display: none !important;
+}
+
+/* Institution visibility (teaching) */
+body[data-preview-showInstitution="false"] .item-institution {
+  display: none !important;
+}
+
+/* Status visibility (projects) */
+body[data-preview-showStatus="false"] .project-status,
+body[data-preview-showStatus="false"] .status-badge {
+  display: none !important;
+}
+
+/* GitHub stats visibility (open-source) */
+body[data-preview-showStats="false"] .repo-stats,
+body[data-preview-showStats="false"] .github-stats {
+  display: none !important;
+}
+
+/* Language visibility (open-source) */
+body[data-preview-showLanguage="false"] .repo-language,
+body[data-preview-showLanguage="false"] .language-badge,
+body[data-preview-showLanguage="false"] .language-dot {
+  display: none !important;
+}
+
+/* Publication previews visibility */
+body[data-preview-showPreviews="false"] .media-card-image,
+body[data-preview-showPreviews="false"] .pub-preview {
+  display: none !important;
+}
+
 /* Publications style: minimal hides preview images */
 [data-preview-style="minimal"] .media-card-image {
   display: none !important;
 }
 
-/* Group by year toggle */
-[data-preview-groupByYear="false"] .year-header {
+/* Year group headers visibility */
+body[data-preview-groupBy="none"] .year-header,
+body[data-preview-groupBy="none"] .timeline-year,
+body[data-preview-groupByYear="false"] .year-header {
   display: none !important;
 }
 
-/* Show previews toggle */
-[data-preview-showPreviews="false"] .media-card-image {
+/* Type visibility (talks) */
+body[data-preview-showType="false"] .talk-meta {
   display: none !important;
 }
 
-/* Show date toggle */
-[data-preview-showDate="false"] .view-date,
-[data-preview-showDate="false"] time {
-  display: none !important;
+/* Grid column variations */
+body[data-preview-columns="1"] .projects-grid,
+body[data-preview-columns="1"] .grid-view {
+  grid-template-columns: 1fr !important;
 }
 
-/* Show tags toggle */
-[data-preview-showTags="false"] .blog-tags,
-[data-preview-showTags="false"] .view-tags {
-  display: none !important;
+body[data-preview-columns="2"] .projects-grid,
+body[data-preview-columns="2"] .grid-view {
+  grid-template-columns: repeat(2, 1fr) !important;
 }
 
-/* Show images toggle */
-[data-preview-showImages="false"] .blog-image,
-[data-preview-showImages="false"] .media-card-image {
-  display: none !important;
+body[data-preview-columns="3"] .projects-grid,
+body[data-preview-columns="3"] .grid-view {
+  grid-template-columns: repeat(3, 1fr) !important;
 }
 
-/* Show stats toggle (repos) */
-[data-preview-showStats="false"] .repo-stats {
-  display: none !important;
-}
-
-/* Show language toggle (repos) */
-[data-preview-showLanguage="false"] .language-dot,
-[data-preview-showLanguage="false"] .repo-language {
-  display: none !important;
-}
-
-/* Show status toggle (projects) */
-[data-preview-showStatus="false"] .project-status {
-  display: none !important;
-}
-
-/* Show location toggle (talks) */
-[data-preview-showLocation="false"] .talk-location {
-  display: none !important;
-}
-
-/* Show type toggle (talks) */
-[data-preview-showType="false"] .talk-meta {
-  display: none !important;
+/* Responsive column override */
+@media (max-width: 768px) {
+  body[data-preview-columns="2"] .projects-grid,
+  body[data-preview-columns="2"] .grid-view,
+  body[data-preview-columns="3"] .projects-grid,
+  body[data-preview-columns="3"] .grid-view {
+    grid-template-columns: 1fr !important;
+  }
 }
