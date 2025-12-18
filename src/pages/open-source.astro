@@ -4,6 +4,8 @@ import RepoCard from '../components/blocks/RepoCard.astro';
 import reposData from '../content/repositories.json';
 import { loadRepositories } from '../lib/github';
 import { config } from '../lib/config';
+import PreviewPanel from '../components/PreviewPanel.astro';
+import { getPageOptions } from '../lib/preview-options';
 
 const title = `Open Source | ${config.site.title}`;
 
@@ -73,3 +75,39 @@ const sortedRepos = await loadRepositories(reposData.repositories);
     }
   }
 </style>
+
+{import.meta.env.DEV && (
+  <PreviewPanel
+    pageType="open-source"
+    options={getPageOptions('open-source')?.options || []}
+  />
+)}
+
+<script>
+  document.addEventListener('preview-option-change', ((e: CustomEvent) => {
+    const { option, value, pageType } = e.detail;
+    if (pageType !== 'open-source') return;
+
+    // Handle column changes
+    if (option === 'columns') {
+      const grid = document.querySelector('.repos-grid') as HTMLElement;
+      if (grid) {
+        grid.style.gridTemplateColumns = `repeat(${value}, 1fr)`;
+      }
+    }
+
+    // Toggle stats visibility
+    if (option === 'showStats') {
+      document.querySelectorAll('.repo-stats').forEach(el => {
+        (el as HTMLElement).style.display = value ? '' : 'none';
+      });
+    }
+
+    // Toggle language visibility
+    if (option === 'showLanguage') {
+      document.querySelectorAll('.language-dot, .repo-language').forEach(el => {
+        (el as HTMLElement).style.display = value ? '' : 'none';
+      });
+    }
+  }) as EventListener);
+</script>

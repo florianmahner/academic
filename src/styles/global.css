@@ -859,3 +859,67 @@ img:not([loading="lazy"]) {
     display: none;
   }
 }
+
+/* ==========================================================================
+   Preview Mode Styles (Dev Only)
+   CSS-based reactivity for PreviewPanel option changes
+   ========================================================================== */
+
+/* Publications style: minimal hides preview images */
+[data-preview-style="minimal"] .media-card-image {
+  display: none !important;
+}
+
+/* Group by year toggle */
+[data-preview-groupByYear="false"] .year-header {
+  display: none !important;
+}
+
+/* Show previews toggle */
+[data-preview-showPreviews="false"] .media-card-image {
+  display: none !important;
+}
+
+/* Show date toggle */
+[data-preview-showDate="false"] .view-date,
+[data-preview-showDate="false"] time {
+  display: none !important;
+}
+
+/* Show tags toggle */
+[data-preview-showTags="false"] .blog-tags,
+[data-preview-showTags="false"] .view-tags {
+  display: none !important;
+}
+
+/* Show images toggle */
+[data-preview-showImages="false"] .blog-image,
+[data-preview-showImages="false"] .media-card-image {
+  display: none !important;
+}
+
+/* Show stats toggle (repos) */
+[data-preview-showStats="false"] .repo-stats {
+  display: none !important;
+}
+
+/* Show language toggle (repos) */
+[data-preview-showLanguage="false"] .language-dot,
+[data-preview-showLanguage="false"] .repo-language {
+  display: none !important;
+}
+
+/* Show status toggle (projects) */
+[data-preview-showStatus="false"] .project-status {
+  display: none !important;
+}
+
+/* Show location toggle (talks) */
+[data-preview-showLocation="false"] .talk-location {
+  display: none !important;
+}
+
+/* Show type toggle (talks) */
+[data-preview-showType="false"] .talk-meta {
+  display: none !important;
+}

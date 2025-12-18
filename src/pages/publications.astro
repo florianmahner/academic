@@ -4,6 +4,8 @@ import PublicationList from '../components/blocks/PublicationList.astro';
 import { loadPublications } from '../lib/bibtex';
 import { config } from '../lib/config';
 import path from 'node:path';
+import PreviewPanel from '../components/PreviewPanel.astro';
+import { getPageOptions } from '../lib/preview-options';
 
 const title = `Publications | ${config.site.title}`;
 
@@ -43,6 +45,41 @@ publications.forEach(pub => {
     </div>
   </article>
 </BaseLayout>
+
+{import.meta.env.DEV && (
+  <PreviewPanel
+    pageType="publications"
+    options={getPageOptions('publications')?.options || []}
+  />
+)}
+
+<script>
+  document.addEventListener('preview-option-change', ((e: CustomEvent) => {
+    const { option, value, pageType } = e.detail;
+    if (pageType !== 'publications') return;
+
+    // Handle style change
+    if (option === 'style') {
+      document.body.setAttribute('data-pub-style', value);
+    }
+
+    // Handle groupByYear
+    if (option === 'groupByYear') {
+      const yearHeaders = document.querySelectorAll('.year-header');
+      yearHeaders.forEach(h => {
+        (h as HTMLElement).style.display = value ? '' : 'none';
+      });
+    }
+
+    // Handle showPreviews
+    if (option === 'showPreviews') {
+      const previews = document.querySelectorAll('.media-card-image');
+      previews.forEach(p => {
+        (p as HTMLElement).style.display = value ? '' : 'none';
+      });
+    }
+  }) as EventListener);
+</script>
 
 <style>
   .publications-page {
