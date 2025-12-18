@@ -1,0 +1,147 @@
+---
+interface Supervisor {
+  name: string;
+  url?: string;
+}
+
+interface Thesis {
+  title: string;
+  url?: string;
+}
+
+interface Props {
+  startYear: string | number;
+  endYear: string | number;
+  degree: string;
+  field: string;
+  institution: string;
+  institutionUrl?: string;
+  supervisors?: Supervisor[];
+  grade?: string;
+  thesis?: Thesis;
+}
+
+const {
+  startYear,
+  endYear,
+  degree,
+  field,
+  institution,
+  institutionUrl,
+  supervisors,
+  grade,
+  thesis
+} = Astro.props;
+---
+
+<div class="education-item">
+  <div class="education-period">{startYear} – {endYear}</div>
+  <div class="education-content">
+    <p><strong>{degree} in {field}</strong></p>
+    <p class="education-institution">
+      {institutionUrl ? (
+        <a href={institutionUrl}>{institution}</a>
+      ) : (
+        institution
+      )}
+    </p>
+    {supervisors && supervisors.length > 0 && (
+      <p class="education-details">
+        Supervisors: {supervisors.map((sup, i) => (
+          <>
+            {sup.url ? <a href={sup.url}>{sup.name}</a> : sup.name}
+            {i < supervisors.length - 1 && ', '}
+          </>
+        ))}
+      </p>
+    )}
+    {grade && (
+      <p class="education-details">Grade: {grade}</p>
+    )}
+    {thesis && (
+      <a href={thesis.url} class="thesis-link">Thesis: {thesis.title}</a>
+    )}
+  </div>
+</div>
+
+<style>
+  .education-item {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: var(--space-5);
+    padding: var(--space-4);
+    transition: border-left-color var(--transition-fast);
+    border-left: 2px solid transparent;
+  }
+
+  @media (hover: hover) {
+    .education-item:hover {
+      border-left-color: var(--color-accent);
+    }
+  }
+
+  .education-period {
+    font-size: var(--font-size-sm);
+    font-family: var(--font-body);
+    font-weight: var(--font-weight-normal);
+    line-height: var(--line-height-normal);
+    color: var(--color-text-muted);
+  }
+
+  .education-content p {
+    margin: 0 0 var(--space-1);
+  }
+
+  .education-content p:first-child {
+    font-size: var(--font-size-base);
+  }
+
+  .education-content strong {
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .education-institution {
+    font-size: var(--font-size-sm);
+  }
+
+  .education-institution a {
+    color: var(--color-text-secondary);
+  }
+
+  .education-details {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+  }
+
+  .thesis-link {
+    display: inline-block;
+    font-size: var(--font-size-sm);
+    color: var(--color-accent);
+    background: none;
+  }
+
+  @media (max-width: 600px) {
+    .education-item {
+      grid-template-columns: 1fr;
+      gap: var(--space-2);
+      padding: var(--space-3);
+    }
+
+    .education-period {
+      font-size: var(--font-size-sm);
+      margin-bottom: var(--space-1);
+    }
+
+    .education-content p {
+      font-size: var(--font-size-base);
+    }
+
+    .education-details {
+      font-size: var(--font-size-sm);
+    }
+
+    .thesis-link {
+      font-size: var(--font-size-sm);
+    }
+  }
+</style>

@@ -1,50 +1,30 @@
 ---
-import { getCollection, getEntry } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { PaperCard } from '../components/blocks';
+import EducationCard from '../components/blocks/EducationCard.astro';
 import NewsTimeline from '../components/blocks/NewsTimeline.astro';
 import ProfilePicture from '../components/blocks/ProfilePicture.astro';
 import { config } from '../lib/config';
 import educationData from '../content/education.json';
 import { loadPublications, getSelectedPublications } from '../lib/bibtex';
 import type { Publication } from '../lib/bibtex';
-import { convertMd } from '../lib/markdown';
+import { getAboutContent, getRecentNews } from '../lib/content-helpers';
 import path from 'node:path';
 
 const title = config.site.title;
 
-// Load about page content from markdown and split into sections
-let bioHtml = '';
-let researchInterestsHtml = '';
+// Prepend base path to images
+const base = import.meta.env.BASE_URL;
+const prependBase = (path: string) => {
+  if (!path || path.startsWith('http')) return path;
+  if (base === '/') return path;
+  // Avoid double slashes: remove trailing slash from base before joining
+  const normalizedBase = base.endsWith('/') ? base.slice(0, -1) : base;
+  return `${normalizedBase}${path}`;
+};
 
-try {
-  const aboutPage = await getEntry('pages', 'about');
-  if (aboutPage) {
-
-    // Get the raw body to split into sections
-    const rawBody = aboutPage.body;
-    const splitMarker = '## Research Interests';
-    const splitIndex = rawBody.indexOf(splitMarker);
-
-    if (splitIndex !== -1) {
-      // Parse bio (everything before ## Research Interests)
-      const bioMd = rawBody.substring(0, splitIndex).trim();
-      // Parse research interests (everything after the heading)
-      const researchMd = rawBody.substring(splitIndex + splitMarker.length).trim();
-
-      bioHtml = convertMd(bioMd);
-      researchInterestsHtml = convertMd(researchMd);
-    } else {
-      // No split marker, use entire content as bio
-      bioHtml = convertMd(rawBody);
-    }
-  }
-} catch {
-  // About page not found, fallback to config
-  // Fallback to config if about.md doesn't exist
-  bioHtml = config.about?.bio || '';
-  researchInterestsHtml = config.about?.researchInterests || '';
-}
+// Load about page content
+const { bioHtml, researchInterestsHtml } = await getAboutContent();
 
 // Load selected publications from BibTeX file
 let selectedPublications: Publication[] = [];
@@ -56,49 +36,11 @@ if (config.features.selectedPublications) {
 
 // Featured projects section removed per user request
 
-// Load recent items for news timeline (blog posts + publications)
-interface NewsItem {
-  type: 'blog' | 'publication';
-  title: string;
-  date: Date;
-  href?: string;
-}
-
-let newsItems: NewsItem[] = [];
-
-// Load blog posts
-try {
-  const allPosts = await getCollection('blog');
-  newsItems.push(...allPosts
-    .filter(post => !post.data.draft)
-    .map(post => ({
-      type: 'blog' as const,
-      title: post.data.title,
-      date: post.data.date,
-      href: prependBase(`/blog/${post.slug}`),
-    }))
-  );
-} catch {
-  // Blog collection not available
-}
-
-// Sort all news items by date (newest first) and limit to 5
-newsItems = newsItems
-  .sort((a, b) => b.date.valueOf() - a.date.valueOf())
-  .slice(0, 5);
+// Load recent items for news timeline (blog posts)
+const newsItems = await getRecentNews(5, base);
 
 // Education data
 const education = educationData.education;
-
-// Prepend base path to images
-const base = import.meta.env.BASE_URL;
-const prependBase = (path: string) => {
-  if (!path || path.startsWith('http')) return path;
-  if (base === '/') return path;
-  // Avoid double slashes: remove trailing slash from base before joining
-  const normalizedBase = base.endsWith('/') ? base.slice(0, -1) : base;
-  return `${normalizedBase}${path}`;
-};
 ---
 
 <BaseLayout title={title}>
@@ -162,31 +104,17 @@ const prependBase = (path: string) => {
 
           <div class="education-list" data-animate="stagger">
             {education.map(edu => (
-              <div class="education-item">
-                <div class="education-period">{edu.startYear} – {edu.endYear}</div>
-                <div class="education-content">
-                  <p><strong>{edu.degree} in {edu.field}</strong></p>
-                  <p class="education-institution">
-                    <a href={edu.institutionUrl}>{edu.institution}</a>
-                  </p>
-                  {edu.supervisors && (
-                    <p class="education-details">
-                      Supervisors: {edu.supervisors.map((sup, i) => (
-                        <>
-                          <a href={sup.url}>{sup.name}</a>
-                          {i < edu.supervisors.length - 1 && ', '}
-                        </>
-                      ))}
-                    </p>
-                  )}
-                  {edu.grade && (
-                    <p class="education-details">Grade: {edu.grade}</p>
-                  )}
-                  {edu.thesis && (
-                    <a href={edu.thesis.url} class="thesis-link">Thesis: {edu.thesis.title}</a>
-                  )}
-                </div>
-              </div>
+              <EducationCard
+                startYear={edu.startYear}
+                endYear={edu.endYear}
+                degree={edu.degree}
+                field={edu.field}
+                institution={edu.institution}
+                institutionUrl={edu.institutionUrl}
+                supervisors={edu.supervisors}
+                grade={edu.grade}
+                thesis={edu.thesis}
+              />
             ))}
           </div>
         </section>
@@ -316,86 +244,6 @@ const prependBase = (path: string) => {
   .education-list {
     display: flex;
     flex-direction: column;
-  }
-
-  .education-item {
-    display: grid;
-    grid-template-columns: 140px 1fr;
-    gap: var(--space-5);
-    padding: var(--space-4);
-    transition: border-left-color var(--transition-fast);
-    border-left: 2px solid transparent;
-  }
-
-  @media (hover: hover) {
-    .education-item:hover {
-      border-left-color: var(--color-accent);
-    }
-  }
-
-  .education-period {
-    font-size: var(--font-size-sm);
-    font-family: var(--font-body);
-    font-weight: var(--font-weight-normal);
-    line-height: var(--line-height-normal);
-    color: var(--color-text-muted);
-  }
-
-  .education-content p {
-    margin: 0 0 var(--space-1);
-  }
-
-  .education-content p:first-child {
-    font-size: var(--font-size-base);
-  }
-
-  .education-content strong {
-    font-weight: var(--font-weight-semibold);
-  }
-
-  .education-institution {
-    font-size: var(--font-size-sm);
-  }
-
-  .education-institution a {
-    color: var(--color-text-secondary);
-  }
-
-  .education-details {
-    font-size: var(--font-size-sm);
-    color: var(--color-text-muted);
-  }
-
-  .thesis-link {
-    display: inline-block;
-    font-size: var(--font-size-sm);
-    color: var(--color-accent);
-    background: none;
-  }
-
-  @media (max-width: 600px) {
-    .education-item {
-      grid-template-columns: 1fr;
-      gap: var(--space-2);
-      padding: var(--space-3);
-    }
-
-    .education-period {
-      font-size: var(--font-size-sm);
-      margin-bottom: var(--space-1);
-    }
-
-    .education-content p {
-      font-size: var(--font-size-base);
-    }
-
-    .education-details {
-      font-size: var(--font-size-sm);
-    }
-
-    .thesis-link {
-      font-size: var(--font-size-sm);
-    }
   }
 
   /* Very small screens */
