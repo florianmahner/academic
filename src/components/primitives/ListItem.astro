@@ -1,0 +1,45 @@
+---
+/**
+ * ListItem Primitive
+ *
+ * Simple list item with optional marker.
+ * Used by: Awards, simple lists, minimal views
+ *
+ * @prop marker - Optional marker (bullet, icon, date)
+ * @slot default - Main content
+ */
+
+interface Props {
+  marker?: string;
+  class?: string;
+}
+
+const { marker, class: className } = Astro.props;
+---
+
+<li class:list={['list-item', 'hover-item', className]}>
+  {marker && <span class="list-item-marker">{marker}</span>}
+  <div class="list-item-content">
+    <slot />
+  </div>
+</li>
+
+<style>
+  .list-item {
+    display: flex;
+    gap: var(--space-3);
+    list-style: none;
+  }
+
+  .list-item-marker {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    flex-shrink: 0;
+    min-width: 80px;
+  }
+
+  .list-item-content {
+    flex: 1;
+    min-width: 0;
+  }
+</style>
