@@ -1,9 +1,10 @@
 ---
 /**
  * BlogCard Component
- * Display blog post preview in list
+ * Display blog post preview in list.
+ * Composes MediaCard primitive with blog-specific additions.
  */
-
+import MediaCard from '../primitives/MediaCard.astro';
 import { formatDate } from '../../lib/date-utils';
 import Badge from '../ui/Badge.astro';
 
@@ -30,92 +31,36 @@ const {
 const href = `/blog/${slug}`;
 ---
 
-<article class:list={['blog-card', 'hover-item', className]} data-animate="fade-up">
-  <a href={href} class="blog-link">
-    {image && (
-      <div class="blog-image">
-        <img src={image} alt={title} loading="lazy" decoding="async" />
+<MediaCard
+  image={image}
+  imageAlt={title}
+  title={title}
+  href={href}
+  class:list={['blog-card', className]}
+>
+  <Fragment slot="meta">
+    <time datetime={date.toISOString()}>{formatDate(date)}</time>
+  </Fragment>
+
+  <Fragment slot="description">
+    {description}
+  </Fragment>
+
+  <Fragment slot="links">
+    {tags.length > 0 && (
+      <div class="blog-tags">
+        {tags.slice(0, 3).map(tag => (
+          <Badge size="sm">{tag}</Badge>
+        ))}
       </div>
     )}
-    <div class="blog-content">
-      <div class="blog-meta">
-        <time datetime={date.toISOString()}>{formatDate(date)}</time>
-      </div>
-      <h3 class="blog-title hover-title">{title}</h3>
-      {description && <p class="blog-description">{description}</p>}
-      {tags.length > 0 && (
-        <div class="blog-tags">
-          {tags.slice(0, 3).map(tag => (
-            <Badge size="sm">{tag}</Badge>
-          ))}
-        </div>
-      )}
-    </div>
-  </a>
-</article>
+  </Fragment>
+</MediaCard>
 
 <style>
-  .blog-card {
-    /* Padding, border-left, and hover handled by global .hover-item */
-  }
-
-  .blog-link {
-    display: block;
-    text-decoration: none;
-    color: inherit;
-    background: none;
-    padding: var(--space-4);
-  }
-
-  .blog-image {
-    margin-bottom: var(--space-3);
-    border-radius: var(--radius-sm);
-    overflow: hidden;
-    aspect-ratio: 16 / 9;
-  }
-
-  .blog-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .blog-content {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-  }
-
-  .blog-meta {
-    font-size: var(--font-size-xs);
-    font-family: var(--font-ui);
-    color: var(--color-text-muted);
-    letter-spacing: 0.01em;
-  }
-
-  .blog-title {
-    font-size: var(--font-size-base);
-    font-family: var(--font-body);
-    font-weight: var(--font-weight-semibold);
-    margin: 0;
-    line-height: var(--line-height-snug);
-    transition: color var(--transition-fast);
-  }
-
-  /* Hover title color handled by global .hover-item:hover .hover-title */
-
-  .blog-description {
-    font-size: var(--font-size-sm);
-    font-family: var(--font-body);
-    color: var(--color-text-secondary);
-    margin: 0;
-    line-height: var(--line-height-normal);
-  }
-
   .blog-tags {
     display: flex;
     gap: var(--space-2);
     flex-wrap: wrap;
-    margin-top: var(--space-1);
   }
 </style>

@@ -1,16 +1,15 @@
 ---
 /**
  * ProjectCard Component
- * Display project with image, description, and links
+ * Display project with image, description, and links.
+ * Composes StatCard primitive.
  */
-
-import Card from '../primitives/Card.astro';
+import StatCard from '../primitives/StatCard.astro';
 import Badge from '../ui/Badge.astro';
 
 interface Props {
   title: string;
   description?: string;
-  image?: string;
   tags?: string[];
   url?: string;
   featured?: boolean;
@@ -20,7 +19,6 @@ interface Props {
 const {
   title,
   description,
-  image,
   tags = [],
   url,
   featured = false,
@@ -28,15 +26,17 @@ const {
 } = Astro.props;
 ---
 
-<Card href={url} external={!!url} class:list={['project-card', { featured }, className]}>
-  {image && (
-    <div class="project-image">
-      <img src={image} alt={title} loading="lazy" decoding="async" />
-    </div>
-  )}
-  <div class="project-content">
-    <h3 class="project-title">{title}</h3>
-    {description && <p class="project-description">{description}</p>}
+<StatCard
+  title={title}
+  href={url}
+  external={!!url}
+  class:list={['project-card', { featured }, className]}
+>
+  <Fragment slot="subtitle">
+    {description}
+  </Fragment>
+
+  <Fragment slot="stats">
     {tags.length > 0 && (
       <div class="project-tags">
         {tags.map(tag => (
@@ -44,57 +44,17 @@ const {
         ))}
       </div>
     )}
-  </div>
-</Card>
+  </Fragment>
+</StatCard>
 
 <style>
   .project-card.featured {
     border-left-color: var(--color-accent);
   }
 
-  .project-image {
-    margin-bottom: var(--space-3);
-    border-radius: var(--radius-sm);
-    overflow: hidden;
-  }
-
-  .project-image img {
-    width: 100%;
-    height: 140px;
-    object-fit: cover;
-  }
-
-  .project-content {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-  }
-
-  .project-title {
-    font-size: var(--font-size-base);
-    font-family: var(--font-body);
-    font-weight: var(--font-weight-medium);
-    line-height: var(--line-height-snug);
-    margin: 0;
-    transition: color var(--transition-fast);
-  }
-
-  .project-card:hover .project-title {
-    color: var(--color-accent);
-  }
-
-  .project-description {
-    font-size: var(--font-size-sm);
-    font-family: var(--font-body);
-    color: var(--color-text-secondary);
-    margin: 0;
-    line-height: var(--line-height-normal);
-  }
-
   .project-tags {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-1);
-    margin-top: var(--space-2);
   }
 </style>

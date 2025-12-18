@@ -1199,6 +1199,420 @@ git commit -m "refactor: complete design primitives migration"
 
 ---
 
+## Phase 4: Complete Refactoring (Additional Tasks)
+
+### Task 13: Refactor BlogCard to use MediaCard
+
+**Files:**
+- Modify: `src/components/blocks/BlogCard.astro`
+
+**Step 1: Refactor BlogCard to compose MediaCard**
+
+BlogCard displays blog posts with optional image, title, date, description, and tags.
+
+```astro
+---
+/**
+ * BlogCard Component
+ * Display blog post preview in list.
+ * Composes MediaCard primitive with blog-specific additions.
+ */
+import MediaCard from '../primitives/MediaCard.astro';
+import { formatDate } from '../../lib/date-utils';
+import Badge from '../ui/Badge.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  date: Date;
+  tags?: string[];
+  slug: string;
+  image?: string;
+  class?: string;
+}
+
+const {
+  title,
+  description,
+  date,
+  tags = [],
+  slug,
+  image,
+  class: className,
+} = Astro.props;
+
+const href = `/blog/${slug}`;
+---
+
+<MediaCard
+  image={image}
+  imageAlt={title}
+  title={title}
+  href={href}
+  class:list={['blog-card', className]}
+>
+  <Fragment slot="meta">
+    <time datetime={date.toISOString()}>{formatDate(date)}</time>
+  </Fragment>
+
+  <Fragment slot="description">
+    {description}
+  </Fragment>
+
+  <Fragment slot="links">
+    {tags.length > 0 && (
+      <div class="blog-tags">
+        {tags.slice(0, 3).map(tag => (
+          <Badge size="sm">{tag}</Badge>
+        ))}
+      </div>
+    )}
+  </Fragment>
+</MediaCard>
+
+<style>
+  .blog-tags {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+  }
+</style>
+```
+
+**Step 2: Commit**
+
+```bash
+git add src/components/blocks/BlogCard.astro
+git commit -m "refactor: BlogCard to compose MediaCard primitive"
+```
+
+---
+
+### Task 14: Refactor TalkCard to use TimelineEntry + ActionLink
+
+**Files:**
+- Modify: `src/components/blocks/TalkCard.astro`
+
+**Step 1: Refactor TalkCard to compose TimelineEntry**
+
+TalkCard displays talks with date, title, event, and links. Using TimelineEntry for layout and ActionLink for links.
+
+```astro
+---
+/**
+ * TalkCard Component
+ * Display talk/presentation with event details and links.
+ * Composes TimelineEntry primitive with talk-specific additions.
+ */
+import TimelineEntry from '../primitives/TimelineEntry.astro';
+import ActionLink from '../primitives/ActionLink.astro';
+import Badge from '../ui/Badge.astro';
+
+interface Props {
+  title: string;
+  event: string;
+  date: string;
+  location?: string;
+  type?: 'conference' | 'workshop' | 'seminar' | 'invited';
+  slides?: string;
+  video?: string;
+  abstract?: string;
+  class?: string;
+}
+
+const {
+  title,
+  event,
+  date,
+  location,
+  type,
+  slides,
+  video,
+  abstract,
+  class: className,
+} = Astro.props;
+---
+
+<TimelineEntry date={date} class:list={['talk-card', className]}>
+  <div class="talk-meta">
+    {type && <Badge size="sm" variant="outline">{type}</Badge>}
+  </div>
+  <h3 class="talk-title hover-title">{title}</h3>
+  <div class="talk-event">
+    {event}
+    {location && <span class="talk-location"> · {location}</span>}
+  </div>
+  {abstract && <p class="talk-abstract">{abstract}</p>}
+
+  <Fragment slot="links">
+    {slides && <ActionLink href={slides} label="Slides" icon="slides" />}
+    {video && <ActionLink href={video} label="Video" icon="video" />}
+  </Fragment>
+</TimelineEntry>
+
+<style>
+  .talk-meta {
+    margin-bottom: var(--space-2);
+  }
+
+  .talk-meta:empty {
+    display: none;
+  }
+
+  .talk-title {
+    font-size: var(--font-size-base);
+    font-family: var(--font-body);
+    font-weight: var(--font-weight-medium);
+    margin: 0 0 var(--space-2);
+    line-height: var(--line-height-snug);
+  }
+
+  .talk-event {
+    font-size: var(--font-size-sm);
+    font-family: var(--font-ui);
+    color: var(--color-accent);
+    font-weight: var(--font-weight-medium);
+  }
+
+  .talk-location {
+    font-family: var(--font-ui);
+    color: var(--color-text-muted);
+    font-weight: var(--font-weight-normal);
+  }
+
+  .talk-abstract {
+    font-size: var(--font-size-sm);
+    font-family: var(--font-body);
+    color: var(--color-text-secondary);
+    margin: var(--space-2) 0 0;
+    line-height: var(--line-height-normal);
+  }
+</style>
+```
+
+**Step 2: Commit**
+
+```bash
+git add src/components/blocks/TalkCard.astro
+git commit -m "refactor: TalkCard to compose TimelineEntry + ActionLink"
+```
+
+---
+
+### Task 15: Refactor ProjectCard to use StatCard
+
+**Files:**
+- Modify: `src/components/blocks/ProjectCard.astro`
+
+**Step 1: Refactor ProjectCard to compose StatCard**
+
+ProjectCard displays projects with image, title, description, and tags. Using StatCard for the base card functionality.
+
+```astro
+---
+/**
+ * ProjectCard Component
+ * Display project with image, description, and links.
+ * Composes StatCard primitive.
+ */
+import StatCard from '../primitives/StatCard.astro';
+import Badge from '../ui/Badge.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  tags?: string[];
+  url?: string;
+  featured?: boolean;
+  class?: string;
+}
+
+const {
+  title,
+  description,
+  image,
+  tags = [],
+  url,
+  featured = false,
+  class: className,
+} = Astro.props;
+---
+
+<StatCard
+  title={title}
+  href={url}
+  external={!!url}
+  class:list={['project-card', { featured }, className]}
+>
+  <Fragment slot="subtitle">
+    {description}
+  </Fragment>
+
+  <Fragment slot="stats">
+    {tags.length > 0 && (
+      <div class="project-tags">
+        {tags.map(tag => (
+          <Badge size="sm" variant="outline">{tag}</Badge>
+        ))}
+      </div>
+    )}
+  </Fragment>
+</StatCard>
+
+<style>
+  .project-card.featured {
+    border-left-color: var(--color-accent);
+  }
+
+  .project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+  }
+</style>
+```
+
+**Step 2: Commit**
+
+```bash
+git add src/components/blocks/ProjectCard.astro
+git commit -m "refactor: ProjectCard to compose StatCard primitive"
+```
+
+---
+
+### Task 16: Refactor projects/index.astro to use StatCard
+
+**Files:**
+- Modify: `src/pages/projects/index.astro`
+
+**Step 1: Replace Card imports with StatCard**
+
+The projects page uses Card directly. Replace with StatCard for consistency.
+
+Update imports:
+```astro
+import StatCard from '../../components/primitives/StatCard.astro';
+```
+
+Replace all `<Card>` usage with `<StatCard>`, moving title to prop:
+```astro
+<StatCard title={project.data.title} href={`${base}/projects/${project.slug}`} class="project-card featured">
+  <!-- content as slots -->
+</StatCard>
+```
+
+**Step 2: Commit**
+
+```bash
+git add src/pages/projects/index.astro
+git commit -m "refactor: projects page to use StatCard primitive"
+```
+
+---
+
+### Task 17: Remove duplicate TimelineItem.astro
+
+**Files:**
+- Delete: `src/components/blocks/TimelineItem.astro`
+- Modify: `src/components/blocks/index.ts`
+
+**Step 1: Verify TimelineItem is not used**
+
+Search for imports of TimelineItem - should only be in index.ts export.
+
+**Step 2: Remove the file**
+
+```bash
+rm src/components/blocks/TimelineItem.astro
+```
+
+**Step 3: Update blocks/index.ts**
+
+Remove the TimelineItem export line.
+
+**Step 4: Commit**
+
+```bash
+git add -A
+git commit -m "remove: duplicate TimelineItem (use TimelineEntry primitive)"
+```
+
+---
+
+### Task 18: Remove deprecated Card.astro
+
+**Files:**
+- Delete: `src/components/primitives/Card.astro`
+- Modify: `src/components/primitives/index.ts`
+
+**Step 1: Verify Card is not used anywhere**
+
+After tasks 15-16, Card should have no imports.
+
+**Step 2: Remove the file**
+
+```bash
+rm src/components/primitives/Card.astro
+```
+
+**Step 3: Update primitives/index.ts**
+
+Remove the Card export and deprecation comment.
+
+**Step 4: Commit**
+
+```bash
+git add -A
+git commit -m "remove: deprecated Card primitive"
+```
+
+---
+
+### Task 19: Final Build and Complete Verification
+
+**Step 1: Run full build**
+
+```bash
+npm run build
+```
+
+Expected: Build completes without errors
+
+**Step 2: Run lint**
+
+```bash
+npm run lint
+```
+
+Expected: No lint errors
+
+**Step 3: Test all affected pages**
+
+```bash
+npm run dev
+```
+
+Test pages:
+- `/` - Homepage
+- `/blog` - Blog list
+- `/talks` - Talks list
+- `/projects` - Projects page
+- `/publications` - Publications page
+- `/open-source` - Open source page
+
+Expected: All pages render correctly
+
+**Step 4: Commit final state**
+
+```bash
+git add -A
+git commit -m "refactor: complete design primitives migration"
+```
+
+---
+
 ## Summary
 
 **Created Primitives:**
@@ -1209,14 +1623,25 @@ git commit -m "refactor: complete design primitives migration"
 5. `AuthorList` - Author names with highlighting
 6. `LanguageDot` - Language indicator with color
 
-**Refactored Components:**
+**Refactored Components (Phase 2):**
 1. `PaperCard` → uses `MediaCard`
 2. `RepoCard` → uses `StatCard`
 3. `EducationCard` → uses `TimelineEntry`
 4. `TeachingCard` → uses `TimelineEntry`
+
+**Refactored Components (Phase 4):**
+5. `BlogCard` → uses `MediaCard`
+6. `TalkCard` → uses `TimelineEntry` + `ActionLink`
+7. `ProjectCard` → uses `StatCard`
+8. `projects/index.astro` → uses `StatCard`
+
+**Removed:**
+- `TimelineItem.astro` (duplicate of `TimelineEntry`)
+- `Card.astro` (deprecated, replaced by `StatCard`/`MediaCard`)
 
 **Benefits:**
 - DRY: Common patterns extracted to primitives
 - Composable: Specialized components extend primitives
 - Consistent: All use `.hover-item` global pattern
 - Maintainable: Changes to primitives cascade to all users
+- Clean: No deprecated or duplicate code

@@ -22,6 +22,3 @@ export { default as ViewDot } from './ViewDot.astro';
 export { default as ViewLinks } from './ViewLinks.astro';
 export { default as ViewTags } from './ViewTags.astro';
 export { default as ViewYearHeader } from './ViewYearHeader.astro';
-
-// Legacy (deprecated - use MediaCard or StatCard instead)
-export { default as Card } from './Card.astro';

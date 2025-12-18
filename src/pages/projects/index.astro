@@ -6,7 +6,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { config } from '../../lib/config';
-import Card from '../../components/primitives/Card.astro';
+import StatCard from '../../components/primitives/StatCard.astro';
 import ViewDot from '../../components/primitives/ViewDot.astro';
 import ViewTags from '../../components/primitives/ViewTags.astro';
 import ActionLink from '../../components/primitives/ActionLink.astro';
@@ -58,30 +58,35 @@ const statusLabels: Record<string, string> = {
       {featuredProjects.length > 0 && (
         <section class="featured-section" data-animate="stagger">
           {featuredProjects.map(project => (
-            <Card href={`${base}/projects/${project.slug}`} class="project-card featured">
-              <div class="project-meta">
-                {project.data.status && (
-                  <span class="project-status">
-                    <ViewDot status={project.data.status} size="md" />
-                    <span class="status-label">{statusLabels[project.data.status]}</span>
-                  </span>
+            <StatCard
+              title={project.data.title}
+              href={`${base}/projects/${project.slug}`}
+              class="project-card featured"
+            >
+              <Fragment slot="subtitle">
+                <div class="project-meta">
+                  {project.data.status && (
+                    <span class="project-status">
+                      <ViewDot status={project.data.status} size="md" />
+                      <span class="status-label">{statusLabels[project.data.status]}</span>
+                    </span>
+                  )}
+                </div>
+                {project.data.description && (
+                  <p class="project-desc">{project.data.description}</p>
                 )}
-              </div>
-              <h2 class="project-name hover-title">{project.data.title}</h2>
-              {project.data.description && (
-                <p class="project-desc">{project.data.description}</p>
-              )}
-              <div class="project-footer">
-                {project.data.tags && project.data.tags.length > 0 && (
-                  <ViewTags tags={project.data.tags.slice(0, 3)} />
-                )}
-                <span class="project-links">
+              </Fragment>
+              <Fragment slot="stats">
+                <div class="project-footer">
+                  {project.data.tags && project.data.tags.length > 0 && (
+                    <ViewTags tags={project.data.tags.slice(0, 3)} />
+                  )}
                   {project.data.github && (
                     <ActionLink href={project.data.github} label="Code" icon="external" />
                   )}
-                </span>
-              </div>
-            </Card>
+                </div>
+              </Fragment>
+            </StatCard>
           ))}
         </section>
       )}
@@ -94,30 +99,35 @@ const statusLabels: Record<string, string> = {
           )}
           <div class="projects-grid">
             {regularProjects.map(project => (
-              <Card href={`${base}/projects/${project.slug}`} class="project-card">
-                <div class="project-meta">
-                  {project.data.status && (
-                    <span class="project-status">
-                      <ViewDot status={project.data.status} size="sm" />
-                      <span class="status-label">{statusLabels[project.data.status]}</span>
-                    </span>
+              <StatCard
+                title={project.data.title}
+                href={`${base}/projects/${project.slug}`}
+                class="project-card"
+              >
+                <Fragment slot="subtitle">
+                  <div class="project-meta">
+                    {project.data.status && (
+                      <span class="project-status">
+                        <ViewDot status={project.data.status} size="sm" />
+                        <span class="status-label">{statusLabels[project.data.status]}</span>
+                      </span>
+                    )}
+                  </div>
+                  {project.data.description && (
+                    <p class="project-desc">{project.data.description}</p>
                   )}
-                </div>
-                <h3 class="project-name hover-title">{project.data.title}</h3>
-                {project.data.description && (
-                  <p class="project-desc">{project.data.description}</p>
-                )}
-                <div class="project-footer">
-                  {project.data.tags && project.data.tags.length > 0 && (
-                    <ViewTags tags={project.data.tags.slice(0, 3)} />
-                  )}
-                  <span class="project-links">
+                </Fragment>
+                <Fragment slot="stats">
+                  <div class="project-footer">
+                    {project.data.tags && project.data.tags.length > 0 && (
+                      <ViewTags tags={project.data.tags.slice(0, 3)} />
+                    )}
                     {project.data.github && (
                       <ActionLink href={project.data.github} label="Code" icon="external" />
                     )}
-                  </span>
-                </div>
-              </Card>
+                  </div>
+                </Fragment>
+              </StatCard>
             ))}
           </div>
         </section>
@@ -205,21 +215,12 @@ const statusLabels: Record<string, string> = {
     font-weight: var(--font-weight-medium);
   }
 
-  .project-name {
-    font-family: var(--font-body);
-    font-size: var(--font-size-base);
-    font-weight: var(--font-weight-medium);
-    color: var(--color-text);
-    margin: 0 0 var(--space-1);
-    /* Hover title color handled by global .hover-item:hover .hover-title */
-  }
-
   .project-desc {
     font-size: var(--font-size-sm);
     font-family: var(--font-body);
     color: var(--color-text-muted);
     line-height: var(--line-height-normal);
-    margin: 0 0 var(--space-3);
+    margin: 0;
   }
 
   .project-footer {
@@ -228,12 +229,7 @@ const statusLabels: Record<string, string> = {
     justify-content: space-between;
     gap: var(--space-3);
     flex-wrap: wrap;
-  }
-
-  .project-links {
-    display: flex;
-    gap: var(--space-2);
-    flex-shrink: 0;
+    width: 100%;
   }
 
   .empty-state {

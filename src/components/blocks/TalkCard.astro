@@ -1,9 +1,11 @@
 ---
 /**
  * TalkCard Component
- * Display talk/presentation with event details and links
+ * Display talk/presentation with event details and links.
+ * Composes TimelineEntry primitive with talk-specific additions.
  */
-
+import TimelineEntry from '../primitives/TimelineEntry.astro';
+import ActionLink from '../primitives/ActionLink.astro';
 import Badge from '../ui/Badge.astro';
 
 interface Props {
@@ -31,68 +33,30 @@ const {
 } = Astro.props;
 ---
 
-<article class:list={['talk-card', 'hover-item', className]} data-animate="fade-up">
-  <div class="talk-header">
-    <div class="talk-meta">
-      <time class="talk-date">{date}</time>
-      {type && <Badge size="sm" variant="outline">{type}</Badge>}
-    </div>
-    <h3 class="talk-title hover-title">{title}</h3>
-    <div class="talk-event">
-      {event}
-      {location && <span class="talk-location"> · {location}</span>}
-    </div>
+<TimelineEntry date={date} class:list={['talk-card', className]}>
+  <div class="talk-meta">
+    {type && <Badge size="sm" variant="outline">{type}</Badge>}
   </div>
+  <h3 class="talk-title hover-title">{title}</h3>
+  <div class="talk-event">
+    {event}
+    {location && <span class="talk-location"> · {location}</span>}
+  </div>
+  {abstract && <p class="talk-abstract">{abstract}</p>}
 
-  {abstract && (
-    <p class="talk-abstract">{abstract}</p>
-  )}
-
-  {(slides || video) && (
-    <div class="talk-links">
-      {slides && (
-        <a href={slides} class="talk-link" target="_blank" rel="noopener noreferrer">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-            <line x1="8" y1="21" x2="16" y2="21"></line>
-            <line x1="12" y1="17" x2="12" y2="21"></line>
-          </svg>
-          Slides
-        </a>
-      )}
-      {video && (
-        <a href={video} class="talk-link" target="_blank" rel="noopener noreferrer">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polygon points="5 3 19 12 5 21 5 3"></polygon>
-          </svg>
-          Video
-        </a>
-      )}
-    </div>
-  )}
-</article>
+  <Fragment slot="links">
+    {slides && <ActionLink href={slides} label="Slides" icon="slides" />}
+    {video && <ActionLink href={video} label="Video" icon="video" />}
+  </Fragment>
+</TimelineEntry>
 
 <style>
-  .talk-card {
-    /* Padding, border-left, and hover handled by global .hover-item */
-  }
-
-  .talk-header {
-    margin-bottom: var(--space-3);
-  }
-
   .talk-meta {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
     margin-bottom: var(--space-2);
   }
 
-  .talk-date {
-    font-size: var(--font-size-xs);
-    font-family: var(--font-ui);
-    color: var(--color-text-muted);
-    letter-spacing: 0.01em;
+  .talk-meta:empty {
+    display: none;
   }
 
   .talk-title {
@@ -120,37 +84,7 @@ const {
     font-size: var(--font-size-sm);
     font-family: var(--font-body);
     color: var(--color-text-secondary);
-    margin: 0 0 var(--space-3);
+    margin: var(--space-2) 0 0;
     line-height: var(--line-height-normal);
-  }
-
-  .talk-links {
-    display: flex;
-    gap: var(--space-3);
-  }
-
-  .talk-link {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    font-size: var(--font-size-sm);
-    font-family: var(--font-ui);
-    font-weight: var(--font-weight-medium);
-    color: var(--color-text-secondary);
-    background: none;
-    padding: var(--space-2) var(--space-3);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-full);
-    transition: all var(--transition-fast);
-  }
-
-  .talk-link:hover {
-    color: var(--color-accent);
-    border-color: var(--color-accent);
-    background-color: rgba(196, 30, 58, 0.05);
-  }
-
-  [data-theme="dark"] .talk-link:hover {
-    background-color: rgba(255, 77, 106, 0.1);
   }
 </style>
