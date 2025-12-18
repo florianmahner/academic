@@ -1,0 +1,179 @@
+---
+/**
+ * MediaCard Primitive
+ *
+ * Card with optional media (image/gif) and structured content slots.
+ * Used by: Publications, Projects, Blog posts with images
+ *
+ * @prop image - Optional image URL
+ * @prop imageAlt - Alt text for image
+ * @prop title - Card title (required)
+ * @prop href - Optional link URL
+ * @prop external - Open link in new tab
+ * @slot meta - Metadata line (venue, date, tags)
+ * @slot subtitle - Below title (authors, description)
+ * @slot description - Main description
+ * @slot links - Action links
+ */
+
+interface Props {
+  image?: string;
+  imageAlt?: string;
+  title: string;
+  href?: string;
+  external?: boolean;
+  class?: string;
+}
+
+const {
+  image,
+  imageAlt = '',
+  title,
+  href,
+  external = false,
+  class: className
+} = Astro.props;
+---
+
+<article class:list={['media-card', 'hover-item', { 'media-card--has-image': !!image }, className]}>
+  {image && (
+    <div class="media-card-image">
+      <img src={image} alt={imageAlt} loading="lazy" decoding="async" />
+    </div>
+  )}
+  <div class="media-card-content">
+    <div class="media-card-meta">
+      <slot name="meta" />
+    </div>
+    <h3 class="media-card-title hover-title">
+      {href ? (
+        <a
+          href={href}
+          target={external ? '_blank' : undefined}
+          rel={external ? 'noopener noreferrer' : undefined}
+        >
+          {title}
+        </a>
+      ) : title}
+    </h3>
+    <div class="media-card-subtitle">
+      <slot name="subtitle" />
+    </div>
+    <div class="media-card-description">
+      <slot name="description" />
+    </div>
+    <div class="media-card-links">
+      <slot name="links" />
+    </div>
+  </div>
+</article>
+
+<style>
+  .media-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .media-card--has-image {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: var(--space-5);
+  }
+
+  .media-card-image {
+    width: 140px;
+    height: 90px;
+    overflow: hidden;
+    border-radius: var(--radius-md);
+    flex-shrink: 0;
+  }
+
+  .media-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .media-card-content {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .media-card-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+  }
+
+  .media-card-meta:empty {
+    display: none;
+  }
+
+  .media-card-title {
+    font-size: var(--font-size-base);
+    font-family: var(--font-body);
+    font-weight: var(--font-weight-semibold);
+    margin: 0 0 var(--space-2);
+    line-height: var(--line-height-snug);
+  }
+
+  .media-card-title a {
+    color: var(--color-text);
+    background: none;
+    transition: color var(--transition-fast);
+  }
+
+  .media-card-title a:hover {
+    color: var(--color-accent);
+  }
+
+  .media-card-subtitle {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-2);
+  }
+
+  .media-card-subtitle:empty {
+    display: none;
+  }
+
+  .media-card-description {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-normal);
+  }
+
+  .media-card-description:empty {
+    display: none;
+  }
+
+  .media-card-links {
+    display: flex;
+    gap: var(--space-3);
+    margin-top: auto;
+    padding-top: var(--space-2);
+  }
+
+  .media-card-links:empty {
+    display: none;
+  }
+
+  @media (max-width: 600px) {
+    .media-card--has-image {
+      grid-template-columns: 1fr;
+      gap: var(--space-3);
+    }
+
+    .media-card-image {
+      width: 100%;
+      max-width: 200px;
+      height: auto;
+      aspect-ratio: 16 / 10;
+    }
+  }
+</style>

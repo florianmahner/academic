@@ -1,0 +1,102 @@
+---
+/**
+ * StatCard Primitive
+ *
+ * Card optimized for displaying items with statistics.
+ * Used by: Repos, metrics, items with counts
+ *
+ * @prop title - Card title
+ * @prop href - Optional link URL
+ * @prop external - Open link in new tab
+ * @slot subtitle - Description below title
+ * @slot stats - Statistics display (stars, forks, etc.)
+ */
+
+interface Props {
+  title: string;
+  href?: string;
+  external?: boolean;
+  class?: string;
+}
+
+const {
+  title,
+  href,
+  external = false,
+  class: className
+} = Astro.props;
+---
+
+<article class:list={['stat-card', 'hover-item', className]}>
+  {href && (
+    <a
+      href={href}
+      target={external ? '_blank' : undefined}
+      rel={external ? 'noopener noreferrer' : undefined}
+      class="stat-card-link"
+      aria-hidden="true"
+      tabindex="-1"
+    />
+  )}
+  <h3 class="stat-card-title hover-title">{title}</h3>
+  <div class="stat-card-subtitle">
+    <slot name="subtitle" />
+  </div>
+  <div class="stat-card-footer">
+    <slot name="stats" />
+  </div>
+</article>
+
+<style>
+  .stat-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .stat-card-link {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  .stat-card-title {
+    font-family: var(--font-body);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text);
+    margin: 0 0 var(--space-1);
+  }
+
+  .stat-card-subtitle {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    line-height: var(--line-height-normal);
+    margin-bottom: var(--space-3);
+    flex: 1;
+  }
+
+  .stat-card-subtitle:empty {
+    display: none;
+  }
+
+  .stat-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    margin-top: auto;
+  }
+
+  .stat-card-footer:empty {
+    display: none;
+  }
+
+  /* Allow nested interactive elements */
+  .stat-card :global(a),
+  .stat-card :global(button) {
+    position: relative;
+    z-index: 2;
+  }
+</style>
