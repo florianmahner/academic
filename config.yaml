@@ -103,12 +103,14 @@ navigation:
 theme:
   # Typography preset
   # Options: "crimson-classic", "editorial-newsreader", "modern-geist",
-  #          "classic-playfair", "brutalist-space", "humanist-inter"
+  #          "classic-playfair", "brutalist-space", "humanist-inter",
+  #          "elegant-josefin", "clean-roboto", "refined-jost", "editorial-instrument"
   preset: editorial-newsreader
 
-  # Optional: Override preset accent colors (leave empty for preset defaults)
-  accent_light: ""  # e.g., "#4f46e5"
-  accent_dark: ""   # e.g., "#818cf8"
+  # Accent color - choose from predefined colors or use custom hex
+  # Predefined: "crimson", "rose", "amber", "emerald", "cyan", "blue", "indigo", "violet", "navy", "slate"
+  # Or use custom hex: { light: "#059669", dark: "#34d399" }
+  accent: emerald
 
 # =============================================================================
 # FEATURES

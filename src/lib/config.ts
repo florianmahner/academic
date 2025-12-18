@@ -51,6 +51,29 @@ const NavigationSchema = z.object({
   items: z.array(NavigationItemSchema),
 });
 
+// Predefined accent colors (matches SettingsPanel)
+const ACCENT_COLORS: Record<string, { light: string; dark: string }> = {
+  crimson: { light: '#c41e3a', dark: '#ff4d6a' },
+  rose: { light: '#e11d48', dark: '#fb7185' },
+  amber: { light: '#d97706', dark: '#fbbf24' },
+  emerald: { light: '#059669', dark: '#34d399' },
+  cyan: { light: '#0891b2', dark: '#22d3ee' },
+  blue: { light: '#2563eb', dark: '#60a5fa' },
+  indigo: { light: '#4f46e5', dark: '#818cf8' },
+  violet: { light: '#7c3aed', dark: '#a78bfa' },
+  navy: { light: '#1e3a5f', dark: '#93c5fd' },
+  slate: { light: '#475569', dark: '#cbd5e1' },
+};
+
+// Accent can be a string (predefined name) or object with light/dark hex values
+const AccentColorSchema = z.union([
+  z.enum(["crimson", "rose", "amber", "emerald", "cyan", "blue", "indigo", "violet", "navy", "slate"]),
+  z.object({
+    light: z.string(),
+    dark: z.string(),
+  }),
+]).optional();
+
 const ThemeSchema = z.object({
   preset: z.enum([
     "crimson-classic",
@@ -59,7 +82,13 @@ const ThemeSchema = z.object({
     "classic-playfair",
     "brutalist-space",
     "humanist-inter",
+    "elegant-josefin",
+    "clean-roboto",
+    "refined-jost",
+    "editorial-instrument",
   ]).default("editorial-newsreader"),
+  accent: AccentColorSchema,
+  // Legacy support
   accent_light: z.string().optional(),
   accent_dark: z.string().optional(),
 });
@@ -155,7 +184,13 @@ export type ThemePreset =
   | "modern-geist"
   | "classic-playfair"
   | "brutalist-space"
-  | "humanist-inter";
+  | "humanist-inter"
+  | "elegant-josefin"
+  | "clean-roboto"
+  | "refined-jost"
+  | "editorial-instrument";
+
+export type AccentColorName = "crimson" | "rose" | "amber" | "emerald" | "cyan" | "blue" | "indigo" | "violet" | "navy" | "slate";
 
 // Layout types are now defined in src/lib/layout-config.ts
 // and configured via frontmatter in src/content/collection-pages/
@@ -239,12 +274,40 @@ function transformConfig(yamlConfig: ConfigType) {
     navigation: yamlConfig.navigation.items,
     navigationMode: yamlConfig.navigation.mode as const,
 
-    // Theme
-    theme: {
-      defaultPreset: yamlConfig.theme.preset,
-      accentLight: yamlConfig.theme.accent_light || undefined,
-      accentDark: yamlConfig.theme.accent_dark || undefined,
-    },
+    // Theme - resolve accent color from predefined name or custom hex
+    theme: (() => {
+      let accentLight: string | undefined;
+      let accentDark: string | undefined;
+
+      if (yamlConfig.theme.accent) {
+        if (typeof yamlConfig.theme.accent === 'string') {
+          // Predefined color name
+          const colors = ACCENT_COLORS[yamlConfig.theme.accent];
+          if (colors) {
+            accentLight = colors.light;
+            accentDark = colors.dark;
+          }
+        } else {
+          // Custom hex object
+          accentLight = yamlConfig.theme.accent.light;
+          accentDark = yamlConfig.theme.accent.dark;
+        }
+      }
+
+      // Legacy support for accent_light/accent_dark
+      if (!accentLight && yamlConfig.theme.accent_light) {
+        accentLight = yamlConfig.theme.accent_light;
+      }
+      if (!accentDark && yamlConfig.theme.accent_dark) {
+        accentDark = yamlConfig.theme.accent_dark;
+      }
+
+      return {
+        defaultPreset: yamlConfig.theme.preset,
+        accentLight,
+        accentDark,
+      };
+    })(),
 
     // Features
     features: {
