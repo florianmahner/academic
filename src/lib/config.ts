@@ -110,6 +110,18 @@ const CVSchema = z.object({
   ])).default(["summary", "education", "work", "awards", "publications", "skills", "languages", "references"]),
 }).optional();
 
+// Homepage section schema
+const HomepageSectionSchema = z.object({
+  id: z.enum(["about", "research", "publications", "education", "news"]),
+  enabled: z.boolean().default(true),
+  title: z.string().optional(),
+  limit: z.number().optional(),
+});
+
+const HomepageSchema = z.object({
+  sections: z.array(HomepageSectionSchema),
+}).optional();
+
 // Main config schema
 // NOTE: Layout configuration has been moved to frontmatter in src/content/collection-pages/
 const ConfigSchema = z.object({
@@ -123,6 +135,7 @@ const ConfigSchema = z.object({
   navigation: NavigationSchema,
   theme: ThemeSchema,
   features: FeaturesSchema,
+  homepage: HomepageSchema,
   about: AboutSchema.optional(),
   footer: FooterSchema,
   publications: PublicationsSchema,
@@ -134,6 +147,7 @@ const ConfigSchema = z.object({
 // =============================================================================
 
 export type ConfigType = z.infer<typeof ConfigSchema>;
+export type HomepageSection = z.infer<typeof HomepageSectionSchema>;
 export type NavigationMode = "floating" | "sidebar" | "inline";
 export type ThemePreset =
   | "crimson-classic"
@@ -283,6 +297,16 @@ function transformConfig(yamlConfig: ConfigType) {
       pdf: '/cv.pdf',
       sections: ['summary', 'education', 'work', 'awards', 'publications', 'skills', 'languages', 'references'] as const,
     },
+
+    // Homepage layout (optional - defaults to standard order)
+    homepage: yamlConfig.homepage ? {
+      sections: yamlConfig.homepage.sections.map(s => ({
+        id: s.id,
+        enabled: s.enabled ?? true,
+        title: s.title,
+        limit: s.limit,
+      })),
+    } : undefined,
   };
 }
 

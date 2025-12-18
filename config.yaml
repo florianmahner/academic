@@ -123,6 +123,31 @@ features:
   profile_picture: true        # Show profile picture on about page
 
 # =============================================================================
+# HOMEPAGE LAYOUT (optional)
+# =============================================================================
+# Customize the order and visibility of homepage sections.
+# If omitted, uses default order: about, research, publications, education, news
+# Each section can have: enabled (bool), title (string)
+
+# homepage:
+#   sections:
+#     - id: about
+#       enabled: true
+#     - id: research
+#       enabled: true
+#       title: Research Interests
+#     - id: publications
+#       enabled: true
+#       title: Selected Publications
+#     - id: education
+#       enabled: true
+#       title: Academic Background
+#     - id: news
+#       enabled: true
+#       title: News
+#       limit: 5
+
+# =============================================================================
 # ABOUT PAGE CONTENT
 # =============================================================================
 # Edit your bio and research interests in: src/content/pages/about.md

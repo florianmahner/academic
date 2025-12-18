@@ -13,6 +13,29 @@ import path from 'node:path';
 
 const title = config.site.title;
 
+// Default section order and titles
+const defaultSections = [
+  { id: 'about', enabled: true, title: '' },
+  { id: 'research', enabled: true, title: 'Research Interests' },
+  { id: 'publications', enabled: config.features.selectedPublications, title: 'Selected Publications' },
+  { id: 'education', enabled: config.features.education, title: 'Academic Background' },
+  { id: 'news', enabled: true, title: 'News', limit: 5 },
+];
+
+// Merge with custom config if provided
+const sections = config.homepage?.sections || defaultSections;
+
+// Helper to get section config
+const getSection = (id: string) => {
+  const section = sections.find(s => s.id === id);
+  const defaultSection = defaultSections.find(s => s.id === id);
+  return {
+    enabled: section?.enabled ?? defaultSection?.enabled ?? true,
+    title: section?.title ?? defaultSection?.title ?? '',
+    limit: section?.limit ?? defaultSection?.limit,
+  };
+};
+
 // Prepend base path to images
 const base = import.meta.env.BASE_URL;
 const prependBase = (path: string) => {
@@ -37,7 +60,8 @@ if (config.features.selectedPublications) {
 // Featured projects section removed per user request
 
 // Load recent items for news timeline (blog posts)
-const newsItems = await getRecentNews(5, base);
+const newsSection = getSection('news');
+const newsItems = await getRecentNews(newsSection.limit || 5, base);
 
 // Education data
 const education = educationData.education;
