@@ -1,0 +1,52 @@
+---
+/**
+ * LanguageDot Primitive
+ *
+ * Displays programming language with colored dot.
+ * Used by: RepoCard, code-related cards
+ */
+
+interface Props {
+  language: string;
+  class?: string;
+}
+
+const { language, class: className } = Astro.props;
+
+// Language colors mapped to CSS variables
+const langVars: Record<string, string> = {
+  python: 'var(--lang-python)',
+  javascript: 'var(--lang-javascript)',
+  typescript: 'var(--lang-typescript)',
+  rust: 'var(--lang-rust)',
+  go: 'var(--lang-go)',
+  java: 'var(--lang-java)',
+  html: 'var(--lang-html)',
+  css: 'var(--lang-css)',
+  shell: 'var(--lang-shell)',
+  default: 'var(--lang-default)',
+};
+
+const color = langVars[language?.toLowerCase() || 'default'] || langVars.default;
+---
+
+<span class:list={['language-dot', className]}>
+  <span class="dot" style={`background-color: ${color}`}></span>
+  {language}
+</span>
+
+<style>
+  .language-dot {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+</style>

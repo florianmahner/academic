@@ -1,0 +1,41 @@
+---
+/**
+ * AuthorList Primitive
+ *
+ * Displays author names with optional highlighting.
+ * Used by: Publications
+ */
+
+interface Props {
+  authors: string[];
+  highlight?: string;
+  class?: string;
+}
+
+const { authors, highlight = '', class: className } = Astro.props;
+---
+
+<p class:list={['author-list', className]}>
+  {authors.map((author, i) => (
+    <>
+      <span class:list={{ 'author-highlight': highlight && author.includes(highlight) }}>
+        {author}
+      </span>
+      {i < authors.length - 1 && ', '}
+    </>
+  ))}
+</p>
+
+<style>
+  .author-list {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin: 0;
+    line-height: var(--line-height-normal);
+  }
+
+  .author-highlight {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text);
+  }
+</style>
