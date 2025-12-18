@@ -1,4 +1,12 @@
 ---
+/**
+ * EducationCard Component
+ *
+ * Display education entry with dates and details.
+ * Composes TimelineEntry primitive.
+ */
+import TimelineEntry from '../primitives/TimelineEntry.astro';
+
 interface Supervisor {
   name: string;
   url?: string;
@@ -32,85 +40,61 @@ const {
   grade,
   thesis
 } = Astro.props;
+
+const dateRange = `${startYear} – ${endYear}`;
 ---
 
-<div class="education-item">
-  <div class="education-period">{startYear} – {endYear}</div>
-  <div class="education-content">
-    <p><strong>{degree} in {field}</strong></p>
-    <p class="education-institution">
-      {institutionUrl ? (
-        <a href={institutionUrl}>{institution}</a>
-      ) : (
-        institution
-      )}
+<TimelineEntry date={dateRange} class="education-card">
+  <p class="education-title"><strong>{degree} in {field}</strong></p>
+  <p class="education-institution">
+    {institutionUrl ? (
+      <a href={institutionUrl}>{institution}</a>
+    ) : (
+      institution
+    )}
+  </p>
+  {supervisors && supervisors.length > 0 && (
+    <p class="education-details">
+      Supervisors: {supervisors.map((sup, i) => (
+        <>
+          {sup.url ? <a href={sup.url}>{sup.name}</a> : sup.name}
+          {i < supervisors.length - 1 && ', '}
+        </>
+      ))}
     </p>
-    {supervisors && supervisors.length > 0 && (
-      <p class="education-details">
-        Supervisors: {supervisors.map((sup, i) => (
-          <>
-            {sup.url ? <a href={sup.url}>{sup.name}</a> : sup.name}
-            {i < supervisors.length - 1 && ', '}
-          </>
-        ))}
-      </p>
-    )}
-    {grade && (
-      <p class="education-details">Grade: {grade}</p>
-    )}
-    {thesis && (
-      <a href={thesis.url} class="thesis-link">Thesis: {thesis.title}</a>
-    )}
-  </div>
-</div>
+  )}
+  {grade && (
+    <p class="education-details">Grade: {grade}</p>
+  )}
+  {thesis && (
+    <a href={thesis.url} class="thesis-link">Thesis: {thesis.title}</a>
+  )}
+</TimelineEntry>
 
 <style>
-  .education-item {
-    display: grid;
-    grid-template-columns: 140px 1fr;
-    gap: var(--space-5);
-    padding: var(--space-4);
-    transition: border-left-color var(--transition-fast);
-    border-left: 2px solid transparent;
-  }
-
-  @media (hover: hover) {
-    .education-item:hover {
-      border-left-color: var(--color-accent);
-    }
-  }
-
-  .education-period {
-    font-size: var(--font-size-sm);
-    font-family: var(--font-body);
-    font-weight: var(--font-weight-normal);
-    line-height: var(--line-height-normal);
-    color: var(--color-text-muted);
-  }
-
-  .education-content p {
+  .education-title {
     margin: 0 0 var(--space-1);
-  }
-
-  .education-content p:first-child {
     font-size: var(--font-size-base);
-  }
-
-  .education-content strong {
-    font-weight: var(--font-weight-semibold);
   }
 
   .education-institution {
     font-size: var(--font-size-sm);
+    margin: 0 0 var(--space-1);
   }
 
   .education-institution a {
     color: var(--color-text-secondary);
+    background: none;
+  }
+
+  .education-institution a:hover {
+    color: var(--color-accent);
   }
 
   .education-details {
     font-size: var(--font-size-sm);
     color: var(--color-text-muted);
+    margin: var(--space-1) 0 0;
   }
 
   .thesis-link {
@@ -118,30 +102,6 @@ const {
     font-size: var(--font-size-sm);
     color: var(--color-accent);
     background: none;
-  }
-
-  @media (max-width: 600px) {
-    .education-item {
-      grid-template-columns: 1fr;
-      gap: var(--space-2);
-      padding: var(--space-3);
-    }
-
-    .education-period {
-      font-size: var(--font-size-sm);
-      margin-bottom: var(--space-1);
-    }
-
-    .education-content p {
-      font-size: var(--font-size-base);
-    }
-
-    .education-details {
-      font-size: var(--font-size-sm);
-    }
-
-    .thesis-link {
-      font-size: var(--font-size-sm);
-    }
+    margin-top: var(--space-1);
   }
 </style>
