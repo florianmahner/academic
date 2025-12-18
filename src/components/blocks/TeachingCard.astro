@@ -1,10 +1,12 @@
 ---
 /**
  * TeachingCard Component
- * Display course/teaching information
+ *
+ * Display course/teaching information.
+ * Composes TimelineEntry primitive.
  */
-
-import Button from '../ui/Button.astro';
+import TimelineEntry from '../primitives/TimelineEntry.astro';
+import ActionLink from '../primitives/ActionLink.astro';
 
 interface Props {
   title: string;
@@ -31,50 +33,24 @@ const {
 const displaySemester = year ? `${semester} ${year}` : semester;
 ---
 
-<div class:list={['teaching-card', 'hover-item', className]} data-animate="fade-up">
-  <div class="teaching-header">
-    <h3 class="teaching-title hover-title">{title}</h3>
-    <span class="teaching-semester">{displaySemester}</span>
-  </div>
+<TimelineEntry date={displaySemester} class:list={['teaching-card', className]}>
+  <h3 class="teaching-title hover-title">{title}</h3>
   <div class="teaching-meta">
     <span class="teaching-role">{role}</span>
     <span class="teaching-institution">{institution}</span>
   </div>
   {description && <p class="teaching-description">{description}</p>}
-  {materials && (
-    <div class="teaching-actions">
-      <Button href={materials} variant="secondary" size="sm" target="_blank" rel="noopener noreferrer">
-        View Materials
-      </Button>
-    </div>
-  )}
-</div>
+
+  <Fragment slot="links">
+    {materials && <ActionLink href={materials} label="Materials" icon="external" />}
+  </Fragment>
+</TimelineEntry>
 
 <style>
-  .teaching-card {
-    /* Padding, border-left, and hover handled by global .hover-item */
-  }
-
-  .teaching-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: var(--space-2);
-    margin-bottom: var(--space-2);
-  }
-
   .teaching-title {
     font-size: var(--font-size-base);
-    font-family: var(--font-body);
     font-weight: var(--font-weight-semibold);
-    margin: 0;
-  }
-
-  .teaching-semester {
-    font-size: var(--font-size-xs);
-    font-family: var(--font-mono);
-    color: var(--color-text-muted);
-    white-space: nowrap;
+    margin: 0 0 var(--space-2);
   }
 
   .teaching-meta {
@@ -82,7 +58,7 @@ const displaySemester = year ? `${semester} ${year}` : semester;
     gap: var(--space-2);
     font-size: var(--font-size-sm);
     color: var(--color-text-secondary);
-    margin-bottom: var(--space-3);
+    margin-bottom: var(--space-2);
   }
 
   .teaching-role {
@@ -99,11 +75,7 @@ const displaySemester = year ? `${semester} ${year}` : semester;
   .teaching-description {
     font-size: var(--font-size-sm);
     color: var(--color-text-secondary);
-    margin: 0 0 var(--space-3);
+    margin: 0;
     line-height: var(--line-height-normal);
-  }
-
-  .teaching-actions {
-    margin-top: var(--space-3);
   }
 </style>

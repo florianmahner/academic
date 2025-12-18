@@ -1,10 +1,12 @@
 ---
 /**
  * RepoCard Component
- * Display GitHub repository with stats
+ *
+ * Display GitHub repository with stats.
+ * Composes StatCard primitive with GitHub-specific additions.
  */
-
-import Card from '../primitives/Card.astro';
+import StatCard from '../primitives/StatCard.astro';
+import LanguageDot from '../primitives/LanguageDot.astro';
 
 interface Props {
   name: string;
@@ -25,35 +27,21 @@ const {
   forks = 0,
   class: className,
 } = Astro.props;
-
-// Language colors - mapped to CSS variables
-const langVars: Record<string, string> = {
-  python: 'var(--lang-python)',
-  javascript: 'var(--lang-javascript)',
-  typescript: 'var(--lang-typescript)',
-  rust: 'var(--lang-rust)',
-  go: 'var(--lang-go)',
-  java: 'var(--lang-java)',
-  html: 'var(--lang-html)',
-  css: 'var(--lang-css)',
-  shell: 'var(--lang-shell)',
-  default: 'var(--lang-default)',
-};
-
-const langColor = langVars[language?.toLowerCase() || 'default'] || langVars.default;
 ---
 
-<Card href={url} external class:list={['repo-card', className]}>
-  <h3 class="repo-name hover-title">{name}</h3>
-  {description && <p class="repo-desc">{description}</p>}
-  <div class="repo-footer">
-    {language && (
-      <span class="lang">
-        <span class="dot" style={`background-color: ${langColor}`}></span>
-        {language}
-      </span>
-    )}
-    <span class="stats">
+<StatCard
+  title={name}
+  href={url}
+  external={true}
+  class:list={['repo-card', className]}
+>
+  <Fragment slot="subtitle">
+    {description}
+  </Fragment>
+
+  <Fragment slot="stats">
+    {language && <LanguageDot language={language} />}
+    <span class="repo-stats">
       {stars > 0 && (
         <span class="stat">
           <svg aria-hidden="true" width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
@@ -71,51 +59,11 @@ const langColor = langVars[language?.toLowerCase() || 'default'] || langVars.def
         </span>
       )}
     </span>
-  </div>
-</Card>
+  </Fragment>
+</StatCard>
 
 <style>
-  .repo-name {
-    font-family: var(--font-body);
-    font-size: var(--font-size-base);
-    font-weight: var(--font-weight-medium);
-    color: var(--color-text);
-    margin: 0 0 var(--space-1);
-    transition: color var(--transition-fast);
-  }
-
-  /* Hover title color handled by global .hover-item:hover .hover-title */
-
-  .repo-desc {
-    font-size: var(--font-size-sm);
-    font-family: var(--font-body);
-    color: var(--color-text-muted);
-    line-height: var(--line-height-normal);
-    margin: 0 0 var(--space-3);
-  }
-
-  .repo-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: var(--font-size-xs);
-    font-family: var(--font-body);
-    color: var(--color-text-muted);
-  }
-
-  .lang {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-  }
-
-  .stats {
+  .repo-stats {
     display: flex;
     align-items: center;
     gap: var(--space-3);
