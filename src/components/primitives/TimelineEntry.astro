@@ -1,0 +1,74 @@
+---
+/**
+ * TimelineEntry Primitive
+ *
+ * Date-aligned content display for chronological items.
+ * Used by: CV, Teaching, Talks, News, Education
+ *
+ * @slot date - Date/period display (left column)
+ * @slot default - Main content
+ * @slot links - Action links (bottom)
+ */
+
+interface Props {
+  date?: string;
+  class?: string;
+}
+
+const { date, class: className } = Astro.props;
+---
+
+<div class:list={['timeline-entry', 'hover-item', className]}>
+  <div class="timeline-entry-date">
+    {date ? date : <slot name="date" />}
+  </div>
+  <div class="timeline-entry-content">
+    <slot />
+    <div class="timeline-entry-links">
+      <slot name="links" />
+    </div>
+  </div>
+</div>
+
+<style>
+  .timeline-entry {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: var(--space-5);
+  }
+
+  .timeline-entry-date {
+    font-size: var(--font-size-sm);
+    font-family: var(--font-body);
+    color: var(--color-text-muted);
+    padding-top: 2px;
+  }
+
+  .timeline-entry-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    min-width: 0;
+  }
+
+  .timeline-entry-links:empty {
+    display: none;
+  }
+
+  .timeline-entry-links {
+    display: flex;
+    gap: var(--space-3);
+    margin-top: var(--space-2);
+  }
+
+  @media (max-width: 600px) {
+    .timeline-entry {
+      grid-template-columns: 1fr;
+      gap: var(--space-2);
+    }
+
+    .timeline-entry-date {
+      font-size: var(--font-size-xs);
+    }
+  }
+</style>
